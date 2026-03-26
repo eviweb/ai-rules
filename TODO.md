@@ -2,6 +2,12 @@
 
 Improvements and additions to consider for future iterations of this config.
 
+## Codex integration
+- [ ] Add `agents/codex/AGENTS.md` entry point (flat file — no @rules/ import support)
+- [ ] Add `generate` command to CLI: concatenate rules/ into a flat file for agents without native import support
+- [ ] Register Codex agent in `agents.toml`
+- [ ] Add tests for generate command and Codex agent
+
 ## Naming conventions
 - [ ] Add naming conventions for other languages (JavaScript/TypeScript, Python, Go...) in `rules/naming.md` as they become relevant in projects
 

@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-03-26
+
+### Added
+- `.github/workflows/ci.yml`: CI pipeline with lint (shellcheck + ruff) and
+  test (pytest on Python 3.11 and 3.12) jobs, triggered on push and PR
+- `ruff>=0.4.0` added to dev dependencies
+- CI badge added to `README.md`
+
+### Fixed
+- CI workflow: replace `uv pip install --system` with `uv sync` + `uv run`
+  to comply with PEP 668 (externally managed Python on Debian/Ubuntu runners)
+- Unused imports removed in `tests/test_agent.py` (ruff F401)
+- `rules/git.md`: document `git branch -D` requirement after GitHub squash/rebase merge
+- `README.md`: fix dev installation command (`uv pip install` → `uv sync --extra dev`)
+
 ## [0.3.0] - 2026-03-26
 
 ### Added

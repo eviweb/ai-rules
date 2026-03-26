@@ -48,6 +48,8 @@ ai-rules/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
 ├── tests/                    # Test suite (pytest)
+├── .github/workflows/
+│   └── ci.yml                # CI pipeline (lint + test)
 ├── agents.toml               # Agent registry and link declarations
 └── pyproject.toml            # Python package definition
 ```
@@ -134,12 +136,12 @@ For each declared link in `agents.toml`, `ai-rules install`:
 
 ```bash
 # Install with dev dependencies
-uv pip install -e ".[dev]"
+uv sync --extra dev
 
 # Run tests
 tests/run-tests.sh
 # or
-.venv/bin/python3 -m pytest -v
+uv run pytest -v
 ```
 
 ## OS support

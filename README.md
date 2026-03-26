@@ -53,17 +53,23 @@ ai-rules/
 ## Requirements
 
 - Python 3.11+
-- [uv](https://github.com/astral-sh/uv) (recommended) or pip
+- [pipx](https://pipx.pypa.io) (recommended) or [uv](https://github.com/astral-sh/uv)
 
 ## Installation
 
 ```bash
 git clone git@github.com:eviweb/ai-rules.git
+
+# Install with pipx (isolated, globally available)
+pipx install ./ai-rules
+
+# Or with uv (for development)
 cd ai-rules
 uv pip install -e .
 ```
 
-Set `AI_RULES_HOME` if you run `ai-rules` from outside the repository:
+Add `AI_RULES_HOME` to your shell profile so the CLI can locate the repository
+from anywhere:
 
 ```bash
 export AI_RULES_HOME=~/path/to/ai-rules

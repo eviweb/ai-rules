@@ -75,6 +75,22 @@ Exception: hotfixes that consist of a single meaningful commit can be merged dir
 - Never merge directly to `main` without a PR
 - Branch names must be self-explanatory without additional context
 
+## Deleting merged branches
+
+After a PR is merged on GitHub, always use `git branch -D` (force delete) rather than `git branch -d`:
+
+```bash
+# Confirm the PR is merged first
+gh pr view <number> --json state -q .state
+
+# Then force-delete the local branch
+git branch -D <branch>
+```
+
+`git branch -d` checks that the branch SHA exists in the current HEAD history.
+When GitHub uses squash merge or rebase merge, commit SHAs are rewritten — the
+local branch will never be recognized as merged, and `-d` will always fail.
+
 ## Merge conflicts
 
 - Always analyze both sides of a conflict before resolving — never blindly apply `--ours` or `--theirs`

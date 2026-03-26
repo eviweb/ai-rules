@@ -14,7 +14,7 @@ Improvements and additions to consider for future iterations of this config.
 - [ ] Add a `rules/logging.md` for non-CLI projects: log levels, structured logging, log aggregation patterns
 
 ## Release
-- [ ] Extract CHANGELOG parsing logic into a dedicated `scripts/extract-changelog.sh` — the inline `sed` command in `rules/release.md` is fragile (does not handle semver metadata like `1.0.0-rc.1` or end-of-file edge cases)
+- [x] Extract CHANGELOG parsing logic into a dedicated `scripts/extract-changelog.sh` — the inline `sed` command in `rules/release.md` is fragile (does not handle semver metadata like `1.0.0-rc.1` or end-of-file edge cases)
 
 ## Open source / public documentation
 If this repository is intended to be shared publicly, add the following files (validate each with user before creating, as per `rules/docs.md`):

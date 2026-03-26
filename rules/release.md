@@ -25,10 +25,9 @@ Create the platform release **after** the tag has been pushed. Use the correspon
 ### GitHub
 
 ```bash
-# Extract release notes from CHANGELOG.md into a temp file first
 gh release create X.Y.Z \
   --title "X.Y.Z" \
-  --notes-file <(sed -n '/^## \[X.Y.Z\]/,/^## \[/{ /^## \[X.Y.Z\]/d; /^## \[/d; p }' CHANGELOG.md) \
+  --notes-file <(scripts/extract-changelog.sh X.Y.Z) \
   --latest
 ```
 
@@ -40,7 +39,7 @@ Using the `tea` CLI (install: `tea` from https://gitea.com/gitea/tea):
 tea releases create \
   --tag X.Y.Z \
   --title "X.Y.Z" \
-  --note "$(sed -n '/^## \[X.Y.Z\]/,/^## \[/{ /^## \[X.Y.Z\]/d; /^## \[/d; p }' CHANGELOG.md)"
+  --note "$(scripts/extract-changelog.sh X.Y.Z)"
 ```
 
 Alternatively, via the Forgejo REST API:

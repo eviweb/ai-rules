@@ -1,0 +1,29 @@
+# agents.toml — Registry of supported AI coding assistants
+#
+# Each agent declares:
+#   name            Display name
+#   entry_point     Path to the agent's main config file (relative to repo root)
+#   install_dir     Target directory on the user's machine
+#   supports_imports  Whether the agent supports @rules/ file imports natively
+#
+# [[agents.*.links]] — Files or directories to deploy (symlinks by default)
+#   source   Path relative to repo root
+#   target   Path relative to install_dir
+
+[agents.claude]
+name            = "Claude Code"
+entry_point     = "agents/claude/CLAUDE.md"
+install_dir     = "~/.claude"
+supports_imports = true
+
+  [[agents.claude.links]]
+  source = "agents/claude/CLAUDE.md"
+  target = "CLAUDE.md"
+
+  [[agents.claude.links]]
+  source = "rules"
+  target = "rules"
+
+  [[agents.claude.links]]
+  source = "settings.json"
+  target = "settings.json"

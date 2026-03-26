@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-03-26
+
+### Added
+- Python CLI (`ai-rules`) with `install`, `update`, `status`, and `list` commands
+- `src/ai_rules/` package: `agent.py`, `config.py`, `installer.py`, `cli.py`
+- `pyproject.toml`: hatchling build backend, typer, pytest dev dependencies
+- `bin/ai-rules`: development entry point (no installation required)
+- `agents.toml`: agent registry with link declarations (Claude Code)
+- `agents/claude/CLAUDE.md`: Claude Code entry point (moved from repo root)
+- 20 tests covering agent loading, repo root resolution, and install logic
+- `tests/run-tests.sh`: test runner wrapper
+- Shell completion support via `ai-rules --install-completion` (bash/zsh/fish)
+
+### Changed
+- Repository renamed from `claude-config` to `ai-rules`
+- `CLAUDE.md` moved to `agents/claude/CLAUDE.md`
+- `README.md` rewritten to reflect new scope and CLI usage
+- `.gitignore` extended with Python artifact patterns
+
+### Removed
+- `install.sh` replaced by the `ai-rules install` CLI command
+
 ## [0.2.0] - 2026-03-26
 
 ### Added

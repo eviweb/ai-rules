@@ -1,5 +1,7 @@
 # ai-rules
 
+[![CI](https://github.com/eviweb/ai-rules/actions/workflows/ci.yml/badge.svg)](https://github.com/eviweb/ai-rules/actions/workflows/ci.yml)
+
 Shared rules and conventions for AI coding assistants.
 
 Provides a structured set of rules covering language, naming, git workflow,

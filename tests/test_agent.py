@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from ai_rules.agent import Agent, Link, load_agents
+from ai_rules.agent import load_agents
 
 
 SAMPLE_TOML = """

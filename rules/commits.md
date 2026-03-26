@@ -14,5 +14,5 @@
 
 ## Claude Code commit workflow
 - **Never commit autonomously.** Commits must be explicitly requested by the user AND confirmed before execution.
-- After every set of modifications (code + tests + docs), always propose a commit message covering all changes.
+- After every set of modifications, always propose a commit message covering **all modified files** — code, tests, and documentation included.
 - Wait for the user's explicit go-ahead before running any `git commit` command.

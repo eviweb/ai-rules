@@ -5,6 +5,9 @@
 @rules/naming.md
 @rules/editor.md
 
+## General principles
+@rules/principles.md
+
 ## Development practices
 @rules/tdd.md
 @rules/security.md

@@ -14,6 +14,24 @@ Every CLI script must support the following options:
 - `--no-log` — disable file logging
 - `--log-dir <path>` — override the default log directory
 
+## Invocation format
+
+Unless the command is too simple to warrant it, prefer the following structured invocation model:
+
+```
+cli [global-options | namespaces | arguments(global-options, namespaces)]
+    [contextual-options(namespaces) | commands | arguments(contextual-options, commands)]
+    [contextual-options(commands) | subcommands | arguments(contextual-options, subcommands)]
+```
+
+- **Global options** apply regardless of the namespace or command (e.g. `--verbose`, `--dry-run`)
+- **Namespaces** group related commands (e.g. `user`, `repo`, `config`)
+- **Commands** are actions within a namespace (e.g. `create`, `delete`, `list`)
+- **Subcommands** refine a command when needed (e.g. `list active`, `config set`)
+- **Contextual options** apply only within the scope they are declared (namespace or command level)
+
+Skip levels that are not relevant — a simple single-purpose script does not need namespaces or subcommands.
+
 ## Debug mode
 - `--debug` activates `set -x` to trace execution
 - Debug output goes to `stderr` only

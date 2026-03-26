@@ -3,6 +3,7 @@
 - Never hardcode credentials, tokens, API keys, or passwords in source files
 - Use environment variables or a secret manager for sensitive values
 - Add secret files (`.env`, `*.key`, `*_token`, etc.) to `.gitignore` before the first commit
+- Always version a `.env.example` file alongside `.env`: it lists all expected keys with empty or placeholder values, documents the required configuration without exposing secrets, and must be kept in sync with `.env` as new variables are added
 - If a secret is accidentally committed: immediately inform the user, explain the risks (exposure in git history, potential misuse), attempt to remediate (e.g. `git filter-branch` or BFG, force-push if not yet public), and in all cases revoke/rotate the credential without delay
 
 ## File permissions

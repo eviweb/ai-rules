@@ -32,6 +32,16 @@ cli [global-options | namespaces | arguments(global-options, namespaces)]
 
 Skip levels that are not relevant — a simple single-purpose script does not need namespaces or subcommands.
 
+## Shell completion
+
+Every CLI must provide shell completion. This is not optional — completion is part of the user experience contract of any CLI tool.
+
+- Support at minimum: **bash**, **zsh**, **fish**
+- Expose completion via `--install-completion` (installs for the current shell) and `--show-completion` (prints the script for manual setup)
+- When using **typer**: completion is built-in, no extra code required
+- When using **argparse** or a custom shell CLI: implement completion manually or via a dedicated library (e.g. `argcomplete` for Python, `bash-completion` for shell scripts)
+- Document the completion setup in `README.md`
+
 ## Debug mode
 - `--debug` activates `set -x` to trace execution
 - Debug output goes to `stderr` only

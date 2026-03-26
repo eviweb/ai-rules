@@ -7,26 +7,28 @@ Global [Claude Code](https://claude.ai/claude-code) configuration — rules and 
 ```
 claude-config/
 ├── CLAUDE.md        # Entry point loaded by Claude Code, imports all rule files
+├── settings.json    # Claude Code global permissions
 ├── rules/           # Individual rule files by topic
 │   ├── language.md
+│   ├── naming.md
+│   ├── editor.md
+│   ├── principles.md
 │   ├── tdd.md
-│   ├── docs.md
-│   ├── commits.md
-│   ├── shell.md
-│   ├── versioning.md
 │   ├── security.md
+│   ├── dependencies.md
+│   ├── compatibility.md
+│   ├── docs.md
+│   ├── changelog.md
+│   ├── versioning.md
+│   ├── shell.md
 │   ├── cli.md
 │   ├── git.md
-│   ├── ci.md
-│   ├── release.md
-│   ├── dependencies.md
+│   ├── commits.md
 │   ├── issues.md
 │   ├── pr.md
-│   ├── changelog.md
-│   ├── editor.md
 │   ├── review.md
-│   ├── naming.md
-│   └── compatibility.md
+│   ├── ci.md
+│   └── release.md
 └── install.sh       # Deploys symlinks into ~/.claude/
 ```
 
@@ -44,6 +46,7 @@ The install script creates the following symlinks:
 |---------|--------|
 | `~/.claude/CLAUDE.md` | `claude-config/CLAUDE.md` |
 | `~/.claude/rules` | `claude-config/rules/` |
+| `~/.claude/settings.json` | `claude-config/settings.json` |
 
 Existing files are backed up automatically before being replaced.
 

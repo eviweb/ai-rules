@@ -92,7 +92,8 @@ link_target() {
 
 [[ $DRY_RUN -eq 1 ]] && info "Dry run mode — no changes will be made"
 
-link_target "${SCRIPT_DIR}/CLAUDE.md" "${CLAUDE_DIR}/CLAUDE.md"
-link_target "${SCRIPT_DIR}/rules"     "${CLAUDE_DIR}/rules"
+link_target "${SCRIPT_DIR}/CLAUDE.md"      "${CLAUDE_DIR}/CLAUDE.md"
+link_target "${SCRIPT_DIR}/rules"          "${CLAUDE_DIR}/rules"
+link_target "${SCRIPT_DIR}/settings.json"  "${CLAUDE_DIR}/settings.json"
 
 info "Done."

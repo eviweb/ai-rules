@@ -157,6 +157,9 @@ ai-rules generate codex
 # Install with dev dependencies
 uv sync --extra dev
 
+# Install git hooks (regenerates flat files automatically on commit)
+ln -sf ../../scripts/pre-commit .git/hooks/pre-commit
+
 # Run tests
 tests/run-tests.sh
 # or

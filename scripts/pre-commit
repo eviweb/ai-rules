@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# pre-commit — Regenerate flat rule files if any rules/ file is staged.
+#
+# Install:
+#   ln -sf ../../scripts/pre-commit .git/hooks/pre-commit
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+VENV="${REPO_ROOT}/.venv"
+
+# Check whether any rules/ file is among the staged changes
+if ! git diff --cached --name-only | grep -q '^rules/'; then
+  exit 0
+fi
+
+if [[ ! -x "${VENV}/bin/python3" ]]; then
+  echo "pre-commit: .venv not found — skipping generate (run: uv sync --extra dev)" >&2
+  exit 0
+fi
+
+echo "pre-commit: rules/ changed — regenerating flat files..."
+cd "${REPO_ROOT}"
+"${VENV}/bin/python3" -m ai_rules.cli generate
+
+# Stage the regenerated files so they are included in the commit
+git diff --name-only | { grep '^agents/' || true; } | xargs --no-run-if-empty git add
+
+echo "pre-commit: done."

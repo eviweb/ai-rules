@@ -27,3 +27,13 @@ supports_imports = true
   [[agents.claude.links]]
   source = "settings.json"
   target = "settings.json"
+
+[agents.codex]
+name             = "Codex"
+entry_point      = "agents/codex/AGENTS.md"
+install_dir      = "~/.codex"
+supports_imports = false
+
+  [[agents.codex.links]]
+  source = "agents/codex/AGENTS.md"
+  target = "AGENTS.md"

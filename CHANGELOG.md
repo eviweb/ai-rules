@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- Codex integration: `agents/codex/AGENTS.md` flat entry point (all rules inlined)
+- `ai-rules generate` command: resolves `@rules/` imports and writes a flat file
+  for agents without native import support (`supports_imports = false`)
+- `src/ai_rules/generator.py`: `resolve_imports()` and `generate_flat_file()` functions
+- `agents.toml`: Codex agent registered (`install_dir = ~/.codex`, no import support)
+- `tests/test_generator.py`: 7 tests for the generator module
+- `rules/cli.md`: require shell completion for every CLI tool
+- `rules/commits.md`: prefer detailed commit messages
+
 ## [0.3.1] - 2026-03-26
 
 ### Added

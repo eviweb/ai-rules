@@ -8,6 +8,7 @@ import typer
 from ai_rules import __version__
 from ai_rules.agent import load_agents
 from ai_rules.config import find_repo_root
+from ai_rules.generator import generate_flat_file
 from ai_rules.installer import install_agent, status_agent
 
 app = typer.Typer(
@@ -122,6 +123,47 @@ def install(
             typer.echo(f"  {action}")
 
     typer.echo("\nDone.")
+
+
+@app.command()
+def generate(
+    agent: Annotated[
+        Optional[str],
+        typer.Argument(help="Agent key to generate flat file for. Defaults to all agents without native import support."),
+    ] = None,
+    dry_run: Annotated[
+        bool,
+        typer.Option("--dry-run", "-n", help="Simulate without writing any files."),
+    ] = False,
+) -> None:
+    """Generate flat rule files for agents that do not support native imports."""
+    repo_root = _repo_root()
+    agents = load_agents(repo_root / "agents.toml")
+
+    # Find the canonical source: first agent with supports_imports=True
+    source_agent = next((a for a in agents.values() if a.supports_imports), None)
+    if source_agent is None:
+        typer.echo("Error: no agent with supports_imports=True found to use as source.", err=True)
+        raise typer.Exit(1)
+    source = repo_root / source_agent.entry_point
+
+    targets = _select_agents(repo_root, agent)
+    targets = {k: v for k, v in targets.items() if not v.supports_imports}
+
+    if not targets:
+        typer.echo("No agents requiring flat file generation.")
+        return
+
+    for key, ag in targets.items():
+        output = repo_root / ag.entry_point
+        if dry_run:
+            typer.echo(f"  [dry-run] would generate {output.relative_to(repo_root)}")
+        else:
+            generate_flat_file(repo_root, source, output)
+            typer.echo(f"  generated {output.relative_to(repo_root)}")
+
+    if not dry_run:
+        typer.echo("\nDone.")
 
 
 @app.command()

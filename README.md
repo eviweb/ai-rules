@@ -10,17 +10,20 @@ supported AI assistants.
 
 ## Supported assistants
 
-| Key      | Assistant    | Config file               |
-|----------|--------------|---------------------------|
-| `claude` | Claude Code  | `agents/claude/CLAUDE.md` |
+| Key      | Assistant    | Config file                   | Import support |
+|----------|--------------|-------------------------------|----------------|
+| `claude` | Claude Code  | `agents/claude/CLAUDE.md`     | native         |
+| `codex`  | Codex        | `agents/codex/AGENTS.md`      | flat file      |
 
 ## Structure
 
 ```
 ai-rules/
 ├── agents/
-│   └── claude/
-│       └── CLAUDE.md       # Claude Code entry point (imports rules via @rules/)
+│   ├── claude/
+│   │   └── CLAUDE.md       # Claude Code entry point (imports rules via @rules/)
+│   └── codex/
+│       └── AGENTS.md       # Codex entry point (flat file, generated via `ai-rules generate`)
 ├── rules/                  # Shared rule files by topic
 │   ├── principles.md
 │   ├── language.md
@@ -89,10 +92,11 @@ Options:
   --help          Show this message and exit.
 
 Commands:
-  list     List available agents.
-  status   Show installation status for one or all agents.
-  install  Install rules for one or all agents.
-  update   Update installation for one or all agents.
+  list      List available agents.
+  status    Show installation status for one or all agents.
+  install   Install rules for one or all agents.
+  update    Update installation for one or all agents.
+  generate  Generate flat rule files for agents without native import support.
 ```
 
 ### Examples
@@ -114,6 +118,10 @@ ai-rules install claude
 # Dry run
 ai-rules install --dry-run
 
+# Regenerate flat files for agents without native import support
+ai-rules generate
+ai-rules generate codex
+
 # Shell completion (bash/zsh/fish)
 ai-rules --install-completion
 ```
@@ -131,6 +139,17 @@ For each declared link in `agents.toml`, `ai-rules install`:
 | `~/.claude/CLAUDE.md`      | `agents/claude/CLAUDE.md`         |
 | `~/.claude/rules`          | `rules/`                          |
 | `~/.claude/settings.json`  | `settings.json`                   |
+| `~/.codex/AGENTS.md`       | `agents/codex/AGENTS.md`          |
+
+### Agents without native import support (Codex)
+
+Codex does not support `@rules/` imports natively. Its entry point is a flat
+file generated from the Claude entry point with all imports resolved inline.
+Regenerate it after updating any rule file:
+
+```bash
+ai-rules generate codex
+```
 
 ## Development
 

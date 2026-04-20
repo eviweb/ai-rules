@@ -23,6 +23,7 @@
 @rules/shell.md
 @rules/cli.md
 @rules/logging.md
+@rules/error-handling.md
 
 ## Git & collaboration
 @rules/git.md

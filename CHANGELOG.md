@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `rules/error-handling.md`: exit code table, error message format, per-language
+  guidance (shell, Python, Go, JS/TS) — wrapping, re-raising with context, typed errors
 - `rules/ci.md`: add job timeouts (table + yaml example), caching strategies for
   Python/uv, npm, pnpm, Rust/cargo (lockfile-keyed with restore-keys), artifact
   retention policies (7 days ephemeral, 90 days release)

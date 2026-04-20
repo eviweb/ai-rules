@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `rules/quality.md`: 11 project quality dimensions — robustness, security,
+  performance, extensibility, user-friendliness, maintainability, observability,
+  testability, portability, auditability, privacy/data minimisation, resilience —
+  each with definition, concrete implications, and red flags
 - `rules/testing.md`: test pyramid, AAA pattern, naming conventions
   (`test_<unit>_<scenario>_<outcome>`), 80% coverage floor, fixture rules,
   per-language guidance (pytest, bats-core, Jest/Vitest, Go table-driven tests)

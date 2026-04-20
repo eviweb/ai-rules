@@ -39,6 +39,7 @@ Gemini CLI v0.36.0 — global config: `~/.gemini/GEMINI.md` (no native imports)
 
 ## Phase 4 — Rules expansion
 ### High value
+- [x] `rules/quality.md`: 11 project quality dimensions (robustness, security, performance, extensibility, user-friendliness, maintainability, observability, testability, portability, auditability, privacy, resilience)
 - [x] `rules/error-handling.md`: exit codes, error message format, propagation patterns (shell, Python, Go, JS/TS)
 - [x] `rules/api.md`: REST conventions — versioning, HTTP status codes, error response format, pagination, authentication patterns
 - [x] `rules/testing.md`: test pyramid, coverage thresholds, test naming conventions, fixture patterns, test data management

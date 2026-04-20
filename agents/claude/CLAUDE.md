@@ -7,6 +7,7 @@
 
 ## General principles
 @rules/principles.md
+@rules/quality.md
 
 ## Development practices
 @rules/tdd.md

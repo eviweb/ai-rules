@@ -57,7 +57,7 @@ Every CLI must provide shell completion. This is not optional — completion is 
 
 - Enabled by default alongside terminal output (without ANSI color codes)
 - Same format as terminal output
-- Default log directory: `~/.local/state/<script-name>/logs/`
+- Default log directory: `${XDG_STATE_HOME:-$HOME/.local/state}/<script-name>/logs/`
 - Log filename: `<script-name>-YYYY-MM-DD.log`
 - Disable with `--no-log`
 - Override directory with `--log-dir <path>` or the env var `<SCRIPT_NAME>_LOG_DIR`

@@ -178,4 +178,10 @@ uv run pytest -v
 
 ## OS support
 
-Tested on Ubuntu 24.04 LTS. Requires Bash 5+ for shell scripts.
+| Platform | Status |
+|----------|--------|
+| Ubuntu 22.04 LTS | supported |
+| Ubuntu 24.04 LTS | supported (primary) |
+| Termux (Android) | supported |
+
+Requires Bash 5+ and zsh for shell scripts. No `sudo` needed — all files are installed in user directories.

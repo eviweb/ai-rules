@@ -1,50 +1,47 @@
 # TODO
 
-Improvements and additions to consider for future iterations of this config.
+## Phase 1 — Core infrastructure
+### CLI
+- [x] Bootstrap Python CLI (`install`, `update`, `status`, `list`)
+- [x] Add `generate` command for agents without native import support
+- [x] Add `bin/ai-rules-wrapper`: symlink-safe bash entry point
+- [x] Shell completion (bash/zsh/fish) via typer
 
-## Codex integration
-- [x] Add `agents/codex/AGENTS.md` entry point (flat file — no @rules/ import support)
-- [x] Add `generate` command to CLI: concatenate rules/ into a flat file for agents without native import support
-- [x] Register Codex agent in `agents.toml`
-- [x] Add tests for generate command and Codex agent
+### Agent support
+- [x] Claude Code integration (`agents/claude/CLAUDE.md`, native imports)
+- [x] Codex integration (`agents/codex/AGENTS.md`, flat file)
+- [x] Register agents in `agents.toml`
 
-## Gemini integration
+### Automation
+- [x] `scripts/pre-commit`: regenerate flat files when `rules/` changes
+- [x] `scripts/extract-changelog.sh`: robust CHANGELOG parsing
 
-Gemini CLI v0.36.0 — config file: `GEMINI.md`
+### Tests
+- [x] 27 tests covering agent loading, config resolution, installer, generator
 
-Discovery strategy (from source analysis):
-- **Global**: `~/.gemini/GEMINI.md` — always loaded
-- **Project**: walks up from CWD until project root (git root) or home parent
-- No native import support → flat file required (same approach as Codex)
-
-Tasks:
-- [ ] Add `agents/gemini/GEMINI.md` flat entry point (generated via `ai-rules generate`)
-- [ ] Register Gemini agent in `agents.toml` (`install_dir = ~/.gemini`, `supports_imports = false`)
+## Phase 2 — Agent coverage
+### Gemini integration
+Gemini CLI v0.36.0 — global config: `~/.gemini/GEMINI.md` (no native imports)
+- [ ] Add `agents/gemini/GEMINI.md` flat entry point
+- [ ] Register Gemini agent in `agents.toml` (`install_dir = ~/.gemini`)
 - [ ] Add tests for Gemini agent registration and flat file generation
 - [ ] Verify `gemini memory list` picks up the symlinked file (trusted folder may be required)
 
-## Naming conventions
-- [ ] Add naming conventions for other languages (JavaScript/TypeScript, Python, Go...) in `rules/naming.md` as they become relevant in projects
+### Rules coverage
+- [ ] Add naming conventions for Python, JavaScript/TypeScript, Go in `rules/naming.md`
+- [ ] Add `rules/logging.md` for non-CLI projects (log levels, structured logging, aggregation)
 
-## CI/CD
-- [ ] Define caching strategies per language/ecosystem (npm, pip, cargo...)
+## Phase 3 — CI/CD & release
+### CI
+- [ ] Define caching strategies per ecosystem (npm, pip, cargo…)
 - [ ] Define artifact retention policies
 - [ ] Define job timeout limits
 
-## Logging (application-level)
-- [ ] Add a `rules/logging.md` for non-CLI projects: log levels, structured logging, log aggregation patterns
+---
 
-## Release
-- [x] Extract CHANGELOG parsing logic into a dedicated `scripts/extract-changelog.sh` — the inline `sed` command in `rules/release.md` is fragile (does not handle semver metadata like `1.0.0-rc.1` or end-of-file edge cases)
+## Future / Postponed
+- [ ] Open source documentation (`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `SUPPORT.md`, issue/PR templates) — validate each with user before creating
 
-## Open source / public documentation
-If this repository is intended to be shared publicly, add the following files (validate each with user before creating, as per `rules/docs.md`):
-- [ ] `LICENSE.md` — validate license choice with user first
-- [ ] `CONTRIBUTING.md` — contribution guidelines (workflow, conventions, PR process)
-- [ ] `CODE_OF_CONDUCT.md` — e.g. Contributor Covenant
-- [ ] `SECURITY.md` — vulnerability reporting policy
-- [ ] `SUPPORT.md` — where to get help
-- [ ] `.github/ISSUE_TEMPLATE/bug_report.md`
-- [ ] `.github/ISSUE_TEMPLATE/feature_request.md`
-- [ ] `.github/PULL_REQUEST_TEMPLATE.md`
-- [ ] `AUTHORS.md` — optional, ask user
+## Deferred / Under Consideration
+- [ ] Support for additional AI assistants beyond Claude, Codex, Gemini
+- [ ] Web UI or TUI for managing agent installations

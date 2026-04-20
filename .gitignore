@@ -1,14 +1,42 @@
-# OS
+# Private local directory
+.private/
+
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*_token
+*_secret
+
+# OS artifacts
 .DS_Store
 Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
 
 # Python
 __pycache__/
 *.py[cod]
 *.pyo
 .venv/
+venv/
 *.egg-info/
 dist/
 build/
 .pytest_cache/
 .coverage
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Logs
+*.log
+logs/

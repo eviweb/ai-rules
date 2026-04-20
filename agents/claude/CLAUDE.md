@@ -22,6 +22,7 @@
 ## Shell & CLI
 @rules/shell.md
 @rules/cli.md
+@rules/logging.md
 
 ## Git & collaboration
 @rules/git.md

@@ -29,7 +29,7 @@ Gemini CLI v0.36.0 — global config: `~/.gemini/GEMINI.md` (no native imports)
 
 ### Rules coverage
 - [ ] Add naming conventions for Python, JavaScript/TypeScript, Go in `rules/naming.md`
-- [ ] Add `rules/logging.md` for non-CLI projects (log levels, structured logging, aggregation)
+- [x] Add `rules/logging.md` for non-CLI projects (log levels, structured logging, aggregation)
 
 ## Phase 3 — CI/CD & release
 ### CI

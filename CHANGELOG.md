@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `rules/logging.md`: application-level logging rules — log levels, structured JSON
+  format, XDG log path, aggregation strategies, per-language guidance (Python, shell, Node.js)
 - `bin/ai-rules-wrapper`: symlink-safe bash entry point — resolves repo root via
   `readlink -f`, sets `AI_RULES_HOME`, and delegates to the venv Python CLI
 - `src/ai_rules/cli.py`: add `__main__` block to support `python3 -m ai_rules.cli`

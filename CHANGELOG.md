@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `rules/naming.md`: add naming conventions for Python, JavaScript/TypeScript, and Go
 - Gemini integration: `agents/gemini/GEMINI.md` flat entry point, agent registered
   in `agents.toml` (`install_dir = ~/.gemini`, no import support), 6 tests in
   `tests/test_gemini.py`, symlink deployed to `~/.gemini/GEMINI.md`

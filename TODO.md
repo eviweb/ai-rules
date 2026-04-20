@@ -28,7 +28,7 @@ Gemini CLI v0.36.0 — global config: `~/.gemini/GEMINI.md` (no native imports)
 - [x] Verify `gemini memory list` picks up the symlinked file — confirmed: file loaded as context, `memory list` only shows `## Gemini Added Memories` entries (expected)
 
 ### Rules coverage
-- [ ] Add naming conventions for Python, JavaScript/TypeScript, Go in `rules/naming.md`
+- [x] Add naming conventions for Python, JavaScript/TypeScript, Go in `rules/naming.md`
 - [x] Add `rules/logging.md` for non-CLI projects (log levels, structured logging, aggregation)
 
 ## Phase 3 — CI/CD & release

@@ -159,7 +159,7 @@ def generate(
         if dry_run:
             typer.echo(f"  [dry-run] would generate {output.relative_to(repo_root)}")
         else:
-            generate_flat_file(repo_root, source, output)
+            generate_flat_file(repo_root, source, output, condense=ag.condense_flat_file)
             typer.echo(f"  generated {output.relative_to(repo_root)}")
 
     if not dry_run:

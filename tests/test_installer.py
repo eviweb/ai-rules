@@ -13,6 +13,7 @@ def make_agent(install_dir: Path, links: list[tuple[str, str]]) -> Agent:
         entry_point="entry.md",
         install_dir=str(install_dir),
         supports_imports=True,
+        condense_flat_file=False,
         links=[Link(source=src, target=tgt) for src, tgt in links],
     )
 

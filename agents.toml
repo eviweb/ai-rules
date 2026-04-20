@@ -1,19 +1,21 @@
 # agents.toml — Registry of supported AI coding assistants
 #
 # Each agent declares:
-#   name            Display name
-#   entry_point     Path to the agent's main config file (relative to repo root)
-#   install_dir     Target directory on the user's machine
-#   supports_imports  Whether the agent supports @rules/ file imports natively
+#   name               Display name
+#   entry_point        Path to the agent's main config file (relative to repo root)
+#   install_dir        Target directory on the user's machine
+#   supports_imports   Whether the agent supports native file imports
+#   condense_flat_file Strip code blocks when generating the flat file (for
+#                      agents with tight context budgets)
 #
 # [[agents.*.links]] — Files or directories to deploy (symlinks by default)
 #   source   Path relative to repo root
 #   target   Path relative to install_dir
 
 [agents.claude]
-name            = "Claude Code"
-entry_point     = "agents/claude/CLAUDE.md"
-install_dir     = "~/.claude"
+name             = "Claude Code"
+entry_point      = "agents/claude/CLAUDE.md"
+install_dir      = "~/.claude"
 supports_imports = true
 
   [[agents.claude.links]]
@@ -29,21 +31,30 @@ supports_imports = true
   target = "settings.json"
 
 [agents.codex]
-name             = "Codex"
-entry_point      = "agents/codex/AGENTS.md"
-install_dir      = "~/.codex"
-supports_imports = false
+name               = "Codex"
+entry_point        = "agents/codex/AGENTS.md"
+install_dir        = "~/.codex"
+supports_imports   = false
+condense_flat_file = false
 
   [[agents.codex.links]]
   source = "agents/codex/AGENTS.md"
   target = "AGENTS.md"
 
+  [[agents.codex.links]]
+  source = "agents/codex/config.toml"
+  target = "config.toml"
+
 [agents.gemini]
 name             = "Gemini"
 entry_point      = "agents/gemini/GEMINI.md"
 install_dir      = "~/.gemini"
-supports_imports = false
+supports_imports = true
 
   [[agents.gemini.links]]
   source = "agents/gemini/GEMINI.md"
   target = "GEMINI.md"
+
+  [[agents.gemini.links]]
+  source = "rules"
+  target = "rules"

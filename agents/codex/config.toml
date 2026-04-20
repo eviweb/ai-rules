@@ -1,0 +1,3 @@
+# Codex global configuration
+# Increase the limit so the full AGENTS.md rule file (~58 KB) is loaded entirely.
+project_doc_max_bytes = 131072

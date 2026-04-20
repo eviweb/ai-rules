@@ -24,6 +24,7 @@
 @rules/cli.md
 @rules/logging.md
 @rules/error-handling.md
+@rules/api.md
 
 ## Git & collaboration
 @rules/git.md

@@ -17,6 +17,7 @@
 
 ## Tagging
 - Tag format: `X.Y.Z` (no `v` prefix), must match the content of `VERSION`
+- Before tagging, write the tag message to `.private/TAGGING_MESSAGE` (create if absent, overwrite if present)
 - Push the tag only after user confirmation:
   ```bash
   git tag X.Y.Z

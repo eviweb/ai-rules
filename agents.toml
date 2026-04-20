@@ -37,3 +37,13 @@ supports_imports = false
   [[agents.codex.links]]
   source = "agents/codex/AGENTS.md"
   target = "AGENTS.md"
+
+[agents.gemini]
+name             = "Gemini"
+entry_point      = "agents/gemini/GEMINI.md"
+install_dir      = "~/.gemini"
+supports_imports = false
+
+  [[agents.gemini.links]]
+  source = "agents/gemini/GEMINI.md"
+  target = "GEMINI.md"

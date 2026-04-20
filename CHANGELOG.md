@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- Gemini integration: `agents/gemini/GEMINI.md` flat entry point, agent registered
+  in `agents.toml` (`install_dir = ~/.gemini`, no import support), 6 tests in
+  `tests/test_gemini.py`, symlink deployed to `~/.gemini/GEMINI.md`
 - `rules/logging.md`: application-level logging rules — log levels, structured JSON
   format, XDG log path, aggregation strategies, per-language guidance (Python, shell, Node.js)
 - `bin/ai-rules-wrapper`: symlink-safe bash entry point — resolves repo root via

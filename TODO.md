@@ -22,10 +22,10 @@
 ## Phase 2 — Agent coverage
 ### Gemini integration
 Gemini CLI v0.36.0 — global config: `~/.gemini/GEMINI.md` (no native imports)
-- [ ] Add `agents/gemini/GEMINI.md` flat entry point
-- [ ] Register Gemini agent in `agents.toml` (`install_dir = ~/.gemini`)
-- [ ] Add tests for Gemini agent registration and flat file generation
-- [ ] Verify `gemini memory list` picks up the symlinked file (trusted folder may be required)
+- [x] Add `agents/gemini/GEMINI.md` flat entry point
+- [x] Register Gemini agent in `agents.toml` (`install_dir = ~/.gemini`)
+- [x] Add tests for Gemini agent registration and flat file generation
+- [x] Verify `gemini memory list` picks up the symlinked file — confirmed: file loaded as context, `memory list` only shows `## Gemini Added Memories` entries (expected)
 
 ### Rules coverage
 - [ ] Add naming conventions for Python, JavaScript/TypeScript, Go in `rules/naming.md`

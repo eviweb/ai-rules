@@ -1,0 +1,765 @@
+# Global Rules
+
+## Language & style
+# Language
+
+All code, code comments, commit messages, variable names, script output strings, filenames, and any other project artifact must be written in English.
+
+French is reserved exclusively for conversational exchanges between the user and the AI.
+# Naming Conventions
+
+## Shell scripts
+- `UPPER_CASE` — constants, global variables, environment variables
+- `lower_case` — local variables inside functions
+- `_leading_underscore` — internal/private functions not meant to be called directly
+- `lower_case` — public functions (descriptive verb-noun, e.g. `parse_arguments`, `check_dependencies`)
+- Avoid abbreviations unless universally understood (e.g. `dir`, `tmp`, `cmd`)
+
+## Files and directories
+- `kebab-case` for script filenames (e.g. `install-forgejo.sh`)
+- `UPPER_CASE` for top-level doc files (e.g. `README.md`, `CHANGELOG.md`)
+- `lower_case` or `kebab-case` for directories
+# Editor Configuration
+
+Every project must include an `.editorconfig` file at the root with at least the following settings:
+
+```ini
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.sh]
+indent_style = space
+indent_size = 2
+
+[*.{js,ts,json,yml,yaml}]
+indent_style = space
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+```
+
+Adapt indentation rules to the language conventions of the project. Propose the `.editorconfig` at project start and wait for user validation.
+
+## General principles
+# General Coding Principles
+
+## Analyze before coding
+Always read and understand the relevant code before writing or modifying anything. Never edit a file that has not been read first. If the scope is unclear, ask before proceeding.
+
+## Propose before implementing
+For any non-trivial change, describe the intended approach and wait for explicit validation before writing code. This avoids costly back-and-forth on the wrong solution.
+
+## Clarify before starting
+If a request is ambiguous, incomplete, or could be interpreted in multiple ways, ask for clarification before writing any code. Starting on a wrong assumption wastes more time than a single clarifying question.
+
+## Propose options before deciding
+For any structuring choice (architecture, tooling, git strategy, framework, etc.), present the available options with their trade-offs and wait for explicit validation before proceeding. Never make a significant design decision autonomously.
+
+## Prefer minimal diffs
+Make the smallest change that correctly solves the problem. Do not touch code outside the scope of the request, even to fix style or improve readability.
+
+## No refactoring without explicit request
+Never restructure, rename, or reorganize existing code unless the user has explicitly asked for it. Refactoring mixed with feature changes makes review harder and increases risk.
+
+## No speculative additions
+Do not add features, options, abstractions, or error handling for hypothetical future needs. Implement only what is currently required.
+
+## No dead code
+Do not leave commented-out code, unused variables, or untracked TODOs. Either resolve them or open a tracked issue.
+
+## Confirm before irreversible actions
+Any action that is hard or impossible to undo (file deletion, branch deletion, `git reset --hard`, force-push, database drop, etc.) must be explicitly described to the user and confirmed before execution. Never perform destructive operations autonomously.
+
+## Explicit naming
+Names for functions, methods, classes, variables, and files must be as explicit as possible. Prefer clarity over brevity: a longer name that describes intent precisely is always better than a short name that requires context to understand.
+
+## Development practices
+# Test-Driven Development
+
+> **TDD is mandatory.** There are no exceptions. Every feature, fix, or refactor must be driven by tests.
+
+Always apply TDD. At the start of a project, propose one or more suitable test frameworks with a clear recommendation. Use the framework validated by the user throughout the project.
+
+- Follow the Red-Green-Refactor cycle: write a failing test first, make it pass with minimal code, then refactor.
+- Write tests before or alongside every new feature or fix. Never ship code without a corresponding test.
+- Keep tests in a `tests/` directory with a dedicated runner script.
+- For shell scripts: bats-core is the standard choice.
+- Do not skip or defer tests — if a test is hard to write, it signals a design problem to fix first.
+# Security
+
+- Never hardcode credentials, tokens, API keys, or passwords in source files
+- Use environment variables or a secret manager for sensitive values
+- Add secret files (`.env`, `*.key`, `*_token`, etc.) to `.gitignore` before the first commit
+- Always version a `.env.example` file alongside `.env`: it lists all expected keys with empty or placeholder values, documents the required configuration without exposing secrets, and must be kept in sync with `.env` as new variables are added
+- If a secret is accidentally committed: immediately inform the user, explain the risks (exposure in git history, potential misuse), attempt to remediate (e.g. `git filter-branch` or BFG, force-push if not yet public), and in all cases revoke/rotate the credential without delay
+
+## File permissions
+- Never create world-writable files
+- Configuration files containing credentials: `600`
+- Scripts that read sensitive configs: `700`
+
+## Input validation
+- Always validate and sanitize arguments before use in shell scripts to prevent command injection
+- Reject or abort on unexpected/empty values for critical parameters
+
+## External dependencies
+- Check for required external commands at the top of every script before use:
+  `command -v foo || { echo "foo is required" >&2; exit 1; }`
+
+## Least privilege
+- Scripts request only the permissions strictly necessary to function
+- Never use `sudo` by default — only when explicitly required and documented
+
+## Error handling
+- Write error messages to `stderr` (`>&2`), never to `stdout`
+- Use explicit and consistent exit codes (`exit 0` success, `exit 1` general error, higher values for specific cases)
+- Avoid silencing errors with `|| true` unless the case is explicitly justified with a comment
+# Dependencies
+
+- Pin dependency versions explicitly — never use unpinned or wildcard versions in production
+- Prefer actively maintained packages with a clear release history
+- Run a security audit before each release (e.g. `npm audit`, `pip audit`, or equivalent)
+- Keep dependencies up to date; review and update regularly
+- Minimize the number of dependencies — prefer standard library or well-established tools over niche packages
+- Document why each non-obvious dependency was chosen (in `README.md` or inline comment)
+# Compatibility
+
+## Shell
+- Target **Bash 5+** by default; also support **zsh** unless the project is bash-only
+- If POSIX `sh` compatibility is required, declare it explicitly at project start and avoid Bash-specific features (arrays, `[[`, `$(())`  with non-POSIX syntax, etc.)
+- Declare the target shell in the shebang: `#!/usr/bin/env bash`
+- Test interactive scripts on both bash and zsh when both are declared as targets
+
+## Operating system
+- Target **Ubuntu LTS** (current and previous release) and **Termux** (Android) by default
+- Declare supported OS and versions in `README.md`
+- If the script relies on OS-specific tools, document the assumption and add a compatibility check at startup
+- Termux notes: no `sudo`, paths differ (`/data/data/com.termux/files/usr`), use `pkg` for packages
+
+## XDG Base Directory compliance
+
+All projects must follow the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/latest/):
+
+| Purpose        | Variable          | Default               | Use for                          |
+|----------------|-------------------|-----------------------|----------------------------------|
+| Configuration  | `XDG_CONFIG_HOME` | `~/.config`           | Config files                     |
+| Data           | `XDG_DATA_HOME`   | `~/.local/share`      | Persistent application data      |
+| State          | `XDG_STATE_HOME`  | `~/.local/state`      | Logs, history, runtime state     |
+| Cache          | `XDG_CACHE_HOME`  | `~/.cache`            | Reproducible, expendable data    |
+| Runtime        | `XDG_RUNTIME_DIR` | set by session manager| Sockets, PIDs, ephemeral files   |
+
+Rules:
+- Never hardcode `~/.config`, `~/.local`, etc. — always read the XDG variable with its default as fallback:
+  ```bash
+  CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/<app-name>"
+  DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/<app-name>"
+  STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/<app-name>"
+  CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/<app-name>"
+  ```
+- Never write files directly to `$HOME` — use the appropriate XDG directory
+- Document the XDG paths used by the application in `README.md`
+- Termux exception: XDG variables may not be set by default; apply the same fallback pattern, which resolves correctly under Termux's `$HOME`
+
+## Project structure & documentation
+# Documentation
+
+Every project must include the following files from the start:
+
+- `README.md` — project description, usage, install instructions
+- `CHANGELOG.md` — updated on every meaningful change
+- `VERSION` — single line, semver (e.g. `1.0.0`), source of truth for version numbers
+- `LICENSE.md` — ask the user to validate the license choice before creating it
+- `TODO.md` — task tracker, structured by phases and themes (see below)
+
+Keep all documentation up to date as the project evolves.
+
+## TODO.md structure
+
+`TODO.md` is the project's task tracker. It must be kept up to date alongside the code.
+
+Structure:
+```
+# TODO
+
+## Phase 1 — <name>
+### <Theme>
+- [ ] Task
+- [x] Done task
+
+## Phase 2 — <name>
+...
+
+---
+
+## Future / Postponed
+Items planned for a later phase, intentionally deferred.
+- [ ] ...
+
+## Deferred / Under Consideration
+Ideas not yet committed to — may or may not happen.
+- [ ] ...
+```
+
+Rules:
+- Phases reflect the project's delivery roadmap; themes group related tasks within a phase
+- "Future / Postponed" comes before "Deferred / Under Consideration": postponed items are more concrete (scoped but delayed), whereas under-consideration items are still exploratory
+- Completed tasks (`[x]`) may be kept for traceability or removed — be consistent
+- Add a separator (`---`) before the two trailing sections to visually distinguish backlog from active work
+
+## Private directory
+
+Every project must include a `.private/` directory and a `.gitignore` at the root.
+
+Create `.private/` at project start — it holds local notes, draft messages, and
+sensitive context that must never be committed.
+
+The `.gitignore` must include at minimum:
+
+```gitignore
+# Private local directory
+.private/
+
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*_token
+*_secret
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Logs
+*.log
+logs/
+```
+
+Adapt to the project's language stack — add entries as needed, never remove the `.private/` entry.
+
+## Community / open source (on user request)
+
+When the user intends to share the project publicly, propose the following files and wait for explicit validation before creating each one:
+
+- `CONTRIBUTING.md` — contribution guidelines (workflow, conventions, PR process)
+- `CODE_OF_CONDUCT.md` — code of conduct (e.g. Contributor Covenant)
+- `SECURITY.md` — vulnerability reporting policy
+- `SUPPORT.md` — where to get help
+- `.github/ISSUE_TEMPLATE/bug_report.md` — bug report template
+- `.github/ISSUE_TEMPLATE/feature_request.md` — feature request template
+- `.github/PULL_REQUEST_TEMPLATE.md` — pull request template
+- `AUTHORS.md` — list of contributors (optional, ask user)
+
+The application/script must read its version from the `VERSION` file, not from a hardcoded constant.
+
+**First commit of a new project:** `init: <short message>` with a detail block.
+**Subsequent commits:** standard conventional commit messages (`feat:`, `fix:`, `docs:`, `test:`, etc.).
+# Changelog
+
+Follow the [Keep a Changelog](https://keepachangelog.com) format.
+
+## Structure
+- Always maintain an `[Unreleased]` section at the top for changes not yet released
+- On release: rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and add a new empty `[Unreleased]` section
+
+## Sections (use only those that apply)
+- `Added` — new features
+- `Changed` — changes to existing functionality
+- `Deprecated` — features to be removed in a future release
+- `Removed` — removed features
+- `Fixed` — bug fixes
+- `Security` — vulnerability fixes
+
+## Rules
+- Every meaningful commit must have a corresponding entry in `[Unreleased]`
+- Entries are written in English, in the imperative mood (e.g. "Add logging support")
+- Do not list trivial changes (formatting, typos in comments, etc.)
+# Semantic Versioning
+
+All projects follow semver (`MAJOR.MINOR.PATCH`):
+
+- **PATCH** — backwards-compatible bug fixes
+- **MINOR** — new backwards-compatible functionality
+- **MAJOR** — breaking changes
+
+Bump the version in the `VERSION` file as part of the commit that introduces the change.
+
+## Shell & CLI
+# Shell Scripts
+
+- Always enable strict mode at the top of every script: `set -euo pipefail`
+- Run `shellcheck` on all scripts before proposing a commit
+- Ensure scripts are executable: `chmod +x <script>`
+- Use `local` for variables inside functions to avoid polluting global scope
+- Use long flags by default for clarity; add the conventional short alias where standard convention exists (e.g. `-h|--help`, `-v|--verbose`, `-o|--output`)
+- Prefer a structured invocation model when applicable: `script [options] command [options] subcommand [options] args` over a flat `script [options] args` — improves scalability and discoverability
+
+## Cleanup & signal handling
+- Always register a `trap` for cleanup when the script creates temporary files or acquires resources:
+  ```bash
+  cleanup() { rm -f "$tmp_file"; }
+  trap cleanup EXIT INT TERM
+  ```
+- Handle `SIGINT` and `SIGTERM` gracefully — never leave temp files or partial state behind on interrupt
+# CLI Projects
+
+## Default options
+
+Every CLI script must support the following options:
+
+- `-h|--help` — display usage and exit
+- `--debug` — enable trace mode (`set -x`) for troubleshooting
+- `-V|--version` — display version and exit
+- `-v|--verbose` — enable debug-level output
+- `-q|--quiet` — suppress all terminal output
+- `--dry-run` — simulate execution without making any changes
+- `--no-color` — disable colored output
+- `--no-log` — disable file logging
+- `--log-dir <path>` — override the default log directory
+
+## Invocation format
+
+Unless the command is too simple to warrant it, prefer the following structured invocation model:
+
+```
+cli [global-options | namespaces | arguments(global-options, namespaces)]
+    [contextual-options(namespaces) | commands | arguments(contextual-options, commands)]
+    [contextual-options(commands) | subcommands | arguments(contextual-options, subcommands)]
+```
+
+- **Global options** apply regardless of the namespace or command (e.g. `--verbose`, `--dry-run`)
+- **Namespaces** group related commands (e.g. `user`, `repo`, `config`)
+- **Commands** are actions within a namespace (e.g. `create`, `delete`, `list`)
+- **Subcommands** refine a command when needed (e.g. `list active`, `config set`)
+- **Contextual options** apply only within the scope they are declared (namespace or command level)
+
+Skip levels that are not relevant — a simple single-purpose script does not need namespaces or subcommands.
+
+## Shell completion
+
+Every CLI must provide shell completion. This is not optional — completion is part of the user experience contract of any CLI tool.
+
+- Support at minimum: **bash**, **zsh**, **fish**
+- Expose completion via `--install-completion` (installs for the current shell) and `--show-completion` (prints the script for manual setup)
+- When using **typer**: completion is built-in, no extra code required
+- When using **argparse** or a custom shell CLI: implement completion manually or via a dedicated library (e.g. `argcomplete` for Python, `bash-completion` for shell scripts)
+- Document the completion setup in `README.md`
+
+## Debug mode
+- `--debug` activates `set -x` to trace execution
+- Debug output goes to `stderr` only
+- Never commit code with `set -x` hardcoded or debug traces left in — use the `--debug` flag exclusively
+
+## Colored terminal output
+
+- Log levels and their colors: `INFO` (white), `WARN` (yellow), `ERROR` (red), `DEBUG` (cyan)
+- Apply colors only when output is a TTY (`[ -t 1 ]`) and `NO_COLOR` is not set (see https://no-color.org)
+- Log format: `[YYYY-MM-DD HH:MM:SS] [LEVEL] message`
+
+## File logging
+
+- Enabled by default alongside terminal output (without ANSI color codes)
+- Same format as terminal output
+- Default log directory: `${XDG_STATE_HOME:-$HOME/.local/state}/<script-name>/logs/`
+- Log filename: `<script-name>-YYYY-MM-DD.log`
+- Disable with `--no-log`
+- Override directory with `--log-dir <path>` or the env var `<SCRIPT_NAME>_LOG_DIR`
+# Logging (application-level)
+
+Applies to non-CLI projects (libraries, services, daemons, APIs). For CLI-specific logging see `rules/cli.md`.
+
+## Log levels
+
+Use the following levels, in ascending severity order:
+
+| Level | Use for |
+|-------|---------|
+| `DEBUG` | Detailed diagnostic info, off in production |
+| `INFO` | Normal operational events (startup, request received, job done) |
+| `WARN` | Unexpected but recoverable situation — something worth investigating |
+| `ERROR` | Failure that affects an operation but not the whole process |
+| `FATAL` / `CRITICAL` | Unrecoverable failure — process must stop |
+
+Rules:
+- Never use `print()` or equivalent for logging — always go through the logging system
+- `DEBUG` must be disabled by default and enabled via config or env var
+- Do not log sensitive data (tokens, passwords, PII) at any level
+
+## Structured logging
+
+Prefer structured (machine-readable) logs over plain text in any service that may be aggregated or monitored:
+
+- Use JSON format for services and daemons
+- Each log entry must include at minimum: `timestamp`, `level`, `message`
+- Add `service`, `version`, and `trace_id` / `request_id` when available
+- Example:
+  ```json
+  {"timestamp": "2026-04-20T10:00:00Z", "level": "INFO", "service": "api", "version": "1.2.0", "message": "Request handled", "request_id": "abc123", "duration_ms": 42}
+  ```
+
+## Log output
+
+- Write to `stderr` by default — never pollute `stdout` with log lines
+- In services: also write to a log file or a log aggregator (see below)
+- Log file location follows XDG: `${XDG_STATE_HOME:-$HOME/.local/state}/<app-name>/logs/`
+
+## Log aggregation
+
+When the project runs in a multi-instance or production environment, document the aggregation strategy in `README.md`:
+
+- **Local / single-node**: rotating file logs (e.g. `logrotate`, `logging.handlers.RotatingFileHandler`)
+- **Containerised**: write to `stdout`/`stderr` and let the container runtime collect them
+- **Distributed**: ship logs to a centralised system (e.g. Loki, ELK, CloudWatch) — document the sink and the expected format
+
+## Per-language guidance
+
+### Python
+- Use the standard `logging` module — never `print()`
+- Configure via `logging.basicConfig()` or a `logging.config.dictConfig()` file
+- Library code: attach a `NullHandler` only — never configure handlers in library code
+  ```python
+  import logging
+  logging.getLogger(__name__).addHandler(logging.NullHandler())
+  ```
+- Application code: configure at entry point, propagate to all modules
+
+### Shell scripts
+- See `rules/cli.md` for CLI-specific log format and file logging conventions
+- For non-interactive scripts (cron, daemons): redirect output to a log file and use `logger` for syslog integration
+
+### Node.js / TypeScript
+- Use a structured logger (e.g. `pino`, `winston`) — never `console.log()` in production code
+- Configure log level via `LOG_LEVEL` env var
+
+## Git & collaboration
+# Git Workflow
+
+## Permanent branches
+
+| Branch | Role |
+|---|---|
+| `main` | Stable, always-deployable code. Protected — no direct commits. |
+| `develop` | Continuous integration of features before release (optional — use only for projects with a long release cycle). |
+
+For simple projects: `main` alone is sufficient, without `develop`.
+
+## Working branches (short-lived)
+
+Created from `main` (or `develop` if present), deleted after merge.
+
+| Prefix | Usage | Example |
+|---|---|---|
+| `feat/` | New feature | `feat/add-auth` |
+| `fix/` | Bug fix | `fix/login-crash` |
+| `chore/` | Maintenance, tooling, dependencies | `chore/update-deps` |
+| `docs/` | Documentation only | `docs/api-reference` |
+| `test/` | Tests only | `test/add-bats-suite` |
+| `release/` | Release preparation (version bump, changelog) | `release/1.2.0` |
+| `hotfix/` | Urgent fix applied directly on top of `main` | `hotfix/critical-null-ptr` |
+
+## Synchronization strategy: rebase
+
+When `main` has moved ahead of a working branch, synchronize with:
+
+```bash
+git rebase main
+```
+
+- Produces a linear, readable history
+- Resolves conflicts commit by commit
+- **Never rebase a branch that has already been pushed and shared** — this rewrites history and will break other contributors. Use `git push --force-with-lease` only when the branch is personal and you are certain no one else is working on it.
+
+## Merge strategy: squash merge
+
+When merging a PR into `main`, use squash merge:
+
+- One commit per feature/fix on `main` — clean, bisect-friendly history
+- Eliminates noise commits (`wip`, `fix typo`, `try again`)
+- Rollback is simple: one commit to revert
+- **The squash commit message must be written carefully** — do not use the auto-generated message. Write a proper conventional commit message that summarizes the intent of the entire branch.
+
+Exception: hotfixes that consist of a single meaningful commit can be merged directly without squashing.
+
+## Workflow by case
+
+**Feature / fix / chore**
+1. Create branch from `main`: `git checkout -b feat/<description>`
+2. Develop with conventional commits
+3. Rebase on `main` if it has diverged: `git rebase main`
+4. Open a PR toward `main`
+5. CI green + review → squash merge with a clean commit message
+6. Delete the branch
+
+**Hotfix (critical production bug)**
+1. Create `hotfix/<description>` from `main`
+2. Fix and test
+3. Open a PR toward `main` — fast merge
+4. Delete the branch
+
+**Release**
+1. Create `release/X.Y.Z` from `main`
+2. Bump `VERSION`, update `CHANGELOG.md`
+3. Open a PR toward `main` → merge → tag `X.Y.Z`
+4. Delete the branch
+
+## General rules
+
+- One branch = one topic = one PR
+- Keep branches short-lived — rebase regularly to avoid large divergence
+- Never merge directly to `main` without a PR
+- Branch names must be self-explanatory without additional context
+
+## Deleting merged branches
+
+After a PR is merged on GitHub, always use `git branch -D` (force delete) rather than `git branch -d`:
+
+```bash
+# Confirm the PR is merged first
+gh pr view <number> --json state -q .state
+
+# Then force-delete the local branch
+git branch -D <branch>
+```
+
+`git branch -d` checks that the branch SHA exists in the current HEAD history.
+When GitHub uses squash merge or rebase merge, commit SHAs are rewritten — the
+local branch will never be recognized as merged, and `-d` will always fail.
+
+## Merge conflicts
+
+- Always analyze both sides of a conflict before resolving — never blindly apply `--ours` or `--theirs`
+- Prefer manual resolution that preserves the intent of both changes when possible
+- If the correct resolution is ambiguous, stop and ask the user before proceeding
+# Git Commits
+
+## Format
+- Follow Conventional Commits: `type(scope): message`
+- Never include emojis in commit messages — the global `commit-msg` hook adds them automatically via `insert-icon`
+- Always use `git commit -s` to append a `Signed-off-by` trailer (DCO compliance + GPG signing)
+- **Prefer detailed commit messages** — whenever a commit touches multiple files or introduces non-obvious changes, add a body listing the key changes. A one-liner is acceptable only for genuinely trivial commits (e.g. typo fix, single-line change). When in doubt, add detail:
+
+  ```
+  type(scope): short summary
+
+  - Change A: why it was needed
+  - Change B: what it replaces or fixes
+  - Change C: any non-obvious consequence
+  ```
+
+## Hook behavior
+- The global `commit-msg` hook runs `cog verify` then `insert-icon`
+- Check that `LEGACY_COMMIT_MESSAGE` is `0` before committing to ensure the hook runs
+- Set `git config hook.legacyCommitMessage true` in two cases (bypasses the hook entirely — no icon added):
+  1. The message intentionally does NOT follow Conventional Commits
+  2. The existing commit history uses the old format (plain message without `type(scope):`) — use legacy mode to maintain consistency within that repository
+
+## Claude Code commit workflow
+- **Never commit autonomously.** Commits must be explicitly requested by the user AND confirmed before execution.
+- After every set of modifications, always propose a commit message covering **all modified files** — code, tests, and documentation included.
+- Before proposing a commit to the user, write the message to `.private/COMMIT_MESSAGE` (create the file if absent, overwrite if present).
+- Wait for the user's explicit go-ahead before running any `git commit` command.
+- **When multiple commits are planned in sequence:** stop after each commit and wait for the user's explicit instruction to continue. Do not chain commits autonomously.
+# Issues
+
+## Title
+- Short and descriptive, written in English
+
+## Description
+Every issue must include:
+- **Context** — why this matters, what triggered it
+- **Expected behavior** — what should happen
+- **Acceptance criteria** — explicit conditions that define the issue as resolved
+
+## Labels
+Apply at least one label:
+- `bug` — something is broken
+- `feat` — new feature or enhancement
+- `chore` — maintenance, tooling, refactoring
+- `docs` — documentation only
+
+## Lifecycle
+- Do not close an issue manually if a PR closes it automatically via `Closes #n`
+- An issue should map to a single branch and a single PR
+# Pull Requests
+
+## Title
+- Follow Conventional Commits format: `type(scope): short description`
+
+## Description
+Every PR must include:
+- **Summary** — what this PR does and why
+- **Linked issue** — `Closes #n` (automatically closes the issue on merge)
+- **Test checklist** — list of manual or automated verifications done
+
+## Rules
+- One PR = one topic — no bundling unrelated changes
+- Do not merge without a green CI
+- Delete the branch after merge
+# Review Guidelines
+
+## Self-review checklist
+
+Before proposing a commit or opening a PR, verify:
+
+### Code
+- [ ] No debug statements, commented-out code, or temporary hacks left in
+- [ ] No hardcoded values that should be configurable or read from `VERSION`/env
+- [ ] All TODOs either resolved or tracked as a new issue
+- [ ] `shellcheck` passes on all modified shell scripts
+
+### Tests
+- [ ] All existing tests pass
+- [ ] New behavior is covered by tests
+- [ ] No tests skipped without justification
+
+### Documentation
+- [ ] `README.md` updated if behavior or usage changed
+- [ ] `CHANGELOG.md` `[Unreleased]` section updated
+- [ ] `VERSION` bumped if applicable
+
+### Security
+- [ ] No credentials, tokens, or secrets introduced
+- [ ] `.env.example` updated if new environment variables were added
+- [ ] Input validation in place for any new user-facing parameters
+
+---
+
+## Code review (as reviewer)
+
+### Solo projects
+When reviewing your own PR before merge (or asking Claude to review):
+
+- [ ] The change solves the stated problem and nothing more
+- [ ] No unintended side effects on existing behavior
+- [ ] Logic is correct and edge cases are handled
+- [ ] Names are explicit and intent is clear without needing comments
+- [ ] No unnecessary complexity introduced
+
+### Team projects
+In addition to the solo checklist:
+
+- [ ] The PR description clearly explains the why, not just the what
+- [ ] The change is reviewable — not too large, not mixing unrelated concerns
+- [ ] Conflicts with parallel work are identified and addressed
+- [ ] API or interface changes are backwards-compatible or explicitly breaking
+- [ ] Shared state, concurrency, or race conditions considered if applicable
+- [ ] A second human reviewer has approved before merge
+
+## CI/CD & release
+# Continuous Integration
+
+## Setup
+- Workflow files:
+  - Forgejo: `.forgejo/workflows/`
+  - GitHub: `.github/workflows/`
+- Propose the CI structure at project start and wait for user validation before creating it
+- Add a CI status badge to `README.md` once the workflow is in place
+
+## Triggers
+- Run on `push` and `pull_request`
+
+## Jobs
+- **lint** — run `shellcheck` on all shell scripts
+- **test** — run the bats-core test suite
+- **build** — run if the project produces build artifacts
+
+## Rules
+- Fail fast on error
+- Never hardcode secrets in workflow files — use platform secrets (Forgejo variables/secrets or GitHub Actions secrets)
+# Release Workflow
+
+## Pre-release checklist
+- Ensure all tests pass and CI is green
+- Bump the `VERSION` file (follow semver rules from `versioning.md`)
+- Update `CHANGELOG.md`: rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and add a new empty `[Unreleased]` section
+- Verify the tag does not already exist
+
+## Release commit
+- Commit message: `chore(release): bump version to X.Y.Z`
+- Wait for explicit user validation before committing and tagging
+
+## Release message
+- Before any release action, draft a detailed release message covering: summary of changes, breaking changes (if any), migration steps (if any), notable fixes
+- Write the draft to `.private/RELEASE_MESSAGE` (create if absent, overwrite if present)
+- Present it to the user for review before using it in the platform release
+
+## Tagging
+- Tag format: `X.Y.Z` (no `v` prefix), must match the content of `VERSION`
+- Push the tag only after user confirmation:
+  ```bash
+  git tag X.Y.Z
+  git push origin X.Y.Z
+  ```
+
+## Platform release
+
+Create the platform release **after** the tag has been pushed. Use the corresponding `CHANGELOG.md` section as release notes.
+
+### GitHub
+
+```bash
+gh release create X.Y.Z \
+  --title "X.Y.Z" \
+  --notes-file <(scripts/extract-changelog.sh X.Y.Z) \
+  --latest
+```
+
+### Forgejo
+
+Using the `tea` CLI (install: `tea` from https://gitea.com/gitea/tea):
+
+```bash
+tea releases create \
+  --tag X.Y.Z \
+  --title "X.Y.Z" \
+  --note "$(scripts/extract-changelog.sh X.Y.Z)"
+```
+
+Alternatively, via the Forgejo REST API:
+
+```bash
+curl -s -X POST "https://<forgejo-host>/api/v1/repos/<owner>/<repo>/releases" \
+  -H "Authorization: token $FORGEJO_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tag_name": "X.Y.Z",
+    "name": "X.Y.Z",
+    "body": "<release notes>",
+    "draft": false,
+    "prerelease": false
+  }'
+```
+
+## Artifacts
+- Package and attach release artifacts if applicable (e.g. `.tar.gz` archive)
+- GitHub: add artifact paths as additional arguments to `gh release create`
+- Forgejo: use `tea releases assets create` or the API endpoint `POST /repos/{owner}/{repo}/releases/{id}/assets`

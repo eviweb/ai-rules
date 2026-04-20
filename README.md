@@ -14,6 +14,7 @@ supported AI assistants.
 |----------|--------------|-------------------------------|----------------|
 | `claude` | Claude Code  | `agents/claude/CLAUDE.md`     | native         |
 | `codex`  | Codex        | `agents/codex/AGENTS.md`      | flat file      |
+| `gemini` | Gemini       | `agents/gemini/GEMINI.md`     | flat file      |
 
 ## Structure
 
@@ -22,8 +23,10 @@ ai-rules/
 ├── agents/
 │   ├── claude/
 │   │   └── CLAUDE.md       # Claude Code entry point (imports rules via @rules/)
-│   └── codex/
-│       └── AGENTS.md       # Codex entry point (flat file, generated via `ai-rules generate`)
+│   ├── codex/
+│   │   └── AGENTS.md       # Codex entry point (flat file, generated via `ai-rules generate`)
+│   └── gemini/
+│       └── GEMINI.md       # Gemini entry point (flat file, generated via `ai-rules generate`)
 ├── rules/                  # Shared rule files by topic
 │   ├── principles.md
 │   ├── language.md
@@ -150,6 +153,7 @@ For each declared link in `agents.toml`, `ai-rules install`:
 | `~/.claude/rules`          | `rules/`                          |
 | `~/.claude/settings.json`  | `settings.json`                   |
 | `~/.codex/AGENTS.md`       | `agents/codex/AGENTS.md`          |
+| `~/.gemini/GEMINI.md`      | `agents/gemini/GEMINI.md`         |
 
 ### Agents without native import support (Codex)
 

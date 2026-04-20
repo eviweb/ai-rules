@@ -8,6 +8,21 @@ Improvements and additions to consider for future iterations of this config.
 - [x] Register Codex agent in `agents.toml`
 - [x] Add tests for generate command and Codex agent
 
+## Gemini integration
+
+Gemini CLI v0.36.0 — config file: `GEMINI.md`
+
+Discovery strategy (from source analysis):
+- **Global**: `~/.gemini/GEMINI.md` — always loaded
+- **Project**: walks up from CWD until project root (git root) or home parent
+- No native import support → flat file required (same approach as Codex)
+
+Tasks:
+- [ ] Add `agents/gemini/GEMINI.md` flat entry point (generated via `ai-rules generate`)
+- [ ] Register Gemini agent in `agents.toml` (`install_dir = ~/.gemini`, `supports_imports = false`)
+- [ ] Add tests for Gemini agent registration and flat file generation
+- [ ] Verify `gemini memory list` picks up the symlinked file (trusted folder may be required)
+
 ## Naming conventions
 - [ ] Add naming conventions for other languages (JavaScript/TypeScript, Python, Go...) in `rules/naming.md` as they become relevant in projects
 

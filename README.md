@@ -72,11 +72,21 @@ pipx install ./ai-rules
 
 # Or with uv (for development)
 cd ai-rules
-uv pip install -e .
+uv sync
 ```
 
-Add `AI_RULES_HOME` to your shell profile so the CLI can locate the repository
-from anywhere:
+### Shell wrapper (symlink-friendly)
+
+`bin/ai-rules-wrapper` is a bash entry point that works from any directory,
+including when installed via symlink. It resolves the repository root
+automatically (no `AI_RULES_HOME` required):
+
+```bash
+ln -s /path/to/ai-rules/bin/ai-rules-wrapper ~/.local/bin/ai-rules
+```
+
+If you prefer to set `AI_RULES_HOME` explicitly (e.g. in your shell profile),
+the wrapper will use it instead of auto-detection:
 
 ```bash
 export AI_RULES_HOME=~/path/to/ai-rules

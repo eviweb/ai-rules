@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `bin/ai-rules-wrapper`: symlink-safe bash entry point — resolves repo root via
+  `readlink -f`, sets `AI_RULES_HOME`, and delegates to the venv Python CLI
+- `src/ai_rules/cli.py`: add `__main__` block to support `python3 -m ai_rules.cli`
+- `TODO.md`: Gemini integration section with discovery strategy and task list
 - Codex integration: `agents/codex/AGENTS.md` flat entry point (all rules inlined)
 - `ai-rules generate` command: resolves `@rules/` imports and writes a flat file
   for agents without native import support (`supports_imports = false`)

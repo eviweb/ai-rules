@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ai-rules-wrapper — Portable entry point for the ai-rules CLI.
+#
+# Resolves the repository root (via AI_RULES_HOME or by walking up from this
+# script's real path), activates the venv, and delegates to the Python CLI.
+#
+# Usage:
+#   # Symlink from anywhere on your PATH:
+#   ln -s /path/to/ai-rules/bin/ai-rules-wrapper ~/.local/bin/ai-rules
+
+_resolve_repo_root() {
+  # If the env var is set, use it directly.
+  if [[ -n "${AI_RULES_HOME:-}" ]]; then
+    echo "${AI_RULES_HOME}"
+    return
+  fi
+
+  # Resolve this script's real location (follows symlinks).
+  local script
+  script="$(readlink -f "${BASH_SOURCE[0]}")"
+  local dir
+  dir="$(dirname "$script")"
+
+  # Walk up until we find agents.toml.
+  local candidate
+  candidate="$(cd "$dir" && pwd)"
+  while [[ "$candidate" != "/" ]]; do
+    if [[ -f "$candidate/agents.toml" ]]; then
+      echo "$candidate"
+      return
+    fi
+    candidate="$(dirname "$candidate")"
+  done
+
+  echo "Error: could not locate ai-rules repository root." \
+       "Set AI_RULES_HOME or run from within the repository." >&2
+  exit 1
+}
+
+REPO_ROOT="$(_resolve_repo_root)"
+VENV="${REPO_ROOT}/.venv"
+PYTHON="${VENV}/bin/python3"
+
+if [[ ! -x "$PYTHON" ]]; then
+  echo "Error: virtual environment not found at ${VENV}." \
+       "Run: cd '${REPO_ROOT}' && uv sync" >&2
+  exit 1
+fi
+
+exec env AI_RULES_HOME="$REPO_ROOT" "$PYTHON" -m ai_rules.cli "$@"

@@ -190,3 +190,7 @@ def update(
             typer.echo(f"  {action}")
 
     typer.echo("\nDone.")
+
+
+if __name__ == "__main__":
+    app()

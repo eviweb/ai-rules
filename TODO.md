@@ -33,9 +33,9 @@ Gemini CLI v0.36.0 — global config: `~/.gemini/GEMINI.md` (no native imports)
 
 ## Phase 3 — CI/CD & release
 ### CI
-- [ ] Define caching strategies per ecosystem (npm, pip, cargo…)
-- [ ] Define artifact retention policies
-- [ ] Define job timeout limits
+- [x] Define caching strategies per ecosystem (npm, pip, cargo…)
+- [x] Define artifact retention policies
+- [x] Define job timeout limits
 
 ---
 

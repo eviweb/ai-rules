@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `rules/ci.md`: add job timeouts (table + yaml example), caching strategies for
+  Python/uv, npm, pnpm, Rust/cargo (lockfile-keyed with restore-keys), artifact
+  retention policies (7 days ephemeral, 90 days release)
 - `rules/naming.md`: add naming conventions for Python, JavaScript/TypeScript, and Go
 - Gemini integration: `agents/gemini/GEMINI.md` flat entry point, agent registered
   in `agents.toml` (`install_dir = ~/.gemini`, no import support), 6 tests in

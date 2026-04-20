@@ -16,7 +16,7 @@
 
 ### Automation
 - [x] `scripts/pre-commit`: regenerate flat files when `rules/` changes
-- [ ] Update `scripts/pre-commit`: Gemini now uses native imports — skip flat file regeneration for `supports_imports = true` agents
+- [x] Update `scripts/pre-commit`: Gemini now uses native imports — skip flat file regeneration for `supports_imports = true` agents; extend trigger to `agents/claude/CLAUDE.md` changes
 - [x] `scripts/extract-changelog.sh`: robust CHANGELOG parsing
 
 ### Tests

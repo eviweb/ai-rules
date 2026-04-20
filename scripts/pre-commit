@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# pre-commit — Regenerate flat rule files if any rules/ file is staged.
+# pre-commit — Regenerate flat rule files for agents with supports_imports=false
+#              when rules/ or the canonical import source changes.
 #
 # Install:
 #   ln -sf ../../scripts/pre-commit .git/hooks/pre-commit
@@ -9,8 +10,8 @@ set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 VENV="${REPO_ROOT}/.venv"
 
-# Check whether any rules/ file is among the staged changes
-if ! git diff --cached --name-only | grep -q '^rules/'; then
+# Trigger when rules/ files or the Claude import source are staged
+if ! git diff --cached --name-only | grep -qE '^rules/|^agents/claude/CLAUDE\.md'; then
   exit 0
 fi
 
@@ -19,11 +20,11 @@ if [[ ! -x "${VENV}/bin/python3" ]]; then
   exit 0
 fi
 
-echo "pre-commit: rules/ changed — regenerating flat files..."
+echo "pre-commit: source changed — regenerating flat files for applicable agents..."
 cd "${REPO_ROOT}"
 "${VENV}/bin/python3" -m ai_rules.cli generate
 
-# Stage the regenerated files so they are included in the commit
+# Stage regenerated flat files so they are included in the commit
 git diff --name-only | { grep '^agents/' || true; } | xargs --no-run-if-empty git add
 
 echo "pre-commit: done."

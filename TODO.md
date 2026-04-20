@@ -4,28 +4,31 @@
 ### CLI
 - [x] Bootstrap Python CLI (`install`, `update`, `status`, `list`)
 - [x] Add `generate` command for agents without native import support
+- [x] Add `remove` command with full state restoration (symlinks + config patches)
 - [x] Add `bin/ai-rules-wrapper`: symlink-safe bash entry point
 - [x] Shell completion (bash/zsh/fish) via typer
+- [ ] End-to-end CLI tests (typer `CliRunner` — commands, not just installer functions)
 
 ### Agent support
 - [x] Claude Code integration (`agents/claude/CLAUDE.md`, native imports)
-- [x] Codex integration (`agents/codex/AGENTS.md`, flat file)
+- [x] Codex integration (`agents/codex/AGENTS.md`, flat file + `config_patches` for `project_doc_max_bytes`)
 - [x] Register agents in `agents.toml`
 
 ### Automation
 - [x] `scripts/pre-commit`: regenerate flat files when `rules/` changes
+- [ ] Update `scripts/pre-commit`: Gemini now uses native imports — skip flat file regeneration for `supports_imports = true` agents
 - [x] `scripts/extract-changelog.sh`: robust CHANGELOG parsing
 
 ### Tests
-- [x] 27 tests covering agent loading, config resolution, installer, generator
+- [x] 58 tests covering agent loading, config resolution, installer, generator, remove
 
 ## Phase 2 — Agent coverage
 ### Gemini integration
-Gemini CLI v0.36.0 — global config: `~/.gemini/GEMINI.md` (no native imports)
-- [x] Add `agents/gemini/GEMINI.md` flat entry point
-- [x] Register Gemini agent in `agents.toml` (`install_dir = ~/.gemini`)
-- [x] Add tests for Gemini agent registration and flat file generation
-- [x] Verify `gemini memory list` picks up the symlinked file — confirmed: file loaded as context, `memory list` only shows `## Gemini Added Memories` entries (expected)
+Gemini CLI — global config: `~/.gemini/GEMINI.md` (native `@./path` imports, 1M token context)
+- [x] Add `agents/gemini/GEMINI.md` as native import file (mirrors `agents/claude/CLAUDE.md`)
+- [x] Register Gemini agent in `agents.toml` (`install_dir = ~/.gemini`, `supports_imports = true`)
+- [x] Deploy `rules/` symlink alongside `GEMINI.md` in `~/.gemini/`
+- [x] Verify Gemini loads all 25 rule files across 17 themes — confirmed
 
 ### Rules coverage
 - [x] Add naming conventions for Python, JavaScript/TypeScript, Go in `rules/naming.md`
@@ -47,10 +50,14 @@ Gemini CLI v0.36.0 — global config: `~/.gemini/GEMINI.md` (no native imports)
 ### Agent coverage
 - [ ] Cursor integration (`agents/cursor/` — `.cursor/rules/*.mdc`, flat file per rule or single file)
 - [ ] GitHub Copilot integration (`agents/copilot/` — `.github/copilot-instructions.md`, flat file)
+- [ ] Windsurf integration (`agents/windsurf/` — `.windsurfrules`, flat file)
+- [ ] Cline / Continue.dev / Aider — investigate config format before committing
 
 ### Medium value
 - [ ] `rules/docker.md`: Dockerfile best practices, multi-stage builds, .dockerignore, compose conventions, image naming
 - [ ] `rules/database.md`: migration conventions, table/column naming, indexing rules, query patterns
+- [ ] `rules/python.md`: type hints, dataclasses, async patterns, packaging (beyond naming conventions)
+- [ ] `rules/frontend.md`: React/Vue conventions, state management, component structure, bundling
 
 ### Lower priority
 - [ ] `rules/monitoring.md`: metrics, alerting, observability patterns for services

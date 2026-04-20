@@ -1,13 +1,11 @@
 # Global Rules
 
 ## Language & style
-
 # Language
 
 All code, code comments, commit messages, variable names, script output strings, filenames, and any other project artifact must be written in English.
 
 French is reserved exclusively for conversational exchanges between the user and the AI.
-
 # Naming Conventions
 
 ## Shell scripts
@@ -21,7 +19,6 @@ French is reserved exclusively for conversational exchanges between the user and
 - `kebab-case` for script filenames (e.g. `install-forgejo.sh`)
 - `UPPER_CASE` for top-level doc files (e.g. `README.md`, `CHANGELOG.md`)
 - `lower_case` or `kebab-case` for directories
-
 # Editor Configuration
 
 Every project must include an `.editorconfig` file at the root with at least the following settings:
@@ -50,7 +47,6 @@ trim_trailing_whitespace = false
 Adapt indentation rules to the language conventions of the project. Propose the `.editorconfig` at project start and wait for user validation.
 
 ## General principles
-
 # General Coding Principles
 
 ## Analyze before coding
@@ -84,16 +80,17 @@ Any action that is hard or impossible to undo (file deletion, branch deletion, `
 Names for functions, methods, classes, variables, and files must be as explicit as possible. Prefer clarity over brevity: a longer name that describes intent precisely is always better than a short name that requires context to understand.
 
 ## Development practices
-
 # Test-Driven Development
+
+> **TDD is mandatory.** There are no exceptions. Every feature, fix, or refactor must be driven by tests.
 
 Always apply TDD. At the start of a project, propose one or more suitable test frameworks with a clear recommendation. Use the framework validated by the user throughout the project.
 
 - Follow the Red-Green-Refactor cycle: write a failing test first, make it pass with minimal code, then refactor.
-- Write tests before or alongside every new feature or fix.
+- Write tests before or alongside every new feature or fix. Never ship code without a corresponding test.
 - Keep tests in a `tests/` directory with a dedicated runner script.
 - For shell scripts: bats-core is the standard choice.
-
+- Do not skip or defer tests — if a test is hard to write, it signals a design problem to fix first.
 # Security
 
 - Never hardcode credentials, tokens, API keys, or passwords in source files
@@ -123,7 +120,6 @@ Always apply TDD. At the start of a project, propose one or more suitable test f
 - Write error messages to `stderr` (`>&2`), never to `stdout`
 - Use explicit and consistent exit codes (`exit 0` success, `exit 1` general error, higher values for specific cases)
 - Avoid silencing errors with `|| true` unless the case is explicitly justified with a comment
-
 # Dependencies
 
 - Pin dependency versions explicitly — never use unpinned or wildcard versions in production
@@ -132,21 +128,45 @@ Always apply TDD. At the start of a project, propose one or more suitable test f
 - Keep dependencies up to date; review and update regularly
 - Minimize the number of dependencies — prefer standard library or well-established tools over niche packages
 - Document why each non-obvious dependency was chosen (in `README.md` or inline comment)
-
 # Compatibility
 
 ## Shell
-- Target **Bash 5+** by default
+- Target **Bash 5+** by default; also support **zsh** unless the project is bash-only
 - If POSIX `sh` compatibility is required, declare it explicitly at project start and avoid Bash-specific features (arrays, `[[`, `$(())`  with non-POSIX syntax, etc.)
 - Declare the target shell in the shebang: `#!/usr/bin/env bash`
+- Test interactive scripts on both bash and zsh when both are declared as targets
 
 ## Operating system
-- Target **Ubuntu LTS** (current and previous release) by default
+- Target **Ubuntu LTS** (current and previous release) and **Termux** (Android) by default
 - Declare supported OS and versions in `README.md`
 - If the script relies on OS-specific tools, document the assumption and add a compatibility check at startup
+- Termux notes: no `sudo`, paths differ (`/data/data/com.termux/files/usr`), use `pkg` for packages
+
+## XDG Base Directory compliance
+
+All projects must follow the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/latest/):
+
+| Purpose        | Variable          | Default               | Use for                          |
+|----------------|-------------------|-----------------------|----------------------------------|
+| Configuration  | `XDG_CONFIG_HOME` | `~/.config`           | Config files                     |
+| Data           | `XDG_DATA_HOME`   | `~/.local/share`      | Persistent application data      |
+| State          | `XDG_STATE_HOME`  | `~/.local/state`      | Logs, history, runtime state     |
+| Cache          | `XDG_CACHE_HOME`  | `~/.cache`            | Reproducible, expendable data    |
+| Runtime        | `XDG_RUNTIME_DIR` | set by session manager| Sockets, PIDs, ephemeral files   |
+
+Rules:
+- Never hardcode `~/.config`, `~/.local`, etc. — always read the XDG variable with its default as fallback:
+  ```bash
+  CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/<app-name>"
+  DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/<app-name>"
+  STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/<app-name>"
+  CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/<app-name>"
+  ```
+- Never write files directly to `$HOME` — use the appropriate XDG directory
+- Document the XDG paths used by the application in `README.md`
+- Termux exception: XDG variables may not be set by default; apply the same fallback pattern, which resolves correctly under Termux's `$HOME`
 
 ## Project structure & documentation
-
 # Documentation
 
 Every project must include the following files from the start:
@@ -155,8 +175,96 @@ Every project must include the following files from the start:
 - `CHANGELOG.md` — updated on every meaningful change
 - `VERSION` — single line, semver (e.g. `1.0.0`), source of truth for version numbers
 - `LICENSE.md` — ask the user to validate the license choice before creating it
+- `TODO.md` — task tracker, structured by phases and themes (see below)
 
 Keep all documentation up to date as the project evolves.
+
+## TODO.md structure
+
+`TODO.md` is the project's task tracker. It must be kept up to date alongside the code.
+
+Structure:
+```
+# TODO
+
+## Phase 1 — <name>
+### <Theme>
+- [ ] Task
+- [x] Done task
+
+## Phase 2 — <name>
+...
+
+---
+
+## Future / Postponed
+Items planned for a later phase, intentionally deferred.
+- [ ] ...
+
+## Deferred / Under Consideration
+Ideas not yet committed to — may or may not happen.
+- [ ] ...
+```
+
+Rules:
+- Phases reflect the project's delivery roadmap; themes group related tasks within a phase
+- "Future / Postponed" comes before "Deferred / Under Consideration": postponed items are more concrete (scoped but delayed), whereas under-consideration items are still exploratory
+- Completed tasks (`[x]`) may be kept for traceability or removed — be consistent
+- Add a separator (`---`) before the two trailing sections to visually distinguish backlog from active work
+
+## Private directory
+
+Every project must include a `.private/` directory and a `.gitignore` at the root.
+
+Create `.private/` at project start — it holds local notes, draft messages, and
+sensitive context that must never be committed.
+
+The `.gitignore` must include at minimum:
+
+```gitignore
+# Private local directory
+.private/
+
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*_token
+*_secret
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Logs
+*.log
+logs/
+```
+
+Adapt to the project's language stack — add entries as needed, never remove the `.private/` entry.
 
 ## Community / open source (on user request)
 
@@ -175,7 +283,6 @@ The application/script must read its version from the `VERSION` file, not from a
 
 **First commit of a new project:** `init: <short message>` with a detail block.
 **Subsequent commits:** standard conventional commit messages (`feat:`, `fix:`, `docs:`, `test:`, etc.).
-
 # Changelog
 
 Follow the [Keep a Changelog](https://keepachangelog.com) format.
@@ -196,7 +303,6 @@ Follow the [Keep a Changelog](https://keepachangelog.com) format.
 - Every meaningful commit must have a corresponding entry in `[Unreleased]`
 - Entries are written in English, in the imperative mood (e.g. "Add logging support")
 - Do not list trivial changes (formatting, typos in comments, etc.)
-
 # Semantic Versioning
 
 All projects follow semver (`MAJOR.MINOR.PATCH`):
@@ -208,7 +314,6 @@ All projects follow semver (`MAJOR.MINOR.PATCH`):
 Bump the version in the `VERSION` file as part of the commit that introduces the change.
 
 ## Shell & CLI
-
 # Shell Scripts
 
 - Always enable strict mode at the top of every script: `set -euo pipefail`
@@ -225,7 +330,6 @@ Bump the version in the `VERSION` file as part of the commit that introduces the
   trap cleanup EXIT INT TERM
   ```
 - Handle `SIGINT` and `SIGTERM` gracefully — never leave temp files or partial state behind on interrupt
-
 # CLI Projects
 
 ## Default options
@@ -291,7 +395,6 @@ Every CLI must provide shell completion. This is not optional — completion is 
 - Override directory with `--log-dir <path>` or the env var `<SCRIPT_NAME>_LOG_DIR`
 
 ## Git & collaboration
-
 # Git Workflow
 
 ## Permanent branches
@@ -390,7 +493,6 @@ local branch will never be recognized as merged, and `-d` will always fail.
 - Always analyze both sides of a conflict before resolving — never blindly apply `--ours` or `--theirs`
 - Prefer manual resolution that preserves the intent of both changes when possible
 - If the correct resolution is ambiguous, stop and ask the user before proceeding
-
 # Git Commits
 
 ## Format
@@ -417,8 +519,9 @@ local branch will never be recognized as merged, and `-d` will always fail.
 ## Claude Code commit workflow
 - **Never commit autonomously.** Commits must be explicitly requested by the user AND confirmed before execution.
 - After every set of modifications, always propose a commit message covering **all modified files** — code, tests, and documentation included.
+- Before proposing a commit to the user, write the message to `.private/COMMIT_MESSAGE` (create the file if absent, overwrite if present).
 - Wait for the user's explicit go-ahead before running any `git commit` command.
-
+- **When multiple commits are planned in sequence:** stop after each commit and wait for the user's explicit instruction to continue. Do not chain commits autonomously.
 # Issues
 
 ## Title
@@ -440,7 +543,6 @@ Apply at least one label:
 ## Lifecycle
 - Do not close an issue manually if a PR closes it automatically via `Closes #n`
 - An issue should map to a single branch and a single PR
-
 # Pull Requests
 
 ## Title
@@ -456,7 +558,6 @@ Every PR must include:
 - One PR = one topic — no bundling unrelated changes
 - Do not merge without a green CI
 - Delete the branch after merge
-
 # Review Guidelines
 
 ## Self-review checklist
@@ -508,7 +609,6 @@ In addition to the solo checklist:
 - [ ] A second human reviewer has approved before merge
 
 ## CI/CD & release
-
 # Continuous Integration
 
 ## Setup
@@ -529,7 +629,6 @@ In addition to the solo checklist:
 ## Rules
 - Fail fast on error
 - Never hardcode secrets in workflow files — use platform secrets (Forgejo variables/secrets or GitHub Actions secrets)
-
 # Release Workflow
 
 ## Pre-release checklist
@@ -541,6 +640,11 @@ In addition to the solo checklist:
 ## Release commit
 - Commit message: `chore(release): bump version to X.Y.Z`
 - Wait for explicit user validation before committing and tagging
+
+## Release message
+- Before any release action, draft a detailed release message covering: summary of changes, breaking changes (if any), migration steps (if any), notable fixes
+- Write the draft to `.private/RELEASE_MESSAGE` (create if absent, overwrite if present)
+- Present it to the user for review before using it in the platform release
 
 ## Tagging
 - Tag format: `X.Y.Z` (no `v` prefix), must match the content of `VERSION`

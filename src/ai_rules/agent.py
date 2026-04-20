@@ -1,14 +1,23 @@
 from __future__ import annotations
 
 import tomllib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
+
+ConfigValue = int | float | str | bool
 
 
 @dataclass
 class Link:
     source: str
     target: str
+
+
+@dataclass
+class ConfigPatch:
+    file: str
+    key: str
+    value: ConfigValue
 
 
 @dataclass
@@ -20,6 +29,7 @@ class Agent:
     supports_imports: bool
     condense_flat_file: bool
     links: list[Link]
+    config_patches: list[ConfigPatch] = field(default_factory=list)
 
     @property
     def install_path(self) -> Path:
@@ -37,6 +47,10 @@ def load_agents(config_path: Path) -> dict[str, Agent]:
             Link(source=lnk["source"], target=lnk["target"])
             for lnk in agent_data.get("links", [])
         ]
+        config_patches = [
+            ConfigPatch(file=p["file"], key=p["key"], value=p["value"])
+            for p in agent_data.get("config_patches", [])
+        ]
         agents[key] = Agent(
             key=key,
             name=agent_data["name"],
@@ -45,6 +59,7 @@ def load_agents(config_path: Path) -> dict[str, Agent]:
             supports_imports=agent_data.get("supports_imports", False),
             condense_flat_file=agent_data.get("condense_flat_file", False),
             links=links,
+            config_patches=config_patches,
         )
 
     return agents

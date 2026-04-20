@@ -41,9 +41,10 @@ condense_flat_file = false
   source = "agents/codex/AGENTS.md"
   target = "AGENTS.md"
 
-  [[agents.codex.links]]
-  source = "agents/codex/config.toml"
-  target = "config.toml"
+  [[agents.codex.config_patches]]
+  file  = "config.toml"
+  key   = "project_doc_max_bytes"
+  value = 131072
 
 [agents.gemini]
 name             = "Gemini"

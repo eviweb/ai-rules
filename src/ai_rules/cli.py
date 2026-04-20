@@ -9,7 +9,7 @@ from ai_rules import __version__
 from ai_rules.agent import load_agents
 from ai_rules.config import find_repo_root
 from ai_rules.generator import generate_flat_file
-from ai_rules.installer import install_agent, status_agent
+from ai_rules.installer import install_agent, remove_agent, status_agent
 
 app = typer.Typer(
     name="ai-rules",
@@ -164,6 +164,32 @@ def generate(
 
     if not dry_run:
         typer.echo("\nDone.")
+
+
+@app.command()
+def remove(
+    agent: Annotated[
+        Optional[str],
+        typer.Argument(help="Agent key (e.g. claude). Defaults to all agents."),
+    ] = None,
+    dry_run: Annotated[
+        bool,
+        typer.Option("--dry-run", "-n", help="Simulate without making any changes."),
+    ] = False,
+) -> None:
+    """Remove rules for one or all agents, restoring original configuration."""
+    repo_root = _repo_root()
+    agents = _select_agents(repo_root, agent)
+
+    if dry_run:
+        typer.echo("Dry run — no changes will be made.\n")
+
+    for key, ag in agents.items():
+        typer.echo(f"[{key}] {ag.name}")
+        for action in remove_agent(repo_root, ag, dry_run=dry_run):
+            typer.echo(f"  {action}")
+
+    typer.echo("\nDone.")
 
 
 @app.command()

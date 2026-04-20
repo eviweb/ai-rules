@@ -37,11 +37,30 @@ Gemini CLI v0.36.0 — global config: `~/.gemini/GEMINI.md` (no native imports)
 - [x] Define artifact retention policies
 - [x] Define job timeout limits
 
+## Phase 4 — Rules expansion
+### High value
+- [ ] `rules/error-handling.md`: exit codes, error message format, propagation patterns (shell, Python, Go, JS/TS)
+- [ ] `rules/api.md`: REST conventions — versioning, HTTP status codes, error response format, pagination, authentication patterns
+- [ ] `rules/testing.md`: test pyramid, coverage thresholds, test naming conventions, fixture patterns, test data management
+
+### Agent coverage
+- [ ] Cursor integration (`agents/cursor/` — `.cursor/rules/*.mdc`, flat file per rule or single file)
+- [ ] GitHub Copilot integration (`agents/copilot/` — `.github/copilot-instructions.md`, flat file)
+
+### Medium value
+- [ ] `rules/docker.md`: Dockerfile best practices, multi-stage builds, .dockerignore, compose conventions, image naming
+- [ ] `rules/database.md`: migration conventions, table/column naming, indexing rules, query patterns
+
+### Lower priority
+- [ ] `rules/monitoring.md`: metrics, alerting, observability patterns for services
+
 ---
 
 ## Future / Postponed
 - [ ] Open source documentation (`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `SUPPORT.md`, issue/PR templates) — validate each with user before creating
 
 ## Deferred / Under Consideration
-- [ ] Support for additional AI assistants beyond Claude, Codex, Gemini
 - [ ] Web UI or TUI for managing agent installations
+- [ ] Embed rules version header in generated flat files (traceability)
+- [ ] `rules/performance.md`: profiling approach, benchmarking conventions, performance budgets
+- [ ] `rules/accessibility.md`: a11y standards, ARIA, color contrast — frontend-specific

@@ -41,7 +41,7 @@ Gemini CLI v0.36.0 — global config: `~/.gemini/GEMINI.md` (no native imports)
 ### High value
 - [x] `rules/error-handling.md`: exit codes, error message format, propagation patterns (shell, Python, Go, JS/TS)
 - [x] `rules/api.md`: REST conventions — versioning, HTTP status codes, error response format, pagination, authentication patterns
-- [ ] `rules/testing.md`: test pyramid, coverage thresholds, test naming conventions, fixture patterns, test data management
+- [x] `rules/testing.md`: test pyramid, coverage thresholds, test naming conventions, fixture patterns, test data management
 
 ### Agent coverage
 - [ ] Cursor integration (`agents/cursor/` — `.cursor/rules/*.mdc`, flat file per rule or single file)

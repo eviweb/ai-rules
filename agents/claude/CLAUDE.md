@@ -10,6 +10,7 @@
 
 ## Development practices
 @rules/tdd.md
+@rules/testing.md
 @rules/security.md
 @rules/dependencies.md
 @rules/compatibility.md

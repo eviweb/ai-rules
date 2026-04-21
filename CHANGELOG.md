@@ -72,6 +72,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   command, `resolve_imports()` and `generate_flat_file()` in `generator.py`
 
 ### Changed
+- `.github/workflows/ci.yml`: add `ai-rules verify` step to test job
+  (catches forgotten `ai-rules generate` in CI); add job timeouts (lint: 5 min,
+  test: 15 min); add uv dependency cache keyed on `uv.lock`
 - `scripts/pre-commit`: also triggers on `agents/claude/CLAUDE.md` changes
   (source for Codex flat file generation); Gemini flat file regeneration
   dropped (now uses native imports)
@@ -79,6 +82,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   flat files for agents with `supports_imports = false`
 
 ### Fixed
+- `tests/test_gemini.py`: remove unused `resolve_imports` import (ruff F401)
 - CI: `scripts/pre-commit` added to shellcheck step (no `.sh` extension —
   previously excluded by `scripts/*.sh` glob)
 - CI: coverage threshold enforced via `--cov-fail-under=80` in pytest config

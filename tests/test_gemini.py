@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from ai_rules.agent import load_agents
-from ai_rules.generator import generate_flat_file, resolve_imports
+from ai_rules.generator import generate_flat_file
 
 
 GEMINI_TOML = """

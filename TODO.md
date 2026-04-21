@@ -75,3 +75,6 @@
 - [ ] Embed rules version header in generated flat files (traceability)
 - [ ] `rules/performance.md`: profiling, benchmarking, performance budgets
 - [ ] `rules/accessibility.md`: a11y standards, ARIA, color contrast
+- [ ] Versioning: `__version__` in `__init__.py` and `VERSION` file are two
+  sources of truth — migrate to `importlib.metadata` reading from `VERSION`
+  via hatchling; non-trivial given build toolchain constraints

@@ -10,6 +10,7 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
 
@@ -23,6 +24,12 @@ jobs:
         with:
           python-version: "3.12"
 
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+          restore-keys: uv-${{ runner.os }}-
+
       - name: Install dependencies
         run: uv sync --extra dev
 
@@ -32,6 +39,7 @@ jobs:
   test:
     name: Test (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       fail-fast: true
       matrix:
@@ -43,8 +51,19 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+          restore-keys: uv-${{ runner.os }}-
+
       - name: Install dependencies
         run: uv sync --extra dev
 
       - name: Run tests
         run: uv run pytest -v
+
+      - name: Verify flat files are in sync
+        run: uv run ai-rules verify
+        env:
+          AI_RULES_HOME: ${{ github.workspace }}

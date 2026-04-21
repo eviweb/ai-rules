@@ -7,7 +7,7 @@
 - [x] Add `remove` command with full state restoration (symlinks + config patches)
 - [x] Add `bin/ai-rules-wrapper`: symlink-safe bash entry point
 - [x] Shell completion (bash/zsh/fish) via typer
-- [ ] End-to-end CLI tests (typer `CliRunner` — commands, not just installer functions)
+- [x] End-to-end CLI tests (typer `CliRunner` — 24 tests covering all commands with real 3-agent fixture)
 
 ### Agent support
 - [x] Claude Code integration (`agents/claude/CLAUDE.md`, native imports)

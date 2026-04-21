@@ -33,7 +33,7 @@
 
 ### CLI
 - [x] `verify` command: check that flat files are in sync with current rules — exits 1 if `generate` would produce a diff (CI use case, catches forgotten `ai-rules generate`)
-- [ ] Clarify `update` vs `install`: currently identical — decide if `update` should also run `generate` for flat-file agents
+- [x] Clarify `update` vs `install`: `update` now also runs `generate` for flat-file agents — single command after `git pull`
 
 ## Phase 2 — Agent coverage
 ### Rules coverage

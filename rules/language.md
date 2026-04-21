@@ -1,1 +1,3 @@
-# Updated language rule
+# Language
+
+Updated rule.

@@ -244,17 +244,32 @@ def update(
         typer.Option("--dry-run", "-n", help="Simulate without making any changes."),
     ] = False,
 ) -> None:
-    """Update installation for one or all agents."""
+    """Update installation and regenerate flat files for one or all agents.
+
+    Combines install and generate: use this after pulling new rules to apply
+    all changes in one step.
+    """
     repo_root = _repo_root()
-    agents = _select_agents(repo_root, agent)
+    all_agents = load_agents(repo_root / "agents.toml")
+    selected = _select_agents(repo_root, agent)
+
+    source_agent = next((a for a in all_agents.values() if a.supports_imports), None)
 
     if dry_run:
         typer.echo("Dry run — no changes will be made.\n")
 
-    for key, ag in agents.items():
+    for key, ag in selected.items():
         typer.echo(f"[{key}] {ag.name}")
         for action in install_agent(repo_root, ag, dry_run=dry_run):
             typer.echo(f"  {action}")
+        if not ag.supports_imports and source_agent is not None:
+            source = repo_root / source_agent.entry_point
+            output = repo_root / ag.entry_point
+            if dry_run:
+                typer.echo(f"  [dry-run] would regenerate {output.relative_to(repo_root)}")
+            else:
+                generate_flat_file(repo_root, source, output, condense=ag.condense_flat_file)
+                typer.echo(f"  regenerated {output.relative_to(repo_root)}")
 
     typer.echo("\nDone.")
 

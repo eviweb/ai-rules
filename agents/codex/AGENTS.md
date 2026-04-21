@@ -1,7 +1,9 @@
 # Global Rules
 
 ## Language & style
-# Updated language rule
+# Language
+
+Updated rule.
 # Naming Conventions
 
 ## Shell scripts

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 from pathlib import Path
 
 import pytest
@@ -72,7 +73,7 @@ supports_imports = true
 
 @pytest.fixture()
 def repo(tmp_path: Path) -> Path:
-    """Minimal repo wired to tmp install dirs, real rules/agents content symlinked."""
+    """Minimal repo wired to tmp install dirs, real rules/agents content copied."""
     repo_root = tmp_path / "repo"
     repo_root.mkdir()
 
@@ -80,9 +81,10 @@ def repo(tmp_path: Path) -> Path:
     install_root.mkdir()
 
     (repo_root / "agents.toml").write_text(_agents_toml(install_root))
-    (repo_root / "rules").symlink_to(REAL_REPO / "rules")
-    (repo_root / "agents").symlink_to(REAL_REPO / "agents")
-    (repo_root / "settings.json").symlink_to(REAL_REPO / "settings.json")
+    shutil.copytree(REAL_REPO / "rules", repo_root / "rules")
+    shutil.copytree(REAL_REPO / "agents", repo_root / "agents")
+    if (REAL_REPO / "settings.json").exists():
+        shutil.copy2(REAL_REPO / "settings.json", repo_root / "settings.json")
 
     return repo_root
 
@@ -329,6 +331,30 @@ def test_update_is_idempotent(repo: Path) -> None:
     result = invoke(["update"], repo)
     assert result.exit_code == 0
     assert "already linked" in result.output
+
+
+def test_update_regenerates_flat_file_for_codex(repo: Path) -> None:
+    invoke(["install"], repo)
+    (repo / "rules" / "language.md").write_text("# Language\n\nUpdated rule.\n")
+    result = invoke(["update", "codex"], repo)
+    assert result.exit_code == 0
+    assert "regenerated" in result.output
+    assert "Updated rule." in (repo / "agents" / "codex" / "AGENTS.md").read_text()
+
+
+def test_update_dry_run_does_not_regenerate(repo: Path) -> None:
+    invoke(["generate"], repo)
+    original = (repo / "agents" / "codex" / "AGENTS.md").read_text()
+    (repo / "rules" / "language.md").write_text("# Language\n\nUpdated rule.\n")
+    invoke(["update", "--dry-run"], repo)
+    assert (repo / "agents" / "codex" / "AGENTS.md").read_text() == original
+
+
+def test_update_skips_regeneration_for_native_import_agents(repo: Path) -> None:
+    invoke(["install"], repo)
+    result = invoke(["update", "claude"], repo)
+    assert result.exit_code == 0
+    assert "regenerated" not in result.output
 
 
 # ---------------------------------------------------------------------------

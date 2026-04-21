@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [0.4.0] - 2026-04-21
+
+### Added
 - `rules/compatibility.md`: XDG section clarified — scope condition added
   ("applies to any project that writes files to the user's machine; pure
   libraries are exempt"), test isolation rule added, Python code example

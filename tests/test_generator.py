@@ -2,7 +2,12 @@ from pathlib import Path
 
 import pytest
 
-from ai_rules.generator import condense_content, generate_flat_file, resolve_imports
+from ai_rules.generator import (
+    condense_content,
+    generate_flat_file,
+    resolve_imports,
+    verify_flat_file,
+)
 
 
 @pytest.fixture()
@@ -121,6 +126,42 @@ def test_generate_flat_file_no_condense_keeps_code_blocks(repo_root: Path) -> No
     output = repo_root / "agents" / "claude" / "CLAUDE.md"
     generate_flat_file(repo_root, source, output, condense=False)
     assert "set -euo pipefail" in output.read_text()
+
+
+def test_verify_flat_file_returns_true_when_in_sync(repo_root: Path) -> None:
+    source = repo_root / "CLAUDE.md"
+    source.write_text("@rules/language.md\n")
+    output = repo_root / "agents" / "codex" / "AGENTS.md"
+    generate_flat_file(repo_root, source, output)
+    assert verify_flat_file(repo_root, source, output) is True
+
+
+def test_verify_flat_file_returns_false_when_stale(repo_root: Path) -> None:
+    source = repo_root / "CLAUDE.md"
+    source.write_text("@rules/language.md\n")
+    output = repo_root / "agents" / "codex" / "AGENTS.md"
+    generate_flat_file(repo_root, source, output)
+    (repo_root / "rules" / "language.md").write_text("# Language\n\nUpdated.\n")
+    assert verify_flat_file(repo_root, source, output) is False
+
+
+def test_verify_flat_file_returns_false_when_missing(repo_root: Path) -> None:
+    source = repo_root / "CLAUDE.md"
+    source.write_text("@rules/language.md\n")
+    output = repo_root / "agents" / "codex" / "AGENTS.md"
+    assert verify_flat_file(repo_root, source, output) is False
+
+
+def test_verify_flat_file_respects_condense_flag(repo_root: Path) -> None:
+    (repo_root / "rules" / "shell.md").write_text(
+        "# Shell\n\nUse strict mode.\n\n```bash\nset -euo pipefail\n```\n"
+    )
+    source = repo_root / "CLAUDE.md"
+    source.write_text("@rules/shell.md\n")
+    output = repo_root / "agents" / "codex" / "AGENTS.md"
+    generate_flat_file(repo_root, source, output, condense=True)
+    assert verify_flat_file(repo_root, source, output, condense=True) is True
+    assert verify_flat_file(repo_root, source, output, condense=False) is False
 
 
 def test_generate_flat_file_overwrites_existing(repo_root: Path) -> None:

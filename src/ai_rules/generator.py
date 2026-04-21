@@ -62,3 +62,19 @@ def generate_flat_file(
         content = condense_content(content)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(content)
+
+
+def verify_flat_file(
+    repo_root: Path, source: Path, output: Path, *, condense: bool = False
+) -> bool:
+    """Return True if *output* is up to date with the resolved *source*.
+
+    Returns False if *output* is missing or its content differs from what
+    ``generate_flat_file`` would produce.
+    """
+    if not output.exists():
+        return False
+    expected = resolve_imports(source, repo_root)
+    if condense:
+        expected = condense_content(expected)
+    return output.read_text() == expected

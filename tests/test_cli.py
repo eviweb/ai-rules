@@ -271,6 +271,49 @@ def test_generate_native_import_agent_outputs_no_agents_message(repo: Path) -> N
 
 
 # ---------------------------------------------------------------------------
+# verify
+# ---------------------------------------------------------------------------
+
+
+def test_verify_exits_0_when_in_sync(repo: Path) -> None:
+    invoke(["generate"], repo)
+    result = invoke(["verify"], repo)
+    assert result.exit_code == 0
+    assert "OK" in result.output
+
+
+def test_verify_exits_1_when_stale(repo: Path) -> None:
+    invoke(["generate"], repo)
+    (repo / "rules" / "language.md").write_text("# Updated language rule\n")
+    result = invoke(["verify"], repo)
+    assert result.exit_code == 1
+    assert "STALE" in result.output
+
+
+def test_verify_exits_1_when_flat_file_missing(repo: Path) -> None:
+    flat = repo / "agents" / "codex" / "AGENTS.md"
+    if flat.exists():
+        flat.unlink()
+    result = invoke(["verify"], repo)
+    assert result.exit_code == 1
+    assert "STALE" in result.output
+
+
+def test_verify_skips_native_import_agents(repo: Path) -> None:
+    invoke(["generate"], repo)
+    result = invoke(["verify", "claude"], repo)
+    assert result.exit_code == 0
+    assert "No agents requiring" in result.output
+
+
+def test_verify_single_agent(repo: Path) -> None:
+    invoke(["generate"], repo)
+    result = invoke(["verify", "codex"], repo)
+    assert result.exit_code == 0
+    assert "OK" in result.output
+
+
+# ---------------------------------------------------------------------------
 # update
 # ---------------------------------------------------------------------------
 

@@ -8,7 +8,7 @@ import typer
 from ai_rules import __version__
 from ai_rules.agent import load_agents
 from ai_rules.config import find_repo_root
-from ai_rules.generator import generate_flat_file
+from ai_rules.generator import generate_flat_file, verify_flat_file
 from ai_rules.installer import install_agent, remove_agent, status_agent
 
 app = typer.Typer(
@@ -164,6 +164,47 @@ def generate(
 
     if not dry_run:
         typer.echo("\nDone.")
+
+
+@app.command()
+def verify(
+    agent: Annotated[
+        Optional[str],
+        typer.Argument(help="Agent key to verify. Defaults to all agents without native import support."),
+    ] = None,
+) -> None:
+    """Verify flat rule files are in sync with current rules.
+
+    Exits 1 if any flat file is missing or out of date. Use this in CI to
+    ensure 'ai-rules generate' was run after modifying rules.
+    """
+    repo_root = _repo_root()
+    agents = load_agents(repo_root / "agents.toml")
+
+    source_agent = next((a for a in agents.values() if a.supports_imports), None)
+    if source_agent is None:
+        typer.echo("Error: no agent with supports_imports=True found to use as source.", err=True)
+        raise typer.Exit(1)
+    source = repo_root / source_agent.entry_point
+
+    targets = _select_agents(repo_root, agent)
+    targets = {k: v for k, v in targets.items() if not v.supports_imports}
+
+    if not targets:
+        typer.echo("No agents requiring flat file verification.")
+        return
+
+    all_ok = True
+    for key, ag in targets.items():
+        output = repo_root / ag.entry_point
+        if verify_flat_file(repo_root, source, output, condense=ag.condense_flat_file):
+            typer.echo(f"  OK      {output.relative_to(repo_root)}")
+        else:
+            typer.echo(f"  STALE   {output.relative_to(repo_root)}: run 'ai-rules generate'")
+            all_ok = False
+
+    if not all_ok:
+        raise typer.Exit(1)
 
 
 @app.command()

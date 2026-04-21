@@ -29,7 +29,7 @@ Run the linter:
 
 ```bash
 uv run ruff check src/ tests/
-shellcheck scripts/*.sh tests/run-tests.sh
+shellcheck scripts/pre-commit scripts/*.sh tests/run-tests.sh
 ```
 
 ## Workflow
@@ -56,6 +56,7 @@ Commit messages follow Conventional Commits (`rules/commits.md`).
 - [ ] Linter passes (`uv run ruff check`, `shellcheck`)
 - [ ] `CHANGELOG.md` `[Unreleased]` section updated
 - [ ] Flat files regenerated if rules changed (`ai-rules generate`)
+- [ ] Flat files verified in sync (`ai-rules verify`)
 
 ## Code of conduct
 

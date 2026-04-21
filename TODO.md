@@ -28,8 +28,8 @@
 - [ ] CHANGELOG: document all unreleased changes from current session
 
 ### CI
-- [ ] Add `scripts/pre-commit` to shellcheck job (no `.sh` extension — currently skipped by `scripts/*.sh` glob)
-- [ ] Enforce coverage threshold in CI workflow (`--cov-fail-under=80` already in pyproject.toml but not enforced in ci.yml)
+- [x] Add `scripts/pre-commit` to shellcheck job (no `.sh` extension — currently skipped by `scripts/*.sh` glob)
+- [x] Enforce coverage threshold in CI workflow (`--cov-fail-under=80` in pyproject.toml, picked up by CI automatically — 94% current)
 
 ### CLI
 - [ ] `verify` command: check that flat files are in sync with current rules — exits 1 if `generate` would produce a diff (CI use case, catches forgotten `ai-rules generate`)

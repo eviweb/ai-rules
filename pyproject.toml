@@ -29,3 +29,4 @@ packages = ["src/ai_rules"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "--cov=src --cov-fail-under=80"

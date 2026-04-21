@@ -17,7 +17,7 @@ jobs:
         run: sudo apt-get install -y shellcheck
 
       - name: Run shellcheck
-        run: shellcheck scripts/*.sh tests/run-tests.sh
+        run: shellcheck scripts/pre-commit scripts/*.sh tests/run-tests.sh
 
       - uses: astral-sh/setup-uv@v5
         with:

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import re
 import shutil
 import tomllib
@@ -11,9 +12,14 @@ from ai_rules.agent import Agent, ConfigPatch, ConfigValue, Link
 _BOOL_TOML = {True: "true", False: "false"}
 
 
-def _backup_dir(install_path: Path) -> Path:
+def _xdg_backup_dir(agent_key: str) -> Path:
+    state_home = Path(os.environ.get("XDG_STATE_HOME", Path.home() / ".local" / "state"))
+    return state_home / "ai-rules" / "backups" / agent_key
+
+
+def _backup_dir(agent_key: str) -> Path:
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    return install_path / f"backup-{timestamp}"
+    return _xdg_backup_dir(agent_key) / f"backup-{timestamp}"
 
 
 def _resolve_link(repo_root: Path, agent: Agent, link: Link) -> tuple[Path, Path]:
@@ -30,10 +36,11 @@ def _toml_format(value: ConfigValue) -> str:
     return str(value)
 
 
-def _find_link_backup(install_path: Path, name: str) -> Path | None:
-    """Return the most recent backup of *name* from any backup-* directory."""
+def _find_link_backup(agent_key: str, name: str) -> Path | None:
+    """Return the most recent backup of *name* from the XDG backup dir."""
+    backup_root = _xdg_backup_dir(agent_key)
     candidates = sorted(
-        (d / name for d in install_path.glob("backup-*") if (d / name).exists()),
+        (d / name for d in backup_root.glob("backup-*") if (d / name).exists()),
         key=lambda p: p.parent.name,
         reverse=True,
     )
@@ -46,22 +53,23 @@ def _cleanup_backup_dir(backup_dir: Path) -> None:
         backup_dir.rmdir()
 
 
-def _find_toml_backup(target_file: Path) -> Path | None:
-    """Return the most recent .bak file for *target_file*."""
+def _find_toml_backup(target_file: Path, agent_key: str) -> Path | None:
+    """Return the most recent .bak file for *target_file* from the XDG backup dir."""
+    backup_root = _xdg_backup_dir(agent_key)
     candidates = sorted(
-        target_file.parent.glob(f"{target_file.name}.*.bak"),
+        backup_root.glob(f"{target_file.name}.*.bak"),
         reverse=True,
     )
     return candidates[0] if candidates else None
 
 
 def _patch_toml_file(
-    target_file: Path, patch: ConfigPatch, dry_run: bool = False
+    target_file: Path, patch: ConfigPatch, agent_key: str, dry_run: bool = False
 ) -> list[str]:
     """Ensure *patch.key* is set to *patch.value* in *target_file*.
 
-    Backs up the file before any modification. Creates the file if absent.
-    Only the root-level section is touched — keys inside [sections] are ignored.
+    Backs up the file to the XDG state dir before any modification.
+    Creates the file if absent. Only the root-level section is touched.
     """
     formatted = _toml_format(patch.value)
     new_line = f"{patch.key} = {formatted}"
@@ -77,9 +85,11 @@ def _patch_toml_file(
             actions.append(f"OK      {patch.file}: {patch.key} already set")
             return actions
         timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-        backup = target_file.parent / f"{target_file.name}.{timestamp}.bak"
+        backup_dir = _xdg_backup_dir(agent_key)
+        backup = backup_dir / f"{target_file.name}.{timestamp}.bak"
         actions.append(f"BACKUP  {patch.file} -> {backup.name}")
         if not dry_run:
+            backup_dir.mkdir(parents=True, exist_ok=True)
             shutil.copy2(target_file, backup)
     else:
         content = ""
@@ -161,7 +171,7 @@ def install_agent(
 
         if target.exists():
             if backup_dir is None:
-                backup_dir = _backup_dir(agent.install_path)
+                backup_dir = _backup_dir(agent.key)
             actions.append(f"BACKUP  {link.target}: moving to {backup_dir.name}/")
             if not dry_run:
                 backup_dir.mkdir(parents=True, exist_ok=True)
@@ -173,7 +183,7 @@ def install_agent(
 
     for patch in agent.config_patches:
         target_file = agent.install_path / patch.file
-        actions.extend(_patch_toml_file(target_file, patch, dry_run=dry_run))
+        actions.extend(_patch_toml_file(target_file, patch, agent.key, dry_run=dry_run))
 
     return actions
 
@@ -184,8 +194,9 @@ def remove_agent(
     """Remove symlinks and revert config patches for an agent.
 
     For each symlink owned by ai-rules: removes it and restores the most
-    recent backup if one exists. For each config patch: restores the most
-    recent .bak file, or removes the patched key if no backup is found.
+    recent backup from the XDG state dir if one exists. For each config patch:
+    restores the most recent .bak file, or removes the patched key if no
+    backup is found.
 
     Returns a list of human-readable action lines.
     """
@@ -202,7 +213,7 @@ def remove_agent(
         if not dry_run:
             target.unlink()
 
-        backup = _find_link_backup(agent.install_path, target.name)
+        backup = _find_link_backup(agent.key, target.name)
         if backup:
             actions.append(f"RESTORE {link.target}: from {backup.parent.name}/")
             if not dry_run:
@@ -211,7 +222,7 @@ def remove_agent(
 
     for patch in agent.config_patches:
         target_file = agent.install_path / patch.file
-        bak = _find_toml_backup(target_file)
+        bak = _find_toml_backup(target_file, agent.key)
         if bak:
             actions.append(f"RESTORE {patch.file}: from {bak.name}")
             if not dry_run:
@@ -219,6 +230,36 @@ def remove_agent(
                 bak.unlink()
         else:
             actions.extend(_unpatch_toml_file(target_file, patch, dry_run=dry_run))
+
+    return actions
+
+
+def migrate_agent_backups(agent: Agent, dry_run: bool = False) -> list[str]:
+    """Move legacy backups from agent install dir to XDG state dir.
+
+    Handles backup-<ts>/ directories (link backups) and *.bak files
+    (TOML patch backups) left in the agent install dir by older versions.
+    """
+    actions: list[str] = []
+    xdg_dir = _xdg_backup_dir(agent.key)
+
+    for legacy_dir in sorted(agent.install_path.glob("backup-*")):
+        if not legacy_dir.is_dir():
+            continue
+        dest = xdg_dir / legacy_dir.name
+        actions.append(f"MIGRATE {legacy_dir.name} -> {dest}")
+        if not dry_run:
+            xdg_dir.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(legacy_dir), dest)
+
+    for patch in agent.config_patches:
+        target_file = agent.install_path / patch.file
+        for bak in sorted(target_file.parent.glob(f"{target_file.name}.*.bak")):
+            dest = xdg_dir / bak.name
+            actions.append(f"MIGRATE {bak.name} -> {dest}")
+            if not dry_run:
+                xdg_dir.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(bak), dest)
 
     return actions
 

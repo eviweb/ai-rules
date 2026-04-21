@@ -357,6 +357,17 @@ def test_update_skips_regeneration_for_native_import_agents(repo: Path) -> None:
     assert "regenerated" not in result.output
 
 
+def test_update_migrates_legacy_backups(repo: Path, tmp_path: Path) -> None:
+    invoke(["install"], repo)
+    legacy_dir = tmp_path / "install" / "codex" / "backup-20240101-120000"
+    legacy_dir.mkdir()
+    (legacy_dir / "AGENTS.md").write_text("old")
+    result = invoke(["update", "codex"], repo)
+    assert result.exit_code == 0
+    assert "MIGRATE" in result.output
+    assert not legacy_dir.exists()
+
+
 # ---------------------------------------------------------------------------
 # outside repo
 # ---------------------------------------------------------------------------

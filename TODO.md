@@ -23,6 +23,10 @@
 - [x] 82 tests covering agent loading, config resolution, installer, generator, remove, CLI commands
 
 ## Pre-release fixes
+### XDG compliance
+- [x] Move backups to `XDG_STATE_HOME/ai-rules/backups/<agent>/` instead of agent install dirs (`~/.claude/backup-*/`, `~/.codex/config.toml.*.bak`)
+- [x] `update` command: migrate existing backups from legacy location to XDG path before installing
+
 ### Documentation
 - [x] README: fix Gemini row (flat file → native imports), add `remove` command to usage, update `rules/` structure (20 → 25 files), update test count
 - [x] CHANGELOG: document all unreleased changes from current session
@@ -56,6 +60,7 @@
 ---
 
 ## Future / Postponed
+- [ ] Bash installer from GitHub: `curl | bash` one-liner with checksum verification, HTTPS, version pinning — secure installation without cloning the repo
 - [ ] Agent coverage: Cursor (`.cursor/rules/*.mdc`), GitHub Copilot (`.github/copilot-instructions.md`), Windsurf (`.windsurfrules`)
 - [ ] Agent coverage: Cline / Continue.dev / Aider — investigate config format first
 - [ ] `rules/docker.md`: Dockerfile best practices, multi-stage builds, compose conventions

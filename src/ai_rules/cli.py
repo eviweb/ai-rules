@@ -9,7 +9,7 @@ from ai_rules import __version__
 from ai_rules.agent import load_agents
 from ai_rules.config import find_repo_root
 from ai_rules.generator import generate_flat_file, verify_flat_file
-from ai_rules.installer import install_agent, remove_agent, status_agent
+from ai_rules.installer import install_agent, migrate_agent_backups, remove_agent, status_agent
 
 app = typer.Typer(
     name="ai-rules",
@@ -260,6 +260,8 @@ def update(
 
     for key, ag in selected.items():
         typer.echo(f"[{key}] {ag.name}")
+        for action in migrate_agent_backups(ag, dry_run=dry_run):
+            typer.echo(f"  {action}")
         for action in install_agent(repo_root, ag, dry_run=dry_run):
             typer.echo(f"  {action}")
         if not ag.supports_imports and source_agent is not None:

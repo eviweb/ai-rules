@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 import pytest
@@ -5,7 +7,9 @@ import pytest
 from ai_rules.agent import Agent, ConfigPatch, Link
 from ai_rules.installer import (
     _patch_toml_file,
+    _xdg_backup_dir,
     install_agent,
+    migrate_agent_backups,
     remove_agent,
     status_agent,
 )
@@ -83,6 +87,10 @@ def test_install_agent_backs_up_existing_file(
     actions = install_agent(repo_root, agent)
     assert any("BACKUP" in a for a in actions)
     assert (install_dir / "entry.md").is_symlink()
+    backup_root = _xdg_backup_dir("test")
+    backups = list(backup_root.glob("backup-*/entry.md"))
+    assert len(backups) == 1
+    assert backups[0].read_text() == "old content"
 
 
 def test_install_agent_dry_run_makes_no_changes(
@@ -138,7 +146,7 @@ def test_status_agent_exists_not_symlink(repo_root: Path, install_dir: Path) -> 
 def test_patch_toml_creates_file_with_key(install_dir: Path) -> None:
     target = install_dir / "config.toml"
     patch = ConfigPatch(file="config.toml", key="max_bytes", value=65536)
-    _patch_toml_file(target, patch)
+    _patch_toml_file(target, patch, "test")
     assert "max_bytes = 65536" in target.read_text()
 
 
@@ -146,7 +154,7 @@ def test_patch_toml_updates_existing_key(install_dir: Path) -> None:
     target = install_dir / "config.toml"
     target.write_text("max_bytes = 1024\n")
     patch = ConfigPatch(file="config.toml", key="max_bytes", value=65536)
-    _patch_toml_file(target, patch)
+    _patch_toml_file(target, patch, "test")
     assert "max_bytes = 65536" in target.read_text()
     assert "1024" not in target.read_text()
 
@@ -155,8 +163,9 @@ def test_patch_toml_backs_up_before_modifying(install_dir: Path) -> None:
     target = install_dir / "config.toml"
     target.write_text("max_bytes = 1024\n")
     patch = ConfigPatch(file="config.toml", key="max_bytes", value=65536)
-    _patch_toml_file(target, patch)
-    backups = list(install_dir.glob("*.bak"))
+    _patch_toml_file(target, patch, "test")
+    backup_root = _xdg_backup_dir("test")
+    backups = list(backup_root.glob("*.bak"))
     assert len(backups) == 1
     assert "1024" in backups[0].read_text()
 
@@ -165,16 +174,16 @@ def test_patch_toml_skips_when_already_correct(install_dir: Path) -> None:
     target = install_dir / "config.toml"
     target.write_text("max_bytes = 65536\n")
     patch = ConfigPatch(file="config.toml", key="max_bytes", value=65536)
-    actions = _patch_toml_file(target, patch)
+    actions = _patch_toml_file(target, patch, "test")
     assert any("already set" in a for a in actions)
-    assert not list(install_dir.glob("*.bak"))
+    assert not list(_xdg_backup_dir("test").glob("*.bak"))
 
 
 def test_patch_toml_preserves_existing_sections(install_dir: Path) -> None:
     target = install_dir / "config.toml"
     target.write_text('max_bytes = 1024\n\n[projects."foo"]\ntrust = "trusted"\n')
     patch = ConfigPatch(file="config.toml", key="max_bytes", value=65536)
-    _patch_toml_file(target, patch)
+    _patch_toml_file(target, patch, "test")
     content = target.read_text()
     assert "max_bytes = 65536" in content
     assert 'trust = "trusted"' in content
@@ -184,9 +193,9 @@ def test_patch_toml_dry_run_makes_no_changes(install_dir: Path) -> None:
     target = install_dir / "config.toml"
     target.write_text("max_bytes = 1024\n")
     patch = ConfigPatch(file="config.toml", key="max_bytes", value=65536)
-    _patch_toml_file(target, patch, dry_run=True)
+    _patch_toml_file(target, patch, "test", dry_run=True)
     assert "1024" in target.read_text()
-    assert not list(install_dir.glob("*.bak"))
+    assert not list(_xdg_backup_dir("test").glob("*.bak"))
 
 
 def test_install_agent_applies_config_patches(repo_root: Path, install_dir: Path) -> None:
@@ -246,7 +255,8 @@ def test_remove_agent_cleans_empty_backup_dir(repo_root: Path, install_dir: Path
     agent = make_agent(install_dir, [("entry.md", "entry.md")])
     install_agent(repo_root, agent)
     remove_agent(repo_root, agent)
-    assert not any(install_dir.glob("backup-*"))
+    backup_root = _xdg_backup_dir("test")
+    assert not any(backup_root.glob("backup-*"))
 
 
 def test_remove_agent_skips_unmanaged_symlink(repo_root: Path, install_dir: Path) -> None:
@@ -273,7 +283,7 @@ def test_remove_agent_restores_toml_backup(repo_root: Path, install_dir: Path) -
     install_agent(repo_root, agent)
     remove_agent(repo_root, agent)
     assert "max_bytes = 1024" in (install_dir / "config.toml").read_text()
-    assert not list(install_dir.glob("*.bak"))
+    assert not list(_xdg_backup_dir("test").glob("*.bak"))
 
 
 def test_remove_agent_unpatches_toml_when_no_backup(
@@ -293,3 +303,50 @@ def test_remove_agent_toml_dry_run_makes_no_changes(
     install_agent(repo_root, agent)
     remove_agent(repo_root, agent, dry_run=True)
     assert "max_bytes = 65536" in (install_dir / "config.toml").read_text()
+
+
+# --- migrate_agent_backups ---
+
+
+def test_migrate_agent_backups_moves_legacy_link_backup(
+    install_dir: Path,
+) -> None:
+    legacy_dir = install_dir / "backup-20240101-120000"
+    legacy_dir.mkdir()
+    (legacy_dir / "entry.md").write_text("old")
+    agent = make_agent(install_dir, [("entry.md", "entry.md")])
+    actions = migrate_agent_backups(agent)
+    assert any("MIGRATE" in a for a in actions)
+    assert not legacy_dir.exists()
+    xdg_dir = _xdg_backup_dir("test")
+    assert (xdg_dir / "backup-20240101-120000" / "entry.md").read_text() == "old"
+
+
+def test_migrate_agent_backups_moves_legacy_toml_bak(
+    install_dir: Path,
+) -> None:
+    bak = install_dir / "config.toml.20240101-120000.bak"
+    bak.write_text("max_bytes = 1024\n")
+    agent = make_patch_agent(install_dir, [("config.toml", "max_bytes", 65536)])
+    actions = migrate_agent_backups(agent)
+    assert any("MIGRATE" in a for a in actions)
+    assert not bak.exists()
+    xdg_dir = _xdg_backup_dir("test")
+    assert (xdg_dir / bak.name).read_text() == "max_bytes = 1024\n"
+
+
+def test_migrate_agent_backups_no_legacy_no_actions(install_dir: Path) -> None:
+    agent = make_agent(install_dir, [("entry.md", "entry.md")])
+    actions = migrate_agent_backups(agent)
+    assert actions == []
+
+
+def test_migrate_agent_backups_dry_run_makes_no_changes(install_dir: Path) -> None:
+    legacy_dir = install_dir / "backup-20240101-120000"
+    legacy_dir.mkdir()
+    (legacy_dir / "entry.md").write_text("old")
+    agent = make_agent(install_dir, [("entry.md", "entry.md")])
+    actions = migrate_agent_backups(agent, dry_run=True)
+    assert any("MIGRATE" in a for a in actions)
+    assert legacy_dir.exists()
+    assert not _xdg_backup_dir("test").exists()

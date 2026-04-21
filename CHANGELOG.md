@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- XDG Base Directory compliance for backups: link backups and TOML `.bak`
+  files now stored under `XDG_STATE_HOME/ai-rules/backups/<agent>/` instead
+  of the agent install dir (`~/.claude/backup-*/`, `~/.codex/*.bak`)
+- `src/ai_rules/installer.py`: `_xdg_backup_dir()`, `migrate_agent_backups()`
+  (moves legacy backups from install dir to XDG state dir, supports `--dry-run`)
+- `ai-rules update`: runs `migrate_agent_backups` before install for each agent,
+  making it the canonical migration path when upgrading from older versions
+- `tests/conftest.py`: autouse fixture redirecting `XDG_STATE_HOME` to a temp
+  dir for all tests — prevents writes to `~/.local/state` during the test suite
 - `rules/docs.md`: "Keep docs in sync with the code" section — explicit rule
   that doc updates must be in the same commit as the code change, with a table
   mapping change types to affected documents; no more deferred doc passes

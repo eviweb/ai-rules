@@ -65,7 +65,7 @@ Gemini CLI — global config: `~/.gemini/GEMINI.md` (native `@./path` imports, 1
 ---
 
 ## Future / Postponed
-- [ ] Open source documentation (`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `SUPPORT.md`, issue/PR templates) — validate each with user before creating
+- [x] Open source documentation (`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `SUPPORT.md`, issue/PR templates, `AUTHORS.md`)
 
 ## Deferred / Under Consideration
 - [ ] Web UI or TUI for managing agent installations

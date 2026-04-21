@@ -10,6 +10,24 @@ Every project must include the following files from the start:
 
 Keep all documentation up to date as the project evolves.
 
+## Keep docs in sync with the code
+
+Update documentation **in the same commit** as the code change that affects it — never defer doc updates to a separate pass:
+
+| Change type | Documents to update |
+|---|---|
+| New feature or command | `README.md` (usage, examples), `CHANGELOG.md` (`[Unreleased]` → Added), `TODO.md` (mark done or add new tasks) |
+| Behaviour change | `README.md` (affected sections), `CHANGELOG.md` (`[Unreleased]` → Changed) |
+| Bug fix | `CHANGELOG.md` (`[Unreleased]` → Fixed) |
+| Breaking change | `README.md` (migration notes), `CHANGELOG.md` (`[Unreleased]` → Changed or Removed), `VERSION` bump |
+| New environment variable or config key | `.env.example`, `README.md` (configuration section) |
+| Dependency added or removed | `README.md` (requirements section if user-facing) |
+
+Rules:
+- A commit that adds or changes observable behaviour without updating `README.md` and `CHANGELOG.md` is incomplete
+- `TODO.md` must reflect the current state of the work: mark tasks done as soon as they are, add new tasks as soon as they are identified
+- Do not batch doc updates into a dedicated "docs" commit at the end of a session — keep them co-located with the code they describe
+
 ## TODO.md structure
 
 `TODO.md` is the project's task tracker. It must be kept up to date alongside the code.

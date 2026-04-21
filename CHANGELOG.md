@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `rules/docs.md`: "Keep docs in sync with the code" section — explicit rule
+  that doc updates must be in the same commit as the code change, with a table
+  mapping change types to affected documents; no more deferred doc passes
+- `rules/review.md`: `TODO.md` added to self-review documentation checklist
 - `rules/quality.md`: 11 project quality dimensions — robustness, security,
   performance, extensibility, user-friendliness, maintainability, observability,
   testability, portability, auditability, privacy/data minimisation, resilience —

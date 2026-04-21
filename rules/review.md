@@ -18,6 +18,7 @@ Before proposing a commit or opening a PR, verify:
 ### Documentation
 - [ ] `README.md` updated if behavior or usage changed
 - [ ] `CHANGELOG.md` `[Unreleased]` section updated
+- [ ] `TODO.md` updated (tasks marked done, new tasks added)
 - [ ] `VERSION` bumped if applicable
 
 ### Security

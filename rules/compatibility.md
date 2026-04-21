@@ -14,7 +14,9 @@
 
 ## XDG Base Directory compliance
 
-All projects must follow the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/latest/):
+Applies to any project that writes files to the user's machine (config, logs, cache, state, backups, sockets). Pure libraries that write no files are exempt.
+
+All such projects must follow the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/latest/):
 
 | Purpose        | Variable          | Default               | Use for                          |
 |----------------|-------------------|-----------------------|----------------------------------|
@@ -25,13 +27,28 @@ All projects must follow the [XDG Base Directory Specification](https://specific
 | Runtime        | `XDG_RUNTIME_DIR` | set by session manager| Sockets, PIDs, ephemeral files   |
 
 Rules:
-- Never hardcode `~/.config`, `~/.local`, etc. — always read the XDG variable with its default as fallback:
-  ```bash
-  CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/<app-name>"
-  DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/<app-name>"
-  STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/<app-name>"
-  CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/<app-name>"
-  ```
+- Never hardcode `~/.config`, `~/.local`, etc. — always read the XDG variable with its default as fallback
 - Never write files directly to `$HOME` — use the appropriate XDG directory
 - Document the XDG paths used by the application in `README.md`
+- In tests: set `XDG_STATE_HOME` (and other relevant vars) to a temporary directory to prevent test runs from writing to the real user state
 - Termux exception: XDG variables may not be set by default; apply the same fallback pattern, which resolves correctly under Termux's `$HOME`
+
+### Shell
+```bash
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/<app-name>"
+DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/<app-name>"
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/<app-name>"
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/<app-name>"
+```
+
+### Python
+```python
+import os
+from pathlib import Path
+
+_HOME = Path.home()
+CONFIG_DIR = Path(os.environ.get("XDG_CONFIG_HOME", _HOME / ".config")) / "<app-name>"
+DATA_DIR   = Path(os.environ.get("XDG_DATA_HOME",   _HOME / ".local/share")) / "<app-name>"
+STATE_DIR  = Path(os.environ.get("XDG_STATE_HOME",  _HOME / ".local/state")) / "<app-name>"
+CACHE_DIR  = Path(os.environ.get("XDG_CACHE_HOME",  _HOME / ".cache")) / "<app-name>"
+```

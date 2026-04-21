@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `rules/compatibility.md`: XDG section clarified — scope condition added
+  ("applies to any project that writes files to the user's machine; pure
+  libraries are exempt"), test isolation rule added, Python code example
+  alongside the existing bash one
 - Global CLI options: `--verbose`/`-v`, `--quiet`/`-q`, `--debug`, `--no-color`
   (respects `NO_COLOR` env var), `--no-log`, `--log-dir <path>`; file logging
   enabled by default to `XDG_STATE_HOME/ai-rules/logs/ai-rules-YYYY-MM-DD.log`

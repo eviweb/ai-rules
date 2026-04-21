@@ -24,8 +24,8 @@
 
 ## Pre-release fixes
 ### Documentation
-- [ ] README: fix Gemini row (flat file → native imports), add `remove` command to usage, update `rules/` structure (20 → 25 files), update test count
-- [ ] CHANGELOG: document all unreleased changes from current session
+- [x] README: fix Gemini row (flat file → native imports), add `remove` command to usage, update `rules/` structure (20 → 25 files), update test count
+- [x] CHANGELOG: document all unreleased changes from current session
 
 ### CI
 - [x] Add `scripts/pre-commit` to shellcheck job (no `.sh` extension — currently skipped by `scripts/*.sh` glob)

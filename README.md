@@ -10,11 +10,11 @@ supported AI assistants.
 
 ## Supported assistants
 
-| Key      | Assistant    | Config file                   | Import support |
-|----------|--------------|-------------------------------|----------------|
-| `claude` | Claude Code  | `agents/claude/CLAUDE.md`     | native         |
-| `codex`  | Codex        | `agents/codex/AGENTS.md`      | flat file      |
-| `gemini` | Gemini       | `agents/gemini/GEMINI.md`     | flat file      |
+| Key      | Assistant    | Config file                   | Import support  |
+|----------|--------------|-------------------------------|-----------------|
+| `claude` | Claude Code  | `agents/claude/CLAUDE.md`     | native          |
+| `codex`  | Codex        | `agents/codex/AGENTS.md`      | flat file       |
+| `gemini` | Gemini       | `agents/gemini/GEMINI.md`     | native          |
 
 ## Structure
 
@@ -26,13 +26,15 @@ ai-rules/
 │   ├── codex/
 │   │   └── AGENTS.md       # Codex entry point (flat file, generated via `ai-rules generate`)
 │   └── gemini/
-│       └── GEMINI.md       # Gemini entry point (flat file, generated via `ai-rules generate`)
-├── rules/                  # Shared rule files by topic
+│       └── GEMINI.md       # Gemini entry point (imports rules via @./rules/)
+├── rules/                  # Shared rule files by topic (25 files)
 │   ├── principles.md
 │   ├── language.md
 │   ├── naming.md
 │   ├── editor.md
+│   ├── quality.md
 │   ├── tdd.md
+│   ├── testing.md
 │   ├── security.md
 │   ├── dependencies.md
 │   ├── compatibility.md
@@ -41,6 +43,9 @@ ai-rules/
 │   ├── versioning.md
 │   ├── shell.md
 │   ├── cli.md
+│   ├── logging.md
+│   ├── error-handling.md
+│   ├── api.md
 │   ├── git.md
 │   ├── commits.md
 │   ├── issues.md
@@ -53,9 +58,9 @@ ai-rules/
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest)
+├── tests/                    # Test suite (pytest, 94 tests)
 ├── .github/workflows/
-│   └── ci.yml                # CI pipeline (lint + test)
+│   └── ci.yml                # CI pipeline (lint + test + coverage)
 ├── agents.toml               # Agent registry and link declarations
 └── pyproject.toml            # Python package definition
 ```
@@ -108,8 +113,10 @@ Commands:
   list      List available agents.
   status    Show installation status for one or all agents.
   install   Install rules for one or all agents.
-  update    Update installation for one or all agents.
+  update    Update installation and regenerate flat files for one or all agents.
+  remove    Remove rules for one or all agents, restoring original configuration.
   generate  Generate flat rule files for agents without native import support.
+  verify    Verify flat rule files are in sync with current rules.
 ```
 
 ### Examples
@@ -131,9 +138,19 @@ ai-rules install claude
 # Dry run
 ai-rules install --dry-run
 
+# Update after pulling new rules (redeploys symlinks + regenerates flat files)
+ai-rules update
+
+# Remove all agents, restoring original configuration
+ai-rules remove
+ai-rules remove codex
+
 # Regenerate flat files for agents without native import support
 ai-rules generate
 ai-rules generate codex
+
+# Verify flat files are in sync (useful in CI)
+ai-rules verify
 
 # Shell completion (bash/zsh/fish)
 ai-rules --install-completion
@@ -145,7 +162,8 @@ For each declared link in `agents.toml`, `ai-rules install`:
 
 1. Creates a symlink in the agent's `install_dir`
 2. Backs up any existing non-symlink file before replacing it
-3. Skips links that are already correctly in place
+3. Applies config patches (updates specific keys in existing config files)
+4. Skips links that are already correctly in place
 
 | Symlink                    | Source                            |
 |----------------------------|-----------------------------------|
@@ -154,15 +172,38 @@ For each declared link in `agents.toml`, `ai-rules install`:
 | `~/.claude/settings.json`  | `settings.json`                   |
 | `~/.codex/AGENTS.md`       | `agents/codex/AGENTS.md`          |
 | `~/.gemini/GEMINI.md`      | `agents/gemini/GEMINI.md`         |
+| `~/.gemini/rules`          | `rules/`                          |
+
+Config patches applied:
+
+| File                       | Key                    | Value    |
+|----------------------------|------------------------|----------|
+| `~/.codex/config.toml`     | `project_doc_max_bytes`| `131072` |
+
+### What remove does
+
+`ai-rules remove` is the inverse of `install`:
+
+1. Removes symlinks owned by ai-rules
+2. Restores the most recent backup if one exists
+3. Reverts config patches (restores `.bak` backup, or removes the patched key)
 
 ### Agents without native import support (Codex)
 
-Codex does not support `@rules/` imports natively. Its entry point is a flat
-file generated from the Claude entry point with all imports resolved inline.
+Codex does not support file imports natively. Its entry point is a flat file
+generated from the Claude entry point with all imports resolved inline.
 Regenerate it after updating any rule file:
 
 ```bash
 ai-rules generate codex
+# or simply:
+ai-rules update codex
+```
+
+Verify the flat file is in sync (e.g. in CI):
+
+```bash
+ai-rules verify
 ```
 
 ## Development

@@ -19,27 +19,52 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   auth (Bearer), rate limiting with Retry-After, OpenAPI requirement
 - `rules/error-handling.md`: exit code table, error message format, per-language
   guidance (shell, Python, Go, JS/TS) — wrapping, re-raising with context, typed errors
-- `rules/ci.md`: add job timeouts (table + yaml example), caching strategies for
-  Python/uv, npm, pnpm, Rust/cargo (lockfile-keyed with restore-keys), artifact
-  retention policies (7 days ephemeral, 90 days release)
-- `rules/naming.md`: add naming conventions for Python, JavaScript/TypeScript, and Go
-- Gemini integration: `agents/gemini/GEMINI.md` flat entry point, agent registered
-  in `agents.toml` (`install_dir = ~/.gemini`, no import support), 6 tests in
-  `tests/test_gemini.py`, symlink deployed to `~/.gemini/GEMINI.md`
-- `rules/logging.md`: application-level logging rules — log levels, structured JSON
-  format, XDG log path, aggregation strategies, per-language guidance (Python, shell, Node.js)
-- `bin/ai-rules-wrapper`: symlink-safe bash entry point — resolves repo root via
-  `readlink -f`, sets `AI_RULES_HOME`, and delegates to the venv Python CLI
-- `src/ai_rules/cli.py`: add `__main__` block to support `python3 -m ai_rules.cli`
-- `TODO.md`: Gemini integration section with discovery strategy and task list
-- Codex integration: `agents/codex/AGENTS.md` flat entry point (all rules inlined)
-- `ai-rules generate` command: resolves `@rules/` imports and writes a flat file
-  for agents without native import support (`supports_imports = false`)
-- `src/ai_rules/generator.py`: `resolve_imports()` and `generate_flat_file()` functions
-- `agents.toml`: Codex agent registered (`install_dir = ~/.codex`, no import support)
-- `tests/test_generator.py`: 7 tests for the generator module
-- `rules/cli.md`: require shell completion for every CLI tool
+- `rules/ci.md`: job timeouts, caching strategies (uv, npm, pnpm, cargo),
+  artifact retention policies
+- `rules/naming.md`: naming conventions for Python, JavaScript/TypeScript, and Go
+- `rules/logging.md`: application-level logging — log levels, structured JSON
+  format, XDG log path, aggregation strategies, per-language guidance
 - `rules/commits.md`: prefer detailed commit messages
+- `rules/cli.md`: require shell completion for every CLI tool
+- Gemini integration: native `@./path` imports, 1M token context — `GEMINI.md`
+  rewritten as an import file mirroring `CLAUDE.md`; `rules/` symlinked into
+  `~/.gemini/`; `supports_imports = true` in `agents.toml`
+- Codex: `config_patches` mechanism — installer patches `~/.codex/config.toml`
+  in-place (`project_doc_max_bytes = 131072`) with backup, preserving existing
+  user configuration; no symlink to a repo-tracked config file
+- `ai-rules remove` command: unlinks symlinks managed by ai-rules and restores
+  the most recent backup; reverts config patches (restore `.bak` or remove key)
+- `ai-rules verify` command: checks flat files are in sync with current rules,
+  exits 1 if any are missing or stale — intended for CI use
+- `ai-rules update` now combines install + generate: redeploys symlinks and
+  regenerates flat files for flat-file agents in one step
+- `src/ai_rules/generator.py`: `condense_content()` strips fenced code blocks
+  and collapses blank lines; `verify_flat_file()` compares output against
+  resolved source; `condense` kwarg on `generate_flat_file()`
+- `src/ai_rules/installer.py`: `ConfigPatch` dataclass, `_patch_toml_file()`,
+  `_unpatch_toml_file()`, `remove_agent()`, backup/restore helpers
+- `src/ai_rules/agent.py`: `ConfigPatch` dataclass, `condense_flat_file` field
+- `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `SUPPORT.md`,
+  `.github/ISSUE_TEMPLATE/bug_report.md`, `.github/ISSUE_TEMPLATE/feature_request.md`,
+  `.github/PULL_REQUEST_TEMPLATE.md`, `AUTHORS.md`
+- `bin/ai-rules-wrapper`: symlink-safe bash entry point
+- Codex integration: `agents/codex/AGENTS.md` flat file, `ai-rules generate`
+  command, `resolve_imports()` and `generate_flat_file()` in `generator.py`
+
+### Changed
+- `scripts/pre-commit`: also triggers on `agents/claude/CLAUDE.md` changes
+  (source for Codex flat file generation); Gemini flat file regeneration
+  dropped (now uses native imports)
+- `ai-rules update`: previously identical to `install`; now also regenerates
+  flat files for agents with `supports_imports = false`
+
+### Fixed
+- CI: `scripts/pre-commit` added to shellcheck step (no `.sh` extension —
+  previously excluded by `scripts/*.sh` glob)
+- CI: coverage threshold enforced via `--cov-fail-under=80` in pytest config
+  (current coverage: 94%)
+- CLI e2e test fixture: changed from symlinks to copies of `rules/` and
+  `agents/` to prevent tests from modifying real repo files
 
 ## [0.3.1] - 2026-03-26
 

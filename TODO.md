@@ -12,24 +12,30 @@
 ### Agent support
 - [x] Claude Code integration (`agents/claude/CLAUDE.md`, native imports)
 - [x] Codex integration (`agents/codex/AGENTS.md`, flat file + `config_patches` for `project_doc_max_bytes`)
+- [x] Gemini integration (`agents/gemini/GEMINI.md`, native `@./path` imports, 1M token context)
 - [x] Register agents in `agents.toml`
 
 ### Automation
-- [x] `scripts/pre-commit`: regenerate flat files when `rules/` changes
-- [x] Update `scripts/pre-commit`: Gemini now uses native imports — skip flat file regeneration for `supports_imports = true` agents; extend trigger to `agents/claude/CLAUDE.md` changes
+- [x] `scripts/pre-commit`: regenerate flat files when `rules/` or `agents/claude/CLAUDE.md` changes
 - [x] `scripts/extract-changelog.sh`: robust CHANGELOG parsing
 
 ### Tests
-- [x] 58 tests covering agent loading, config resolution, installer, generator, remove
+- [x] 82 tests covering agent loading, config resolution, installer, generator, remove, CLI commands
+
+## Pre-release fixes
+### Documentation
+- [ ] README: fix Gemini row (flat file → native imports), add `remove` command to usage, update `rules/` structure (20 → 25 files), update test count
+- [ ] CHANGELOG: document all unreleased changes from current session
+
+### CI
+- [ ] Add `scripts/pre-commit` to shellcheck job (no `.sh` extension — currently skipped by `scripts/*.sh` glob)
+- [ ] Enforce coverage threshold in CI workflow (`--cov-fail-under=80` already in pyproject.toml but not enforced in ci.yml)
+
+### CLI
+- [ ] `verify` command: check that flat files are in sync with current rules — exits 1 if `generate` would produce a diff (CI use case, catches forgotten `ai-rules generate`)
+- [ ] Clarify `update` vs `install`: currently identical — decide if `update` should also run `generate` for flat-file agents
 
 ## Phase 2 — Agent coverage
-### Gemini integration
-Gemini CLI — global config: `~/.gemini/GEMINI.md` (native `@./path` imports, 1M token context)
-- [x] Add `agents/gemini/GEMINI.md` as native import file (mirrors `agents/claude/CLAUDE.md`)
-- [x] Register Gemini agent in `agents.toml` (`install_dir = ~/.gemini`, `supports_imports = true`)
-- [x] Deploy `rules/` symlink alongside `GEMINI.md` in `~/.gemini/`
-- [x] Verify Gemini loads all 25 rule files across 17 themes — confirmed
-
 ### Rules coverage
 - [x] Add naming conventions for Python, JavaScript/TypeScript, Go in `rules/naming.md`
 - [x] Add `rules/logging.md` for non-CLI projects (log levels, structured logging, aggregation)
@@ -42,33 +48,24 @@ Gemini CLI — global config: `~/.gemini/GEMINI.md` (native `@./path` imports, 1
 
 ## Phase 4 — Rules expansion
 ### High value
-- [x] `rules/quality.md`: 11 project quality dimensions (robustness, security, performance, extensibility, user-friendliness, maintainability, observability, testability, portability, auditability, privacy, resilience)
-- [x] `rules/error-handling.md`: exit codes, error message format, propagation patterns (shell, Python, Go, JS/TS)
-- [x] `rules/api.md`: REST conventions — versioning, HTTP status codes, error response format, pagination, authentication patterns
-- [x] `rules/testing.md`: test pyramid, coverage thresholds, test naming conventions, fixture patterns, test data management
-
-### Agent coverage
-- [ ] Cursor integration (`agents/cursor/` — `.cursor/rules/*.mdc`, flat file per rule or single file)
-- [ ] GitHub Copilot integration (`agents/copilot/` — `.github/copilot-instructions.md`, flat file)
-- [ ] Windsurf integration (`agents/windsurf/` — `.windsurfrules`, flat file)
-- [ ] Cline / Continue.dev / Aider — investigate config format before committing
-
-### Medium value
-- [ ] `rules/docker.md`: Dockerfile best practices, multi-stage builds, .dockerignore, compose conventions, image naming
-- [ ] `rules/database.md`: migration conventions, table/column naming, indexing rules, query patterns
-- [ ] `rules/python.md`: type hints, dataclasses, async patterns, packaging (beyond naming conventions)
-- [ ] `rules/frontend.md`: React/Vue conventions, state management, component structure, bundling
-
-### Lower priority
-- [ ] `rules/monitoring.md`: metrics, alerting, observability patterns for services
+- [x] `rules/quality.md`: 11 project quality dimensions
+- [x] `rules/error-handling.md`: exit codes, error message format, per-language patterns
+- [x] `rules/api.md`: REST conventions
+- [x] `rules/testing.md`: test pyramid, coverage, naming, fixture patterns
 
 ---
 
 ## Future / Postponed
-- [x] Open source documentation (`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `SUPPORT.md`, issue/PR templates, `AUTHORS.md`)
+- [ ] Agent coverage: Cursor (`.cursor/rules/*.mdc`), GitHub Copilot (`.github/copilot-instructions.md`), Windsurf (`.windsurfrules`)
+- [ ] Agent coverage: Cline / Continue.dev / Aider — investigate config format first
+- [ ] `rules/docker.md`: Dockerfile best practices, multi-stage builds, compose conventions
+- [ ] `rules/database.md`: migration conventions, naming, indexing, query patterns
+- [ ] `rules/python.md`: type hints, dataclasses, async, packaging
+- [ ] `rules/frontend.md`: React/Vue conventions, state management, component structure
+- [ ] `rules/monitoring.md`: metrics, alerting, observability patterns for services
 
 ## Deferred / Under Consideration
 - [ ] Web UI or TUI for managing agent installations
 - [ ] Embed rules version header in generated flat files (traceability)
-- [ ] `rules/performance.md`: profiling approach, benchmarking conventions, performance budgets
-- [ ] `rules/accessibility.md`: a11y standards, ARIA, color contrast — frontend-specific
+- [ ] `rules/performance.md`: profiling, benchmarking, performance budgets
+- [ ] `rules/accessibility.md`: a11y standards, ARIA, color contrast

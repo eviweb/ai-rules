@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- Global CLI options: `--verbose`/`-v`, `--quiet`/`-q`, `--debug`, `--no-color`
+  (respects `NO_COLOR` env var), `--no-log`, `--log-dir <path>`; file logging
+  enabled by default to `XDG_STATE_HOME/ai-rules/logs/ai-rules-YYYY-MM-DD.log`
 - XDG Base Directory compliance for backups: link backups and TOML `.bak`
   files now stored under `XDG_STATE_HOME/ai-rules/backups/<agent>/` instead
   of the agent install dir (`~/.claude/backup-*/`, `~/.codex/*.bak`)

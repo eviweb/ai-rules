@@ -369,6 +369,55 @@ def test_update_migrates_legacy_backups(repo: Path, tmp_path: Path) -> None:
 
 
 # ---------------------------------------------------------------------------
+# global options
+# ---------------------------------------------------------------------------
+
+
+def test_quiet_suppresses_action_output(repo: Path) -> None:
+    result = RUNNER.invoke(
+        app, ["--quiet", "install"], env={"AI_RULES_HOME": str(repo)}
+    )
+    assert result.exit_code == 0
+    assert "LINK" not in result.output
+    assert "Done." not in result.output
+
+
+def test_quiet_still_shows_errors(repo: Path) -> None:
+    result = RUNNER.invoke(
+        app, ["--quiet", "install", "unknown"], env={"AI_RULES_HOME": str(repo)}
+    )
+    assert result.exit_code == 1
+    assert "Error" in result.output
+
+
+def test_no_log_disables_file_logging(repo: Path, tmp_path: Path) -> None:
+    result = RUNNER.invoke(
+        app, ["--no-log", "list"], env={"AI_RULES_HOME": str(repo)}
+    )
+    assert result.exit_code == 0
+    log_dir = tmp_path / "state" / "ai-rules" / "logs"
+    assert not log_dir.exists()
+
+
+def test_file_logging_creates_log_file(repo: Path, tmp_path: Path) -> None:
+    invoke(["list"], repo)
+    log_dir = tmp_path / "state" / "ai-rules" / "logs"
+    assert log_dir.exists()
+    assert any(log_dir.glob("ai-rules-*.log"))
+
+
+def test_log_dir_overrides_log_directory(repo: Path, tmp_path: Path) -> None:
+    custom_log_dir = tmp_path / "custom-logs"
+    result = RUNNER.invoke(
+        app,
+        ["--log-dir", str(custom_log_dir), "list"],
+        env={"AI_RULES_HOME": str(repo)},
+    )
+    assert result.exit_code == 0
+    assert any(custom_log_dir.glob("ai-rules-*.log"))
+
+
+# ---------------------------------------------------------------------------
 # outside repo
 # ---------------------------------------------------------------------------
 

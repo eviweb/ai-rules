@@ -58,7 +58,7 @@ ai-rules/
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest, 94 tests)
+├── tests/                    # Test suite (pytest, 104 tests)
 ├── .github/workflows/
 │   └── ci.yml                # CI pipeline (lint + test + coverage)
 ├── agents.toml               # Agent registry and link declarations
@@ -106,8 +106,14 @@ export AI_RULES_HOME=~/path/to/ai-rules
 ai-rules [OPTIONS] COMMAND [ARGS]
 
 Options:
-  -V, --version   Show version and exit.
-  --help          Show this message and exit.
+  -V, --version            Show version and exit.
+  -v, --verbose            Enable verbose output.
+  -q, --quiet              Suppress non-error output.
+  --debug                  Enable debug mode.
+  --no-color               Disable colored output.
+  --no-log                 Disable file logging.
+  --log-dir PATH           Override the default log directory.
+  --help                   Show this message and exit.
 
 Commands:
   list      List available agents.
@@ -205,6 +211,20 @@ Verify the flat file is in sync (e.g. in CI):
 ```bash
 ai-rules verify
 ```
+
+## XDG Base Directory paths
+
+ai-rules follows the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/latest/). All files it writes on the user's machine respect XDG defaults:
+
+| Purpose | Path | Default |
+|---------|------|---------|
+| Backups (link files) | `$XDG_STATE_HOME/ai-rules/backups/<agent>/backup-<ts>/` | `~/.local/state/ai-rules/backups/<agent>/backup-<ts>/` |
+| Backups (config patches) | `$XDG_STATE_HOME/ai-rules/backups/<agent>/` | `~/.local/state/ai-rules/backups/<agent>/` |
+| Logs | `$XDG_STATE_HOME/ai-rules/logs/` | `~/.local/state/ai-rules/logs/` |
+
+Log filename format: `ai-rules-YYYY-MM-DD.log`. File logging is enabled by default; disable with `--no-log` or override the directory with `--log-dir <path>`.
+
+If upgrading from a version that stored backups in the agent install dirs (`~/.claude/backup-*/`, `~/.codex/*.bak`), run `ai-rules update` once to migrate them automatically.
 
 ## Development
 

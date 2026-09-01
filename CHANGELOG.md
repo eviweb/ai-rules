@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [0.5.0] - 2026-09-01
+
+### Added
 - `rules/ci.md`: "Workflow security" section (explicit `permissions:`, `concurrency`
   with `cancel-in-progress`, `pull_request` vs `pull_request_target`,
   `persist-credentials: false`), "Action supply chain" section (pin actions to a

@@ -9,6 +9,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 ### Changed
+- `.github/workflows/ci.yml`: hardened per `rules/ci.md` guidance — added
+  `workflow_dispatch`, workflow-level `permissions: contents: read`,
+  `concurrency` with `cancel-in-progress`, `persist-credentials: false` on
+  both `actions/checkout` steps (neither job pushes back), and pinned
+  `actions/checkout`, `astral-sh/setup-uv`, `actions/cache` to full commit
+  SHAs with a trailing version comment (kept on the major version lines
+  already in use — v4.x for checkout/cache, v5.x for setup-uv — rather than
+  bundling unrelated major bumps into this hardening pass)
 
 ### Fixed
 

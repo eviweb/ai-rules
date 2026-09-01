@@ -58,6 +58,10 @@
 - [x] `rules/api.md`: REST conventions
 - [x] `rules/testing.md`: test pyramid, coverage, naming, fixture patterns
 
+## Phase 5 — CI/CD hardening
+### Dogfooding
+- [x] Apply the new `rules/ci.md` guidance to this repo's own `.github/workflows/ci.yml` (`workflow_dispatch`, `permissions`, `concurrency`, `persist-credentials: false`, SHA-pinned actions with version comments)
+
 ---
 
 ## Future / Postponed

@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `rules/ci.md`: "Workflow security" section (explicit `permissions:`, `concurrency`
+  with `cancel-in-progress`, `pull_request` vs `pull_request_target`,
+  `persist-credentials: false`), "Action supply chain" section (pin actions to a
+  full commit SHA with a version comment, review pins deliberately, prefer
+  GitHub/upstream-maintained actions, verify checksums/signatures on downloaded
+  binaries), "Repository settings (GitHub)" section (workflow permissions,
+  actions allow-list, required status checks, fork approval policy, secrets
+  scoped to trusted workflows), and a `Rules` bullet on linting workflow files
+  (`actionlint`) once the workflow surface grows
+- `rules/release.md`: pre-release checklist now includes reviewing workflow
+  permissions, action pins, and external downloads used in CI
 
 ### Changed
 - `.github/workflows/ci.yml`: hardened per `rules/ci.md` guidance — added

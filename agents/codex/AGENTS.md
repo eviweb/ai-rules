@@ -1325,6 +1325,7 @@ In addition to the solo checklist:
 
 ## Triggers
 - Run on `push` and `pull_request`
+- Add `workflow_dispatch:` to allow an intentional manual run
 
 ## Jobs
 - **lint** — run `shellcheck` on all shell scripts
@@ -1334,6 +1335,33 @@ In addition to the solo checklist:
 ## Rules
 - Fail fast on error
 - Never hardcode secrets in workflow files — use platform secrets (Forgejo variables/secrets or GitHub Actions secrets)
+- Lint the workflow files themselves once the workflow surface grows (e.g. `actionlint`) — treat CI configuration like any other code under review
+
+## Workflow security
+
+- Declare workflow-level `permissions:` explicitly. Start with `contents: read` and grant additional permissions only to the job that needs them.
+- Add `concurrency` keyed by workflow and branch or pull request; enable `cancel-in-progress` for validation workflows.
+- Use `pull_request`, never `pull_request_target`, for jobs that check out or execute pull-request code — `pull_request_target` runs with access to secrets and a writable token against untrusted code.
+- Set `persist-credentials: false` on `actions/checkout` unless a later step in the same job must push back to the repository.
+
+```yaml
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+```
+
+## Action supply chain
+
+- Pin every third-party action to a full commit SHA and keep its human-readable version in a trailing comment:
+  ```yaml
+  - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+  ```
+- Review and deliberately update pins — an immutable SHA pin does not receive automatic feature or security upgrades.
+- Prefer actions maintained by GitHub or the upstream project over third-party forks.
+- Verify checksums or signatures for any binary downloaded in a workflow step — a fixed download URL alone does not authenticate the artifact.
 
 ## Job timeouts
 
@@ -1423,12 +1451,25 @@ Attach artifacts only when they provide diagnostic or release value. Set short r
 
 - Do not upload artifacts on every push — scope uploads to relevant branches (`main`, release branches) or failure conditions
 - Always name artifacts explicitly — avoid generic names like `output` or `build`
+
+## Repository settings (GitHub)
+
+These apply outside the workflow files themselves, in the platform's repository settings — verify and adjust before relying on a workflow for security:
+
+- **Settings > Actions > General > Workflow permissions**: keep the default read-only repository permission.
+- **Settings > Actions > General > Actions permissions**: restrict to an allow-list of the GitHub and upstream actions actually required, when the org/repo supports it.
+- **Settings > Branches**: require the CI checks as status checks on protected branches (see `rules/git.md`).
+- Keep the standard (non-automatic) approval policy for workflows triggered from forks.
+- Use repository or organization secrets only in trusted workflows — CI triggered by pull requests should run without privileged secrets.
+
+Forgejo exposes an equivalent set of settings under repository Settings; adapt the same principles (default least privilege, required checks, no secrets on untrusted triggers) to its UI.
 # Release Workflow
 
 ## Pre-release checklist
 - Ensure all tests pass and CI is green
 - Bump the `VERSION` file (follow semver rules from `versioning.md`)
 - Update `CHANGELOG.md`: rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and add a new empty `[Unreleased]` section
+- Review workflow permissions, action pins, and external downloads used in CI (see `rules/ci.md`)
 - Verify the tag does not already exist
 
 ## Release commit

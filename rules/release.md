@@ -4,6 +4,7 @@
 - Ensure all tests pass and CI is green
 - Bump the `VERSION` file (follow semver rules from `versioning.md`)
 - Update `CHANGELOG.md`: rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and add a new empty `[Unreleased]` section
+- Review workflow permissions, action pins, and external downloads used in CI (see `rules/ci.md`)
 - Verify the tag does not already exist
 
 ## Release commit

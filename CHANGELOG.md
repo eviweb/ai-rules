@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `rules/ci-triggers-template.md` — experimental, not-yet-mandatory CI trigger pattern (scope `push` to `main`/`develop`/conventional branch prefixes, exclude tags, scope `pull_request` to PRs targeting `main`, skip `lint`/`test` via job-level `if:` on docs-only changes without breaking required status checks). Validated once on a real project; apply manually elsewhere to test before folding into `rules/ci.md`
 
 ### Changed
 

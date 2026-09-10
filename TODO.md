@@ -64,6 +64,9 @@
 - [x] `rules/release.md`: pre-release checklist now reviews CI permissions/pins/downloads
 ### Dogfooding
 - [x] Apply the new `rules/ci.md` guidance to this repo's own `.github/workflows/ci.yml` (`workflow_dispatch`, `permissions`, `concurrency`, `persist-credentials: false`, SHA-pinned actions with version comments)
+### Trigger scoping (experimental)
+- [x] `rules/ci-triggers-template.md` — scope `push`/`pull_request` triggers (branch prefixes, no tags, PR target restricted to `main`), skip `lint`/`test` on docs-only changes via job-level `if:` (not trigger-level `paths-ignore`, to avoid stalling required status checks). Marked experimental — not yet folded into `rules/ci.md`'s mandatory checklist
+- [ ] Apply the template to 1-2 more real projects; if it holds up, promote it into `rules/ci.md` as a standing requirement and update `rules/git.md`'s branching model section to cross-reference it
 
 ---
 

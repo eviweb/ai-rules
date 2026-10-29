@@ -82,9 +82,12 @@
 - [ ] `rules/python.md`: type hints, dataclasses, async, packaging
 - [ ] `rules/frontend.md`: React/Vue conventions, state management, component structure
 - [ ] `rules/monitoring.md`: metrics, alerting, observability patterns for services
+- [ ] Apply GitHub rulesets to this repo (standby): merge-commit only, signed commits, PR required with 0 approvals (solo), required checks `Lint` / `Test (Python 3.11)` / `Test (Python 3.12)`, semver tag protection `refs/tags/[0-9]*`; depends on new templates in `gh-rulesets`
+- [ ] Validate `rules/ci-triggers-template.md` on a second real project, then promote it into `rules/ci.md` or drop it
 
 ## Deferred / Under Consideration
 - [ ] Web UI or TUI for managing agent installations
 - [ ] Embed rules version header in generated flat files (traceability)
+- [ ] Compact the rules with `ai-engineering-expert.md` (imperative style, no loss of meaning): start with a pilot on `quality.md`, compare agent behaviour before/after on 3 typical tasks; measured baseline: 25 imported files = 62.8 KB, `condense` alone saves 12 %
 - [ ] `rules/performance.md`: profiling, benchmarking, performance budgets
 - [ ] `rules/accessibility.md`: a11y standards, ARIA, color contrast

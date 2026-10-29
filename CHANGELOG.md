@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - CI: `actionlint` 1.7.12 step in the lint job, installed from the upstream release with a pinned SHA256 verified before extraction, as required by `rules/ci.md` (workflow linting, checksum on downloaded binaries)
 
 ### Changed
+- `TODO.md`: track the standby rulesets, the CI triggers template validation and the rules compaction idea in the backlog
 - `rules/release.md`, `rules/git.md`: release commit flow per project profile (strict: `release/X.Y.Z` branch and PR; light: direct commit allowed)
 - `README.md`: declare the strict project profile, refresh rule and test counts, list the experimental CI triggers template
 - `CONTRIBUTING.md`: merge commit and signed commits expectations

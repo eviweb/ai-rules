@@ -22,7 +22,7 @@
 - Push the tag only after user confirmation:
   ```bash
   git tag X.Y.Z
-  git push origin X.Y.Z
+  git push <remote> X.Y.Z   # remote name depends on your setup (origin, github, upstream...)
   ```
 
 ## Platform release

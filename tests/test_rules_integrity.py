@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -23,3 +24,25 @@ def test_claude_entry_point_imports_only_existing_rule_files():
     missing = [name for name in imported if not (REPO_ROOT / "rules" / name).is_file()]
 
     assert missing == []
+
+
+def test_rules_examples_do_not_use_unpinned_action_tags():
+    unpinned = []
+    for rule_file in sorted((REPO_ROOT / "rules").glob("*.md")):
+        for number, line in enumerate(rule_file.read_text().splitlines(), start=1):
+            if "uses:" in line and re.search(r"@v\d", line):
+                unpinned.append(f"{rule_file.name}:{number}")
+
+    assert unpinned == []
+
+
+def test_rules_not_imported_by_claude_entry_point_are_marked_experimental():
+    entry_point = (REPO_ROOT / "agents" / "claude" / "CLAUDE.md").read_text()
+    orphans = [
+        rule_file.name
+        for rule_file in sorted((REPO_ROOT / "rules").glob("*.md"))
+        if f"@rules/{rule_file.name}" not in entry_point
+        and "Status: experimental" not in rule_file.read_text()
+    ]
+
+    assert orphans == []

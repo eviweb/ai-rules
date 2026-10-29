@@ -6,7 +6,7 @@
 ## Description
 Every PR must include:
 - **Summary** — what this PR does and why
-- **Linked issue** — `Closes #n` (automatically closes the issue on merge)
+- **Linked issue** — `Closes #n` (automatically closes the issue on merge). Mandatory in the strict profile; in the light profile, write `None` when no issue exists
 - **Test checklist** — list of manual or automated verifications done
 
 ## Rules

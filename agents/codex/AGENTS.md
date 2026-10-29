@@ -644,9 +644,9 @@ When the user intends to share the project publicly, propose the following files
 - `.github/PULL_REQUEST_TEMPLATE.md` — pull request template
 - `AUTHORS.md` — list of contributors (optional, ask user)
 
-The application/script must read its version from the `VERSION` file, not from a hardcoded constant.
+The application/script must read its version from the `VERSION` file, not from a hardcoded constant — unless the language or packaging toolchain imposes another single source (e.g. `__version__` consumed by the build backend). In that case document the exception in `README.md` and keep `VERSION` in sync at release.
 
-**First commit of a new project:** `init: <short message>` with a detail block.
+**First commit of a new project:** standard Conventional Commits (e.g. `chore: initialize project`) with a detail block. Use `init:` or another format only on explicit user request.
 **Subsequent commits:** standard conventional commit messages (`feat:`, `fix:`, `docs:`, `test:`, etc.).
 # Changelog
 
@@ -1103,11 +1103,24 @@ Use cursor-based pagination for large or frequently updated collections; use off
 ## Git & collaboration
 # Git Workflow
 
+## Project profile
+
+Read this first: it conditions the rules below. Declare the profile in the project `README.md`. If undeclared, apply **strict**.
+
+| | light (solo, small project) | strict (shared, public, or consumed artifact) |
+|---|---|---|
+| PR | Recommended for `feat/` and `fix/`; direct commit on `main` tolerated for trivial `docs/`, `chore/` and the release commit | Mandatory for everything, release included |
+| Safeguard | Pre-commit hook, tests green locally | Platform branch protection: required checks, direct push blocked |
+
+Strict applies if any is true: several contributors, public repo with consumers, branch protection enabled.
+
+Common to both: no force-push on `main`, tests green before tagging, tags only on a commit validated by CI, one topic per branch or commit.
+
 ## Permanent branches
 
 | Branch | Role |
 |---|---|
-| `main` | Stable, always-deployable code. Protected — no direct commits. |
+| `main` | Stable, always-deployable code. Protected — no direct commits (light profile: see exceptions above). |
 | `develop` | Continuous integration of features before release (optional — use only for projects with a long release cycle). |
 
 For simple projects: `main` alone is sufficient, without `develop`.
@@ -1170,24 +1183,11 @@ When merging a PR into `main`, use a merge commit (`gh pr merge --merge`):
 3. Open a PR toward `main` → merge → tag `X.Y.Z`
 4. Delete the branch
 
-## Project profile
-
-Declare the profile in the project `README.md`. If undeclared, apply **strict**.
-
-| | light (solo, small project) | strict (shared, public, or consumed artifact) |
-|---|---|---|
-| PR | Recommended for `feat/` and `fix/`; direct commit on `main` tolerated for trivial `docs/`, `chore/` and the release commit | Mandatory for everything, release included |
-| Safeguard | Pre-commit hook, tests green locally | Platform branch protection: required checks, direct push blocked |
-
-Strict applies if any is true: several contributors, public repo with consumers, branch protection enabled.
-
-Common to both: no force-push on `main`, tests green before tagging, tags only on a commit validated by CI, one topic per branch or commit.
-
 ## General rules
 
 - One branch = one topic = one PR
 - Keep branches short-lived — rebase regularly to avoid large divergence
-- Never merge directly to `main` without a PR (strict profile; see Project profile)
+- Never merge directly to `main` without a PR (strict profile; see Project profile at the top)
 - Branch names must be self-explanatory without additional context
 
 ## Deleting merged branches
@@ -1263,7 +1263,7 @@ Apply at least one label:
 ## Description
 Every PR must include:
 - **Summary** — what this PR does and why
-- **Linked issue** — `Closes #n` (automatically closes the issue on merge)
+- **Linked issue** — `Closes #n` (automatically closes the issue on merge). Mandatory in the strict profile; in the light profile, write `None` when no issue exists
 - **Test checklist** — list of manual or automated verifications done
 
 ## Rules
@@ -1336,8 +1336,8 @@ In addition to the solo checklist:
 - Add `workflow_dispatch:` to allow an intentional manual run
 
 ## Jobs
-- **lint** — run `shellcheck` on all shell scripts
-- **test** — run the bats-core test suite
+- **lint** — run the project's linters (e.g. `shellcheck` for shell, `ruff` for Python, `eslint` for JS/TS)
+- **test** — run the project's test suite with its framework (see `tdd.md`)
 - **build** — run if the project produces build artifacts
 
 ## Rules
@@ -1393,11 +1393,11 @@ Default to the shortest reasonable value — increase only when a job consistent
 
 ## Caching strategies
 
-Cache dependency installs to avoid re-downloading on every run. Always key on the lockfile so the cache is invalidated when dependencies change.
+Cache dependency installs to avoid re-downloading on every run. Always key on the lockfile so the cache is invalidated when dependencies change. Examples show `<PINNED_SHA> # vX.Y.Z` — replace with a real full commit SHA (see Action supply chain).
 
 ### Python (uv / pip)
 ```yaml
-- uses: actions/cache@v4
+- uses: actions/cache@<PINNED_SHA> # vX.Y.Z
   with:
     path: ~/.cache/uv
     key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
@@ -1406,7 +1406,7 @@ Cache dependency installs to avoid re-downloading on every run. Always key on th
 
 ### Node.js (npm)
 ```yaml
-- uses: actions/cache@v4
+- uses: actions/cache@<PINNED_SHA> # vX.Y.Z
   with:
     path: ~/.npm
     key: npm-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
@@ -1415,7 +1415,7 @@ Cache dependency installs to avoid re-downloading on every run. Always key on th
 
 ### Node.js (pnpm)
 ```yaml
-- uses: actions/cache@v4
+- uses: actions/cache@<PINNED_SHA> # vX.Y.Z
   with:
     path: ~/.local/share/pnpm/store
     key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -1424,7 +1424,7 @@ Cache dependency installs to avoid re-downloading on every run. Always key on th
 
 ### Rust (cargo)
 ```yaml
-- uses: actions/cache@v4
+- uses: actions/cache@<PINNED_SHA> # vX.Y.Z
   with:
     path: |
       ~/.cargo/registry
@@ -1450,7 +1450,7 @@ Attach artifacts only when they provide diagnostic or release value. Set short r
 | Release artifacts | 90 days (or keep via platform release) |
 
 ```yaml
-- uses: actions/upload-artifact@v4
+- uses: actions/upload-artifact@<PINNED_SHA> # vX.Y.Z
   with:
     name: test-report
     path: reports/
@@ -1495,7 +1495,7 @@ Forgejo exposes an equivalent set of settings under repository Settings; adapt t
 - Push the tag only after user confirmation:
   ```bash
   git tag X.Y.Z
-  git push origin X.Y.Z
+  git push <remote> X.Y.Z   # remote name depends on your setup (origin, github, upstream...)
   ```
 
 ## Platform release

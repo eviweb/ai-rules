@@ -7,9 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `tests/test_rules_integrity.py`: checks for unpinned action tags in rule examples and for rules neither imported nor marked experimental
 - `rules/ci-triggers-template.md` — experimental, not-yet-mandatory CI trigger pattern (scope `push` to `main`/`develop`/conventional branch prefixes, exclude tags, scope `pull_request` to PRs targeting `main`, skip `lint`/`test` via job-level `if:` on docs-only changes without breaking required status checks). Validated once on a real project; apply manually elsewhere to test before folding into `rules/ci.md`
 
 ### Changed
+- `rules/ci.md`: action examples use a pinned-SHA placeholder (consistent with the supply-chain rule); lint/test jobs are tool-agnostic
+- `rules/git.md`: project profile moved first and referenced from the `main` protection row
+- `rules/release.md`: tag push uses a generic `<remote>`
+- `rules/docs.md`: `VERSION` single-source rule allows a documented toolchain exception; first commit follows Conventional Commits unless `init:` is explicitly requested
+- `rules/pr.md`: linked issue mandatory in strict profile only
 - `rules/git.md`: default merge strategy is now a merge commit (keeps GPG signatures; squash and rebase replace or drop them), `git branch -d` for cleanup, new light/strict project profile (strict by default)
 - `rules/versioning.md`, `docs.md`, `review.md`, `release.md`: `VERSION` is bumped only in the release commit
 - `rules/pr.md`: merge with a merge commit

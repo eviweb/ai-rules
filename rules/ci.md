@@ -12,8 +12,8 @@
 - Add `workflow_dispatch:` to allow an intentional manual run
 
 ## Jobs
-- **lint** — run `shellcheck` on all shell scripts
-- **test** — run the bats-core test suite
+- **lint** — run the project's linters (e.g. `shellcheck` for shell, `ruff` for Python, `eslint` for JS/TS)
+- **test** — run the project's test suite with its framework (see `tdd.md`)
 - **build** — run if the project produces build artifacts
 
 ## Rules
@@ -69,11 +69,11 @@ Default to the shortest reasonable value — increase only when a job consistent
 
 ## Caching strategies
 
-Cache dependency installs to avoid re-downloading on every run. Always key on the lockfile so the cache is invalidated when dependencies change.
+Cache dependency installs to avoid re-downloading on every run. Always key on the lockfile so the cache is invalidated when dependencies change. Examples show `<PINNED_SHA> # vX.Y.Z` — replace with a real full commit SHA (see Action supply chain).
 
 ### Python (uv / pip)
 ```yaml
-- uses: actions/cache@v4
+- uses: actions/cache@<PINNED_SHA> # vX.Y.Z
   with:
     path: ~/.cache/uv
     key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
@@ -82,7 +82,7 @@ Cache dependency installs to avoid re-downloading on every run. Always key on th
 
 ### Node.js (npm)
 ```yaml
-- uses: actions/cache@v4
+- uses: actions/cache@<PINNED_SHA> # vX.Y.Z
   with:
     path: ~/.npm
     key: npm-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
@@ -91,7 +91,7 @@ Cache dependency installs to avoid re-downloading on every run. Always key on th
 
 ### Node.js (pnpm)
 ```yaml
-- uses: actions/cache@v4
+- uses: actions/cache@<PINNED_SHA> # vX.Y.Z
   with:
     path: ~/.local/share/pnpm/store
     key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -100,7 +100,7 @@ Cache dependency installs to avoid re-downloading on every run. Always key on th
 
 ### Rust (cargo)
 ```yaml
-- uses: actions/cache@v4
+- uses: actions/cache@<PINNED_SHA> # vX.Y.Z
   with:
     path: |
       ~/.cargo/registry
@@ -126,7 +126,7 @@ Attach artifacts only when they provide diagnostic or release value. Set short r
 | Release artifacts | 90 days (or keep via platform release) |
 
 ```yaml
-- uses: actions/upload-artifact@v4
+- uses: actions/upload-artifact@<PINNED_SHA> # vX.Y.Z
   with:
     name: test-report
     path: reports/

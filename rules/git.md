@@ -1,10 +1,23 @@
 # Git Workflow
 
+## Project profile
+
+Read this first: it conditions the rules below. Declare the profile in the project `README.md`. If undeclared, apply **strict**.
+
+| | light (solo, small project) | strict (shared, public, or consumed artifact) |
+|---|---|---|
+| PR | Recommended for `feat/` and `fix/`; direct commit on `main` tolerated for trivial `docs/`, `chore/` and the release commit | Mandatory for everything, release included |
+| Safeguard | Pre-commit hook, tests green locally | Platform branch protection: required checks, direct push blocked |
+
+Strict applies if any is true: several contributors, public repo with consumers, branch protection enabled.
+
+Common to both: no force-push on `main`, tests green before tagging, tags only on a commit validated by CI, one topic per branch or commit.
+
 ## Permanent branches
 
 | Branch | Role |
 |---|---|
-| `main` | Stable, always-deployable code. Protected — no direct commits. |
+| `main` | Stable, always-deployable code. Protected — no direct commits (light profile: see exceptions above). |
 | `develop` | Continuous integration of features before release (optional — use only for projects with a long release cycle). |
 
 For simple projects: `main` alone is sufficient, without `develop`.
@@ -67,24 +80,11 @@ When merging a PR into `main`, use a merge commit (`gh pr merge --merge`):
 3. Open a PR toward `main` → merge → tag `X.Y.Z`
 4. Delete the branch
 
-## Project profile
-
-Declare the profile in the project `README.md`. If undeclared, apply **strict**.
-
-| | light (solo, small project) | strict (shared, public, or consumed artifact) |
-|---|---|---|
-| PR | Recommended for `feat/` and `fix/`; direct commit on `main` tolerated for trivial `docs/`, `chore/` and the release commit | Mandatory for everything, release included |
-| Safeguard | Pre-commit hook, tests green locally | Platform branch protection: required checks, direct push blocked |
-
-Strict applies if any is true: several contributors, public repo with consumers, branch protection enabled.
-
-Common to both: no force-push on `main`, tests green before tagging, tags only on a commit validated by CI, one topic per branch or commit.
-
 ## General rules
 
 - One branch = one topic = one PR
 - Keep branches short-lived — rebase regularly to avoid large divergence
-- Never merge directly to `main` without a PR (strict profile; see Project profile)
+- Never merge directly to `main` without a PR (strict profile; see Project profile at the top)
 - Branch names must be self-explanatory without additional context
 
 ## Deleting merged branches

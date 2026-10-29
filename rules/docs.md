@@ -128,7 +128,7 @@ When the user intends to share the project publicly, propose the following files
 - `.github/PULL_REQUEST_TEMPLATE.md` — pull request template
 - `AUTHORS.md` — list of contributors (optional, ask user)
 
-The application/script must read its version from the `VERSION` file, not from a hardcoded constant.
+The application/script must read its version from the `VERSION` file, not from a hardcoded constant — unless the language or packaging toolchain imposes another single source (e.g. `__version__` consumed by the build backend). In that case document the exception in `README.md` and keep `VERSION` in sync at release.
 
-**First commit of a new project:** `init: <short message>` with a detail block.
+**First commit of a new project:** standard Conventional Commits (e.g. `chore: initialize project`) with a detail block. Use `init:` or another format only on explicit user request.
 **Subsequent commits:** standard conventional commit messages (`feat:`, `fix:`, `docs:`, `test:`, etc.).

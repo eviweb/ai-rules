@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 
 ### Fixed
+- `rules/language.md`: restore the English-only rule for project artifacts, accidentally
+  overwritten by test content since 0.4.0 (propagated to the Codex flat file)
+- `tests/test_rules_integrity.py`: guard against rule regressions (language rule content,
+  `CLAUDE.md` imports pointing to existing files)
 
 ## [0.5.0] - 2026-09-01
 

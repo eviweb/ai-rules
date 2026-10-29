@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `rules/ci-triggers-template.md` — experimental, not-yet-mandatory CI trigger pattern (scope `push` to `main`/`develop`/conventional branch prefixes, exclude tags, scope `pull_request` to PRs targeting `main`, skip `lint`/`test` via job-level `if:` on docs-only changes without breaking required status checks). Validated once on a real project; apply manually elsewhere to test before folding into `rules/ci.md`
 
 ### Changed
+- `rules/git.md`: default merge strategy is now a merge commit (keeps GPG signatures; squash and rebase replace or drop them), `git branch -d` for cleanup, new light/strict project profile (strict by default)
+- `rules/versioning.md`, `docs.md`, `review.md`, `release.md`: `VERSION` is bumped only in the release commit
+- `rules/pr.md`: merge with a merge commit
 
 ### Fixed
 - `rules/language.md`: restore the English-only rule for project artifacts, accidentally

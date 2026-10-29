@@ -35,16 +35,15 @@ git rebase main
 - Resolves conflicts commit by commit
 - **Never rebase a branch that has already been pushed and shared** — this rewrites history and will break other contributors. Use `git push --force-with-lease` only when the branch is personal and you are certain no one else is working on it.
 
-## Merge strategy: squash merge
+## Merge strategy: merge commit
 
-When merging a PR into `main`, use squash merge:
+When merging a PR into `main`, use a merge commit (`gh pr merge --merge`):
 
-- One commit per feature/fix on `main` — clean, bisect-friendly history
-- Eliminates noise commits (`wip`, `fix typo`, `try again`)
-- Rollback is simple: one commit to revert
-- **The squash commit message must be written carefully** — do not use the auto-generated message. Write a proper conventional commit message that summarizes the intent of the entire branch.
-
-Exception: hotfixes that consist of a single meaningful commit can be merged directly without squashing.
+- Original commits keep their author GPG signature (`Verified`); the merge commit is signed by the platform
+- Squash replaces the signature with the platform's; rebase rewrites commits and leaves them `unsigned` — do not use either when signatures matter
+- History is non-linear: `git log --first-parent main` gives the linear, per-PR view
+- Commit messages survive as-is on `main`: clean the branch before pushing (`git rebase -i`, only while it is not shared) and write the merge message carefully — no `wip` / `fix typo` commits
+- Do not enable "require linear history" in the ruleset (incompatible); "require signed commits" is compatible
 
 ## Workflow by case
 
@@ -53,7 +52,7 @@ Exception: hotfixes that consist of a single meaningful commit can be merged dir
 2. Develop with conventional commits
 3. Rebase on `main` if it has diverged: `git rebase main`
 4. Open a PR toward `main`
-5. CI green + review → squash merge with a clean commit message
+5. CI green + review → merge commit with a clean message
 6. Delete the branch
 
 **Hotfix (critical production bug)**
@@ -68,28 +67,35 @@ Exception: hotfixes that consist of a single meaningful commit can be merged dir
 3. Open a PR toward `main` → merge → tag `X.Y.Z`
 4. Delete the branch
 
+## Project profile
+
+Declare the profile in the project `README.md`. If undeclared, apply **strict**.
+
+| | light (solo, small project) | strict (shared, public, or consumed artifact) |
+|---|---|---|
+| PR | Recommended for `feat/` and `fix/`; direct commit on `main` tolerated for trivial `docs/`, `chore/` and the release commit | Mandatory for everything, release included |
+| Safeguard | Pre-commit hook, tests green locally | Platform branch protection: required checks, direct push blocked |
+
+Strict applies if any is true: several contributors, public repo with consumers, branch protection enabled.
+
+Common to both: no force-push on `main`, tests green before tagging, tags only on a commit validated by CI, one topic per branch or commit.
+
 ## General rules
 
 - One branch = one topic = one PR
 - Keep branches short-lived — rebase regularly to avoid large divergence
-- Never merge directly to `main` without a PR
+- Never merge directly to `main` without a PR (strict profile; see Project profile)
 - Branch names must be self-explanatory without additional context
 
 ## Deleting merged branches
 
-After a PR is merged on GitHub, always use `git branch -D` (force delete) rather than `git branch -d`:
+After a PR is merged, delete the local branch:
 
 ```bash
-# Confirm the PR is merged first
-gh pr view <number> --json state -q .state
-
-# Then force-delete the local branch
-git branch -D <branch>
+git branch -d <branch>
 ```
 
-`git branch -d` checks that the branch SHA exists in the current HEAD history.
-When GitHub uses squash merge or rebase merge, commit SHAs are rewritten — the
-local branch will never be recognized as merged, and `-d` will always fail.
+`-d` works because merge commits keep the original SHAs reachable from `main`. If it fails, the PR was merged another way (squash/rebase): confirm with `gh pr view <number> --json state -q .state`, then use `-D`.
 
 ## Merge conflicts
 

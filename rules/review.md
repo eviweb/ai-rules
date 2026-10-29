@@ -19,7 +19,6 @@ Before proposing a commit or opening a PR, verify:
 - [ ] `README.md` updated if behavior or usage changed
 - [ ] `CHANGELOG.md` `[Unreleased]` section updated
 - [ ] `TODO.md` updated (tasks marked done, new tasks added)
-- [ ] `VERSION` bumped if applicable
 
 ### Security
 - [ ] No credentials, tokens, or secrets introduced

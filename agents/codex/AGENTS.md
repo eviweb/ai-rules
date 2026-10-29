@@ -1180,7 +1180,7 @@ When merging a PR into `main`, use a merge commit (`gh pr merge --merge`):
 **Release**
 1. Create `release/X.Y.Z` from `main`
 2. Bump `VERSION`, update `CHANGELOG.md`
-3. Open a PR toward `main` → merge → tag `X.Y.Z`
+3. Open a PR toward `main` → merge → tag `X.Y.Z` (light profile: the release commit may be made directly on `main`, then tag)
 4. Delete the branch
 
 ## General rules
@@ -1482,6 +1482,7 @@ Forgejo exposes an equivalent set of settings under repository Settings; adapt t
 
 ## Release commit
 - Commit message: `chore(release): bump version to X.Y.Z`
+- Strict profile: commit on a `release/X.Y.Z` branch and merge through a PR (see `git.md`). Light profile: the release commit may go directly on `main`
 - Wait for explicit user validation before committing and tagging
 
 ## Release message

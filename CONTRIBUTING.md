@@ -38,7 +38,7 @@ shellcheck scripts/pre-commit scripts/*.sh tests/run-tests.sh
 2. Create a branch: `git checkout -b feat/<short-description>`
 3. Make your changes with tests
 4. Ensure all tests pass and the linter is clean
-5. Open a pull request against `main`
+5. Open a pull request against `main`; it is merged with a merge commit, so keep your commits clean (no `wip` / `fix typo`) and signed
 
 Branch naming follows the conventions in `rules/git.md`.
 Commit messages follow Conventional Commits (`rules/commits.md`).

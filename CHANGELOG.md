@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [0.6.1] - 2026-10-29
+
+### Added
 - CI: `actionlint` 1.7.12 step in the lint job, installed from the upstream release with a pinned SHA256 verified before extraction, as required by `rules/ci.md` (workflow linting, checksum on downloaded binaries)
 
 ### Changed

@@ -19,7 +19,7 @@ Update documentation **in the same commit** as the code change that affects it �
 | New feature or command | `README.md` (usage, examples), `CHANGELOG.md` (`[Unreleased]` → Added), `TODO.md` (mark done or add new tasks) |
 | Behaviour change | `README.md` (affected sections), `CHANGELOG.md` (`[Unreleased]` → Changed) |
 | Bug fix | `CHANGELOG.md` (`[Unreleased]` → Fixed) |
-| Breaking change | `README.md` (migration notes), `CHANGELOG.md` (`[Unreleased]` → Changed or Removed), `VERSION` bump |
+| Breaking change | `README.md` (migration notes), `CHANGELOG.md` (`[Unreleased]` → Changed or Removed; flag as breaking so release bumps MAJOR) |
 | New environment variable or config key | `.env.example`, `README.md` (configuration section) |
 | Dependency added or removed | `README.md` (requirements section if user-facing) |
 

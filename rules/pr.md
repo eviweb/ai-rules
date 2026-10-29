@@ -12,4 +12,5 @@ Every PR must include:
 ## Rules
 - One PR = one topic — no bundling unrelated changes
 - Do not merge without a green CI
+- Merge with a merge commit to keep commit signatures (see `git.md`)
 - Delete the branch after merge

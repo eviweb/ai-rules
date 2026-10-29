@@ -6,4 +6,4 @@ All projects follow semver (`MAJOR.MINOR.PATCH`):
 - **MINOR** — new backwards-compatible functionality
 - **MAJOR** — breaking changes
 
-Bump the version in the `VERSION` file as part of the commit that introduces the change.
+Bump `VERSION` only in the release commit (see `release.md`), never in feature or fix commits. Record the change in `CHANGELOG.md` `[Unreleased]`; the bump level (PATCH/MINOR/MAJOR) is decided at release from its content.

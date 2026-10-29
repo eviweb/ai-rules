@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `rules/ci-triggers-template.md` — experimental, not-yet-mandatory CI trigger pattern (scope `push` to `main`/`develop`/conventional branch prefixes, exclude tags, scope `pull_request` to PRs targeting `main`, skip `lint`/`test` via job-level `if:` on docs-only changes without breaking required status checks). Validated once on a real project; apply manually elsewhere to test before folding into `rules/ci.md`
 
 ### Changed
+- Version single source: `VERSION` is now the only place to bump; the build backend reads it (`pyproject.toml`), `ai_rules.__version__` comes from the installed metadata with a `VERSION` file fallback when run from source. Run `uv sync` after bumping to refresh installed metadata
 - `rules/ci.md`: action examples use a pinned-SHA placeholder (consistent with the supply-chain rule); lint/test jobs are tool-agnostic
 - `rules/git.md`: project profile moved first and referenced from the `main` protection row
 - `rules/release.md`: tag push uses a generic `<remote>`

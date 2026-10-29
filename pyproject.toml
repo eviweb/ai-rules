@@ -22,7 +22,8 @@ dev = [
 ]
 
 [tool.hatch.version]
-path = "src/ai_rules/__init__.py"
+path = "VERSION"
+pattern = "(?P<version>\\d+\\.\\d+\\.\\d+\\S*)"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ai_rules"]

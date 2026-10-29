@@ -59,6 +59,8 @@
 - [x] `rules/testing.md`: test pyramid, coverage, naming, fixture patterns
 
 ## Phase 5 — CI/CD hardening
+### Versioning
+- [x] Single source of truth: `VERSION` read by hatchling, `__version__` derived from metadata (fallback to `VERSION`)
 ### Rules
 - [x] `rules/ci.md`: workflow security (permissions, concurrency, `pull_request` vs `pull_request_target`, `persist-credentials`), action supply chain (SHA pinning, checksums), repository settings (GitHub)
 - [x] `rules/release.md`: pre-release checklist now reviews CI permissions/pins/downloads
@@ -85,6 +87,3 @@
 - [ ] Embed rules version header in generated flat files (traceability)
 - [ ] `rules/performance.md`: profiling, benchmarking, performance budgets
 - [ ] `rules/accessibility.md`: a11y standards, ARIA, color contrast
-- [ ] Versioning: `__version__` in `__init__.py` and `VERSION` file are two
-  sources of truth — migrate to `importlib.metadata` reading from `VERSION`
-  via hatchling; non-trivial given build toolchain constraints

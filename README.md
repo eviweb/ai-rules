@@ -232,6 +232,9 @@ If upgrading from a version that stored backups in the agent install dirs (`~/.c
 # Install with dev dependencies
 uv sync --extra dev
 
+# After changing VERSION, refresh the installed metadata so `--version` matches
+uv sync --extra dev
+
 # Install git hooks (regenerates flat files automatically on commit)
 ln -sf ../../scripts/pre-commit .git/hooks/pre-commit
 

@@ -46,3 +46,28 @@ def test_rules_not_imported_by_claude_entry_point_are_marked_experimental():
     ]
 
     assert orphans == []
+
+
+def test_package_version_matches_version_file():
+    from ai_rules import __version__
+
+    assert __version__ == (REPO_ROOT / "VERSION").read_text().strip()
+
+
+def test_package_version_falls_back_to_version_file_when_not_installed(monkeypatch):
+    import importlib
+    import importlib.metadata
+
+    import ai_rules
+
+    def raise_not_found(name):
+        raise importlib.metadata.PackageNotFoundError(name)
+
+    monkeypatch.setattr(importlib.metadata, "version", raise_not_found)
+    try:
+        reloaded = importlib.reload(ai_rules)
+
+        assert reloaded.__version__ == (REPO_ROOT / "VERSION").read_text().strip()
+    finally:
+        monkeypatch.undo()
+        importlib.reload(ai_rules)

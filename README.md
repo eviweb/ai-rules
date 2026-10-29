@@ -27,7 +27,7 @@ ai-rules/
 │   │   └── AGENTS.md       # Codex entry point (flat file, generated via `ai-rules generate`)
 │   └── gemini/
 │       └── GEMINI.md       # Gemini entry point (imports rules via @./rules/)
-├── rules/                  # Shared rule files by topic (25 files)
+├── rules/                  # Shared rule files by topic (25 imported + 1 experimental)
 │   ├── principles.md
 │   ├── language.md
 │   ├── naming.md
@@ -52,13 +52,14 @@ ai-rules/
 │   ├── pr.md
 │   ├── review.md
 │   ├── ci.md
-│   └── release.md
+│   ├── release.md
+│   └── ci-triggers-template.md  # experimental, not imported by agents
 ├── scripts/
 │   └── extract-changelog.sh  # Extract release notes from CHANGELOG.md
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest, 104 tests)
+├── tests/                    # Test suite (pytest, 110 tests)
 ├── .github/workflows/
 │   └── ci.yml                # CI pipeline (lint + test + coverage)
 ├── agents.toml               # Agent registry and link declarations
@@ -225,6 +226,10 @@ ai-rules follows the [XDG Base Directory Specification](https://specifications.f
 Log filename format: `ai-rules-YYYY-MM-DD.log`. File logging is enabled by default; disable with `--no-log` or override the directory with `--log-dir <path>`.
 
 If upgrading from a version that stored backups in the agent install dirs (`~/.claude/backup-*/`, `~/.codex/*.bak`), run `ai-rules update` once to migrate them automatically.
+
+## Project profile
+
+`ai-rules` follows the **strict** profile defined in `rules/git.md`: every change goes through a pull request, merged with a merge commit (`gh pr merge --merge`) so that commit signatures are preserved, with CI required on `main`. Releases are bumped only in the release commit (`VERSION` is the single source of the version).
 
 ## Development
 

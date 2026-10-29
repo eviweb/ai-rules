@@ -9,6 +9,7 @@
 
 ## Release commit
 - Commit message: `chore(release): bump version to X.Y.Z`
+- Strict profile: commit on a `release/X.Y.Z` branch and merge through a PR (see `git.md`). Light profile: the release commit may go directly on `main`
 - Wait for explicit user validation before committing and tagging
 
 ## Release message

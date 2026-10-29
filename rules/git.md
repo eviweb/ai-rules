@@ -77,7 +77,7 @@ When merging a PR into `main`, use a merge commit (`gh pr merge --merge`):
 **Release**
 1. Create `release/X.Y.Z` from `main`
 2. Bump `VERSION`, update `CHANGELOG.md`
-3. Open a PR toward `main` → merge → tag `X.Y.Z`
+3. Open a PR toward `main` → merge → tag `X.Y.Z` (light profile: the release commit may be made directly on `main`, then tag)
 4. Delete the branch
 
 ## General rules

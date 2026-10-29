@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `CONTRIBUTING.md`: merge commit and signed commits expectations
 
 ### Fixed
+- `README.md`: the post-bump refresh command is `uv sync --extra dev --reinstall-package ai-rules`; plain `uv sync` leaves the editable install metadata stale and `--version` (and the version guard test) report the previous version
 
 ## [0.6.0] - 2026-10-29
 

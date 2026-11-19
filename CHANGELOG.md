@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `ROADMAP.md`: roadmap 0.6.2 → 1.0.0 (always-on core, scoped rules, skills, hooks, cross-agent parity, evals) with findings, target architecture, phases and acceptance criteria
 
 ### Changed
+- `rules/versioning.md`, `rules/release.md`: between releases `VERSION` is `X.Y.Z-dev`; the release commit drops the suffix and the first commit of the next version sets the new `-dev` value
 - `TODO.md`: points to `ROADMAP.md`, adds the roadmap phases as `R0`–`R8` checklists; the deferred rules compaction and version header items and the duplicated template-validation item are folded into them
 
 ### Fixed

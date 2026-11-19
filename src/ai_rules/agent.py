@@ -21,6 +21,19 @@ class ConfigPatch:
 
 
 @dataclass
+class SettingsMerge:
+    """A JSON settings file merged key by key instead of linked.
+
+    *source* is the fragment in the repository; *owned* lists the dotted key
+    paths ai-rules is allowed to write (every other key belongs to the agent).
+    """
+
+    file: str
+    source: str
+    owned: list[str]
+
+
+@dataclass
 class Agent:
     key: str
     name: str
@@ -30,6 +43,7 @@ class Agent:
     condense_flat_file: bool
     links: list[Link]
     config_patches: list[ConfigPatch] = field(default_factory=list)
+    settings_merges: list[SettingsMerge] = field(default_factory=list)
 
     @property
     def install_path(self) -> Path:
@@ -51,6 +65,10 @@ def load_agents(config_path: Path) -> dict[str, Agent]:
             ConfigPatch(file=p["file"], key=p["key"], value=p["value"])
             for p in agent_data.get("config_patches", [])
         ]
+        settings_merges = [
+            SettingsMerge(file=m["file"], source=m["source"], owned=list(m["owned"]))
+            for m in agent_data.get("settings_merge", [])
+        ]
         agents[key] = Agent(
             key=key,
             name=agent_data["name"],
@@ -60,6 +78,7 @@ def load_agents(config_path: Path) -> dict[str, Agent]:
             condense_flat_file=agent_data.get("condense_flat_file", False),
             links=links,
             config_patches=config_patches,
+            settings_merges=settings_merges,
         )
 
     return agents

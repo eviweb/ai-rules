@@ -8,6 +8,7 @@ from datetime import datetime
 from pathlib import Path
 
 from ai_rules.agent import Agent, ConfigPatch, ConfigValue, Link
+from ai_rules.settings_merge import merge_settings, status_settings, unmerge_settings
 
 _BOOL_TOML = {True: "true", False: "false"}
 
@@ -185,6 +186,9 @@ def install_agent(
         target_file = agent.install_path / patch.file
         actions.extend(_patch_toml_file(target_file, patch, agent.key, dry_run=dry_run))
 
+    for settings_merge in agent.settings_merges:
+        actions.extend(merge_settings(repo_root, agent, settings_merge, dry_run=dry_run))
+
     return actions
 
 
@@ -230,6 +234,9 @@ def remove_agent(
                 bak.unlink()
         else:
             actions.extend(_unpatch_toml_file(target_file, patch, dry_run=dry_run))
+
+    for settings_merge in agent.settings_merges:
+        actions.extend(unmerge_settings(repo_root, agent, settings_merge, dry_run=dry_run))
 
     return actions
 
@@ -295,5 +302,10 @@ def status_agent(repo_root: Path, agent: Agent) -> list[tuple[str, str]]:
         else:
             current = existing.get(patch.key, "<missing>")
             results.append((patch.file, f"patch needed ({patch.key}={current})"))
+
+    for settings_merge in agent.settings_merges:
+        results.append(
+            (settings_merge.file, status_settings(repo_root, agent, settings_merge))
+        )
 
     return results

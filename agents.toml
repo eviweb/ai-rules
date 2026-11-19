@@ -11,6 +11,13 @@
 # [[agents.*.links]] — Files or directories to deploy (symlinks by default)
 #   source   Path relative to repo root
 #   target   Path relative to install_dir
+#
+# [[agents.*.settings_merge]] — JSON settings file merged key by key
+#   file     Target file name in install_dir
+#   source   Fragment relative to repo root
+#   owned    Dotted key paths ai-rules may write; every other key is left alone.
+#            Additions are tracked in $XDG_STATE_HOME/ai-rules/state/ so that
+#            `remove` reverts only what ai-rules added.
 
 [agents.claude]
 name             = "Claude Code"
@@ -26,9 +33,12 @@ supports_imports = true
   source = "rules"
   target = "rules"
 
-  [[agents.claude.links]]
+  # settings.json is merged key by key, never symlinked: Claude Code writes its
+  # own keys (plugins, /permissions, theme) into the deployed file.
+  [[agents.claude.settings_merge]]
+  file   = "settings.json"
   source = "settings.json"
-  target = "settings.json"
+  owned  = ["permissions.allow", "permissions.ask", "permissions.deny", "hooks", "autoApprove"]
 
 [agents.codex]
 name               = "Codex"

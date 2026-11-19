@@ -62,7 +62,7 @@ ai-rules/
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest, 121 tests)
+├── tests/                    # Test suite (pytest, 148 tests)
 ├── .github/workflows/
 │   └── ci.yml                # CI pipeline (lint + test + coverage)
 ├── agents.toml               # Agent registry and link declarations
@@ -173,13 +173,13 @@ For each declared link in `agents.toml`, `ai-rules install`:
 1. Creates a symlink in the agent's `install_dir`
 2. Backs up any existing non-symlink file before replacing it
 3. Applies config patches (updates specific keys in existing config files)
-4. Skips links that are already correctly in place
+4. Merges settings files key by key (see below)
+5. Skips links that are already correctly in place
 
 | Symlink                    | Source                            |
 |----------------------------|-----------------------------------|
 | `~/.claude/CLAUDE.md`      | `agents/claude/CLAUDE.md`         |
 | `~/.claude/rules`          | `rules/`                          |
-| `~/.claude/settings.json`  | `settings.json`                   |
 | `~/.codex/AGENTS.md`       | `agents/codex/AGENTS.md`          |
 | `~/.gemini/GEMINI.md`      | `agents/gemini/GEMINI.md`         |
 | `~/.gemini/rules`          | `rules/`                          |
@@ -190,6 +190,14 @@ Config patches applied:
 |----------------------------|------------------------|----------|
 | `~/.codex/config.toml`     | `project_doc_max_bytes`| `131072` |
 
+Settings merge (`[[agents.*.settings_merge]]` in `agents.toml`):
+
+| File                       | Fragment        | Keys owned by ai-rules                                      |
+|----------------------------|-----------------|-------------------------------------------------------------|
+| `~/.claude/settings.json`  | `settings.json` | `permissions.allow`, `permissions.ask`, `permissions.deny`, `hooks`, `autoApprove` |
+
+`~/.claude/settings.json` is a regular file, not a symlink: Claude Code writes its own keys into it (plugins, `/permissions`, theme), which would otherwise land in this repository. ai-rules adds its list entries and scalars, never touches other keys, and records what it added in `$XDG_STATE_HOME/ai-rules/state/claude-settings.json`. `ai-rules update` retires entries that left the fragment. A legacy symlinked install is migrated automatically: the content is backed up to `$XDG_STATE_HOME/ai-rules/backups/claude/` and replaced by a regular file with the same content.
+
 ### What remove does
 
 `ai-rules remove` is the inverse of `install`:
@@ -197,6 +205,7 @@ Config patches applied:
 1. Removes symlinks owned by ai-rules
 2. Restores the most recent backup if one exists
 3. Reverts config patches (restores `.bak` backup, or removes the patched key)
+4. Reverts settings merges: removes only the entries ai-rules added and restores the scalars it replaced (the file is deleted if it ends up empty)
 
 ### How rules are loaded (Claude Code)
 

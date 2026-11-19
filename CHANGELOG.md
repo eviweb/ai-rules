@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [0.6.2] - 2026-11-19
+
+### Added
 - `docs/metrics/baseline-0.6.1.md`: reference measurement of the context cost of the rules (`/context` categories, per-file tokens, estimate versus measurement, effect of the first R0 fixes), the comparison point for the roadmap phases
 - `scripts/measure-context.sh`: per-layer byte, line and approximate token counts (Claude `@imports`, `rules/` directory, Gemini imports, Codex flat file, plus `core/` and `skills/` when present) as a Markdown table, with `--files` and a double-loading count; covered by `tests/test_measure_context.py`
 - `ROADMAP.md`: roadmap 0.6.2 → 1.0.0 (always-on core, scoped rules, skills, hooks, cross-agent parity, evals) with findings, target architecture, phases and acceptance criteria

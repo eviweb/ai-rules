@@ -62,7 +62,7 @@ ai-rules/
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest, 148 tests)
+├── tests/                    # Test suite (pytest, 169 tests)
 ├── .github/workflows/
 │   └── ci.yml                # CI pipeline (lint + test + coverage)
 ├── agents.toml               # Agent registry and link declarations
@@ -194,9 +194,9 @@ Settings merge (`[[agents.*.settings_merge]]` in `agents.toml`):
 
 | File                       | Fragment        | Keys owned by ai-rules                                      |
 |----------------------------|-----------------|-------------------------------------------------------------|
-| `~/.claude/settings.json`  | `settings.json` | `permissions.allow`, `permissions.ask`, `permissions.deny`, `hooks`, `autoApprove` |
+| `~/.claude/settings.json`  | `settings.json` | `permissions.allow`, `permissions.ask`, `permissions.deny`, `hooks` |
 
-`~/.claude/settings.json` is a regular file, not a symlink: Claude Code writes its own keys into it (plugins, `/permissions`, theme), which would otherwise land in this repository. ai-rules adds its list entries and scalars, never touches other keys, and records what it added in `$XDG_STATE_HOME/ai-rules/state/claude-settings.json`. `ai-rules update` retires entries that left the fragment. A legacy symlinked install is migrated automatically: the content is backed up to `$XDG_STATE_HOME/ai-rules/backups/claude/` and replaced by a regular file with the same content.
+`~/.claude/settings.json` is a regular file, not a symlink: Claude Code writes its own keys into it (plugins, `/permissions`, theme), which would otherwise land in this repository. ai-rules adds its list entries and scalars (`allow`, `ask` and `deny` rules; `git commit`, `git push`, `rm`, `npx` and `chmod` ask first, destructive variants such as `rm -r`, `git push --force`, `git reset --hard` and `git clean` are denied, `--force-with-lease` still asks), never touches other keys, and records what it added in `$XDG_STATE_HOME/ai-rules/state/claude-settings.json`. `ai-rules update` retires entries that left the fragment. A legacy symlinked install is migrated automatically: the content is backed up to `$XDG_STATE_HOME/ai-rules/backups/claude/` and replaced by a regular file with the same content.
 
 ### What remove does
 

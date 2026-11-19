@@ -126,15 +126,15 @@ Expected outcome: always-on context drops from ~65 KB to ≤ 13 KB (core + boots
 
 **Goal:** stop writing into the repo, close permission holes, align permissions with `commits.md`.
 
-- [ ] Replace the `settings.json` symlink with a **managed merge**: generalize the existing `config_patches` mechanism (TOML, Codex) to JSON
+- [x] Replace the `settings.json` symlink with a **managed merge**: generalize the existing `config_patches` mechanism (TOML, Codex) to JSON
   - `agents.toml`: new `[[agents.claude.settings_merge]]` entries listing owned key paths (`permissions.allow`, `permissions.deny`, `permissions.ask`, `hooks`)
   - Track owned entries in `$XDG_STATE_HOME/ai-rules/state/claude-settings.json` so `remove` reverts only what ai-rules added
   - Never overwrite keys Claude Code manages (`enabledPlugins`, model, theme…)
-- [ ] Move to `ask`: `git commit *`, `git push *`, `rm *`, `npx *`, `chmod *`
-- [ ] Extend `deny`: `rm -fr *`, `rm -r *`, `rm -R *`, `git push --force*`, `git push -f *`, `git reset --hard*`, `git checkout -- *`, `git clean *`, `git branch -D *`
-- [ ] Remove `autoApprove` unless confirmed in current Claude Code settings documentation
-- [ ] Migration in `update`: detect legacy symlink, back it up to XDG state, replace with a regular file containing merged content
-- [ ] Tests: merge idempotency, removal restores pre-install content, unknown user keys preserved
+- [x] Move to `ask`: `git commit *`, `git push *`, `rm *`, `npx *`, `chmod *`
+- [x] Extend `deny`: `rm -fr *`, `rm -r *`, `rm -R *`, `git push --force *`, `git push -f *` (a space before `*` leaves `--force-with-lease` under `ask`, as allowed by `git.md`), `git reset --hard *`, `git checkout -- *`, `git clean *`, `git branch -D *`
+- [x] Remove `autoApprove` unless confirmed in current Claude Code settings documentation
+- [x] Migration in `update`: detect legacy symlink, back it up to XDG state, replace with a regular file containing merged content
+- [x] Tests: merge idempotency, removal restores pre-install content, unknown user keys preserved
 
 **Acceptance:** installing a plugin or editing `/permissions` leaves the ai-rules working tree clean; `ai-rules remove` restores the exact previous `~/.claude/settings.json`.
 

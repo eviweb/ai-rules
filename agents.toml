@@ -38,7 +38,7 @@ supports_imports = true
   [[agents.claude.settings_merge]]
   file   = "settings.json"
   source = "settings.json"
-  owned  = ["permissions.allow", "permissions.ask", "permissions.deny", "hooks", "autoApprove"]
+  owned  = ["permissions.allow", "permissions.ask", "permissions.deny", "hooks"]
 
 [agents.codex]
 name               = "Codex"

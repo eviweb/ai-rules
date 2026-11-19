@@ -77,10 +77,10 @@
 ### R0 — Baseline and double-load fix (0.6.2)
 - [x] Integrate `ROADMAP.md` and align this tracker
 - [x] Add `scripts/measure-context.sh` (per-layer size table, double-loading count)
-- [ ] Record the baseline in a fresh Claude Code session (`/context`, `/memory`) and compare with the script's estimate
+- [x] Record the baseline in a fresh Claude Code session (`/context`) and compare with the script's estimate: `docs/metrics/baseline-0.6.1.md`
 - [x] Calibrate `measure-context.sh` on `/context` (2.7 bytes/token) and reword the overlap warning: baseline of 2026-11-19 shows no double loading (symlink deployment)
 - [x] Keep experimental files out of the auto-loaded `rules/` directory: `ci-triggers-template.md` moved to `templates/ci-triggers.md` (~2.4k tokens per session); integrity test requires every `rules/` file to be imported
-- [ ] Integrity test: no file reachable through two loading paths; commit `docs/metrics/baseline-0.6.1.md`
+- [ ] Integrity test: no file reachable through two loading paths
 ### R1 — Settings hardening (0.6.3, breaking)
 - [ ] Replace the `settings.json` symlink with a managed JSON merge (generalize `config_patches`)
 - [ ] Tighten permissions (`ask` for commit/push/rm/npx/chmod, extended `deny`), drop `autoApprove`, migrate legacy symlink in `update`

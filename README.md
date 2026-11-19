@@ -55,6 +55,7 @@ ai-rules/
 │   └── release.md
 ├── templates/              # On-demand references, not auto-loaded
 │   └── ci-triggers.md      # experimental CI triggers pattern
+├── docs/metrics/           # Context-cost measurements per version (baseline-0.6.1.md)
 ├── scripts/
 │   ├── extract-changelog.sh  # Extract release notes from CHANGELOG.md
 │   └── measure-context.sh    # Size of each rule-loading layer (bytes, lines, ~tokens)

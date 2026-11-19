@@ -2,7 +2,7 @@
 
 ## Pre-release checklist
 - Ensure all tests pass and CI is green
-- Bump the `VERSION` file in the release commit only (level per `versioning.md`)
+- Set `VERSION` to the final `X.Y.Z` (dropping the `-dev` suffix) in the release commit only (level per `versioning.md`)
 - Update `CHANGELOG.md`: rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and add a new empty `[Unreleased]` section
 - Review workflow permissions, action pins, and external downloads used in CI (see `rules/ci.md`)
 - Verify the tag does not already exist
@@ -11,6 +11,7 @@
 - Commit message: `chore(release): bump version to X.Y.Z`
 - Strict profile: commit on a `release/X.Y.Z` branch and merge through a PR (see `git.md`). Light profile: the release commit may go directly on `main`
 - Wait for explicit user validation before committing and tagging
+- After tagging, opening the next version sets `VERSION` to `X.Y.Z-dev` (next planned version) in its first commit
 
 ## Release message
 - Before any release action, draft a detailed release message covering: summary of changes, breaking changes (if any), migration steps (if any), notable fixes

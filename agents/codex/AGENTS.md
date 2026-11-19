@@ -676,7 +676,7 @@ All projects follow semver (`MAJOR.MINOR.PATCH`):
 - **MINOR** — new backwards-compatible functionality
 - **MAJOR** — breaking changes
 
-Bump `VERSION` only in the release commit (see `release.md`), never in feature or fix commits. Record the change in `CHANGELOG.md` `[Unreleased]`; the bump level (PATCH/MINOR/MAJOR) is decided at release from its content.
+Bump `VERSION` only in the release commit (see `release.md`), never in feature or fix commits. Between releases, `VERSION` holds the next planned version with a `-dev` suffix (`X.Y.Z-dev`), set in the commit that opens that version; the release commit removes the suffix. Record the change in `CHANGELOG.md` `[Unreleased]`; the bump level (PATCH/MINOR/MAJOR) is decided at release from its content.
 
 ## Shell & CLI
 # Shell Scripts
@@ -1475,7 +1475,7 @@ Forgejo exposes an equivalent set of settings under repository Settings; adapt t
 
 ## Pre-release checklist
 - Ensure all tests pass and CI is green
-- Bump the `VERSION` file in the release commit only (level per `versioning.md`)
+- Set `VERSION` to the final `X.Y.Z` (dropping the `-dev` suffix) in the release commit only (level per `versioning.md`)
 - Update `CHANGELOG.md`: rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and add a new empty `[Unreleased]` section
 - Review workflow permissions, action pins, and external downloads used in CI (see `rules/ci.md`)
 - Verify the tag does not already exist
@@ -1484,6 +1484,7 @@ Forgejo exposes an equivalent set of settings under repository Settings; adapt t
 - Commit message: `chore(release): bump version to X.Y.Z`
 - Strict profile: commit on a `release/X.Y.Z` branch and merge through a PR (see `git.md`). Light profile: the release commit may go directly on `main`
 - Wait for explicit user validation before committing and tagging
+- After tagging, opening the next version sets `VERSION` to `X.Y.Z-dev` (next planned version) in its first commit
 
 ## Release message
 - Before any release action, draft a detailed release message covering: summary of changes, breaking changes (if any), migration steps (if any), notable fixes

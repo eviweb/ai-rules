@@ -7,8 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- Managed JSON merge for agent settings (`[[agents.*.settings_merge]]` in `agents.toml`, `src/ai_rules/settings_merge.py`): ai-rules writes only the key paths it owns, records additions in `$XDG_STATE_HOME/ai-rules/state/`, and `update` / `remove` retire or revert exactly those entries; `status` reports the merged file
 
 ### Changed
+- **Breaking:** `~/.claude/settings.json` is no longer a symlink to the repository `settings.json` but a regular file merged by ai-rules, so Claude Code no longer writes into the repository. `ai-rules update` migrates a legacy symlink automatically (backup in `$XDG_STATE_HOME/ai-rules/backups/claude/`, keys written by Claude Code are preserved)
 
 ### Fixed
 

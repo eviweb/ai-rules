@@ -10,9 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Managed JSON merge for agent settings (`[[agents.*.settings_merge]]` in `agents.toml`, `src/ai_rules/settings_merge.py`): ai-rules writes only the key paths it owns, records additions in `$XDG_STATE_HOME/ai-rules/state/`, and `update` / `remove` retire or revert exactly those entries; `status` reports the merged file
 
 ### Changed
+- Claude Code permissions: `git commit *`, `git push *`, `rm *`, `npx *` and `chmod *` move from `allow` to `ask` (aligns with the "never commit autonomously" rule); `deny` now also blocks `rm -fr/-r/-R/-Rf/-fR`, forced `git push` (`--force`, `-f`; `--force-with-lease` still asks), `git reset --hard`, `git checkout -- <path>`, `git clean` and `git branch -D`; `update` retires the entries that left `allow`
 - **Breaking:** `~/.claude/settings.json` is no longer a symlink to the repository `settings.json` but a regular file merged by ai-rules, so Claude Code no longer writes into the repository. `ai-rules update` migrates a legacy symlink automatically (backup in `$XDG_STATE_HOME/ai-rules/backups/claude/`, keys written by Claude Code are preserved)
 
 ### Fixed
+
+### Removed
+- `autoApprove` key from `settings.json`: it is not a documented Claude Code setting (`update` removes it from `~/.claude/settings.json` when ai-rules set it)
 
 ## [0.6.2] - 2026-11-19
 

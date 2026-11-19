@@ -84,7 +84,7 @@
 - [x] Document the effective loading mechanism in `README.md`
 ### R1 — Settings hardening (0.6.3, breaking)
 - [x] Replace the `settings.json` symlink with a managed JSON merge (generalize `config_patches`), including legacy symlink migration in `update`
-- [ ] Tighten permissions (`ask` for commit/push/rm/npx/chmod, extended `deny`), drop `autoApprove`
+- [x] Tighten permissions (`ask` for commit/push/rm/npx/chmod, extended `deny`), drop `autoApprove`
 ### R2 — Core slimming and scoped rules (0.7.0, breaking)
 - [ ] `core/` (always loaded, ≤ 200 lines / 10 KB) + scoped rules with `paths:` frontmatter + CI size budgets
 - [ ] Compaction pass with `ai-engineering-expert.md` (replaces the former deferred "compact the rules" item; baseline: 25 imported files = 62.8 KB, `condense` alone saves 12 %)

@@ -9,7 +9,6 @@
       "Bash(npm run *)",
       "Bash(npm install *)",
       "Bash(npm install)",
-      "Bash(npx *)",
       "Bash(node *)",
       "Bash(tsc *)",
       "Bash(shellcheck *)",
@@ -21,21 +20,17 @@
       "Bash(git log)",
       "Bash(git log *)",
       "Bash(git add *)",
-      "Bash(git commit *)",
       "Bash(git branch)",
       "Bash(git branch *)",
       "Bash(git checkout *)",
       "Bash(git tag *)",
-      "Bash(git push *)",
       "Bash(git stash)",
       "Bash(git stash *)",
       "Bash(ls)",
       "Bash(ls *)",
       "Bash(mkdir *)",
-      "Bash(chmod *)",
       "Bash(cp *)",
       "Bash(mv *)",
-      "Bash(rm *)",
       "Bash(rmdir *)",
       "Bash(ln -s *)",
       "Bash(cat *)",
@@ -43,12 +38,31 @@
       "Bash(which *)",
       "Bash(pwd)"
     ],
+    "ask": [
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(rm *)",
+      "Bash(npx *)",
+      "Bash(chmod *)"
+    ],
     "deny": [
       "Bash(rm -rf *)",
+      "Bash(rm -fr *)",
+      "Bash(rm -r *)",
+      "Bash(rm -R *)",
+      "Bash(rm -Rf *)",
+      "Bash(rm -fR *)",
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(git push * --force)",
+      "Bash(git push * -f)",
+      "Bash(git reset --hard *)",
+      "Bash(git checkout -- *)",
+      "Bash(git clean *)",
+      "Bash(git branch -D *)",
       "Bash(sudo *)",
       "Bash(curl * | bash *)",
       "Bash(wget * | bash *)"
     ]
-  },
-  "autoApprove": false
+  }
 }

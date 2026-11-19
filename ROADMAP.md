@@ -110,7 +110,7 @@ Expected outcome: always-on context drops from ~65 KB to ≤ 13 KB (core + boots
 
 - [x] Integrate this roadmap into the repository (`ROADMAP.md`) and align `TODO.md` with it
 - [ ] Record baseline with `/context` and `/memory` in a fresh Claude Code session: total memory tokens, list of loaded rule files
-- [ ] Add `scripts/measure-context.sh`: byte/line/approx-token counts for every layer (core, scoped, skills, flat files); output as Markdown table
+- [x] Add `scripts/measure-context.sh`: byte/line/approx-token counts for every layer (core, scoped, skills, flat files); output as Markdown table
 - [ ] Fix F2: stop deploying `rules/` to `~/.claude/rules` **or** stop importing it — pick one:
   - Option A (preferred until Phase 2): deploy to `~/.claude/ai-rules/rules` (not auto-loaded) and keep `@imports`
   - Option B: keep `~/.claude/rules` auto-load and remove `@rules/` imports from `CLAUDE.md`

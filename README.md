@@ -55,11 +55,12 @@ ai-rules/
 │   ├── release.md
 │   └── ci-triggers-template.md  # experimental, not imported by agents
 ├── scripts/
-│   └── extract-changelog.sh  # Extract release notes from CHANGELOG.md
+│   ├── extract-changelog.sh  # Extract release notes from CHANGELOG.md
+│   └── measure-context.sh    # Size of each rule-loading layer (bytes, lines, ~tokens)
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest, 110 tests)
+├── tests/                    # Test suite (pytest, 118 tests)
 ├── .github/workflows/
 │   └── ci.yml                # CI pipeline (lint + test + coverage)
 ├── agents.toml               # Agent registry and link declarations

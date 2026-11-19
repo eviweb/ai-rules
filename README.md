@@ -27,7 +27,7 @@ ai-rules/
 │   │   └── AGENTS.md       # Codex entry point (flat file, generated via `ai-rules generate`)
 │   └── gemini/
 │       └── GEMINI.md       # Gemini entry point (imports rules via @./rules/)
-├── rules/                  # Shared rule files by topic (25 imported + 1 experimental)
+├── rules/                  # Shared rule files by topic (25 files, all imported)
 │   ├── principles.md
 │   ├── language.md
 │   ├── naming.md
@@ -52,15 +52,16 @@ ai-rules/
 │   ├── pr.md
 │   ├── review.md
 │   ├── ci.md
-│   ├── release.md
-│   └── ci-triggers-template.md  # experimental, not imported by agents
+│   └── release.md
+├── templates/              # On-demand references, not auto-loaded
+│   └── ci-triggers.md      # experimental CI triggers pattern
 ├── scripts/
 │   ├── extract-changelog.sh  # Extract release notes from CHANGELOG.md
 │   └── measure-context.sh    # Size of each rule-loading layer (bytes, lines, ~tokens)
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest, 120 tests)
+├── tests/                    # Test suite (pytest, 121 tests)
 ├── .github/workflows/
 │   └── ci.yml                # CI pipeline (lint + test + coverage)
 ├── agents.toml               # Agent registry and link declarations

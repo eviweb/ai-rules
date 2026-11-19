@@ -1,5 +1,8 @@
 # CI Triggers Template (experimental)
 
+> Lives in `templates/`, not `rules/`: the `rules/` directory is auto-loaded into every
+> agent session, and this on-demand reference should only be read when setting up CI triggers.
+
 > **Status: experimental — not yet part of the mandatory `rules/ci.md` checklist.**
 > Validated once on a real project (see below). Apply manually on other
 > projects to test before folding it into `ci.md` as a standing requirement.

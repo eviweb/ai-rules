@@ -10,6 +10,7 @@
 ## Triggers
 - Run on `push` and `pull_request`
 - Add `workflow_dispatch:` to allow an intentional manual run
+- Scoped trigger pattern (branches, tags, docs-only changes): experimental, see `templates/ci-triggers.md` when setting up CI triggers
 
 ## Jobs
 - **lint** — run the project's linters (e.g. `shellcheck` for shell, `ruff` for Python, `eslint` for JS/TS)

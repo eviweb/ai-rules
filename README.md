@@ -198,6 +198,13 @@ Config patches applied:
 2. Restores the most recent backup if one exists
 3. Reverts config patches (restores `.bak` backup, or removes the patched key)
 
+### How rules are loaded (Claude Code)
+
+- `~/.claude/CLAUDE.md` imports each rule (`@rules/<name>.md`): it is the table of contents, and also the source from which the Codex flat file is generated and the Gemini entry point mirrored.
+- `~/.claude/rules/` is auto-loaded in full by Claude Code: every file in `rules/` is in context, imported or not. Hence every `rules/` file must be imported (checked by the tests), and on-demand or experimental material lives in `templates/`.
+- With the symlink deployment created by `ai-rules install`, the imports and the auto-loaded directory resolve to the same files, and Claude Code loads each one once (measured, see `docs/metrics/baseline-0.6.1.md`). A copied deployment was not tested.
+- Always-on cost of the rules: about 65 KB, roughly 24.5k tokens. Estimate it with `scripts/measure-context.sh` and confirm with `/context`.
+
 ### Agents without native import support (Codex)
 
 Codex does not support file imports natively. Its entry point is a flat file

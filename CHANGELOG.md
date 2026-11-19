@@ -7,8 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `ROADMAP.md`: roadmap 0.6.2 → 1.0.0 (always-on core, scoped rules, skills, hooks, cross-agent parity, evals) with findings, target architecture, phases and acceptance criteria
 
 ### Changed
+- `TODO.md`: points to `ROADMAP.md`, adds the roadmap phases as `R0`–`R8` checklists; the deferred rules compaction and version header items and the duplicated template-validation item are folded into them
 
 ### Fixed
 

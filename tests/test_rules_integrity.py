@@ -36,16 +36,22 @@ def test_rules_examples_do_not_use_unpinned_action_tags():
     assert unpinned == []
 
 
-def test_rules_not_imported_by_claude_entry_point_are_marked_experimental():
+def test_every_rules_file_is_imported_because_rules_directory_is_autoloaded():
     entry_point = (REPO_ROOT / "agents" / "claude" / "CLAUDE.md").read_text()
-    orphans = [
+    not_imported = [
         rule_file.name
         for rule_file in sorted((REPO_ROOT / "rules").glob("*.md"))
         if f"@rules/{rule_file.name}" not in entry_point
-        and "Status: experimental" not in rule_file.read_text()
     ]
 
-    assert orphans == []
+    assert not_imported == []
+
+
+def test_ci_rule_points_to_existing_trigger_template():
+    ci_rule = (REPO_ROOT / "rules" / "ci.md").read_text()
+
+    assert "templates/ci-triggers.md" in ci_rule
+    assert (REPO_ROOT / "templates" / "ci-triggers.md").is_file()
 
 
 def test_package_version_matches_version_file():

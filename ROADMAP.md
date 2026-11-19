@@ -114,7 +114,7 @@ Expected outcome: always-on context drops from ~65 KB to ≤ 13 KB (core + boots
 - [ ] Fix F2: stop deploying `rules/` to `~/.claude/rules` **or** stop importing it — pick one:
   - Option A (preferred until Phase 2): deploy to `~/.claude/ai-rules/rules` (not auto-loaded) and keep `@imports`
   - Option B: keep `~/.claude/rules` auto-load and remove `@rules/` imports from `CLAUDE.md`
-- [ ] Ensure experimental files are never auto-loaded (move `ci-triggers-template.md` out of any auto-loaded directory)
+- [x] Ensure experimental files are never auto-loaded (`ci-triggers-template.md` moved to `templates/ci-triggers.md`)
 - [ ] Integrity test: no file is reachable through two loading paths
 
 **Acceptance:** `/context` shows each rule exactly once; `ci-triggers-template.md` absent from loaded memory; baseline numbers committed in `docs/metrics/baseline-0.6.1.md`.

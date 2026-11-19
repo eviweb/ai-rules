@@ -76,7 +76,8 @@
 ## Roadmap 0.6.2 → 1.0.0 (see ROADMAP.md)
 ### R0 — Baseline and double-load fix (0.6.2)
 - [x] Integrate `ROADMAP.md` and align this tracker
-- [ ] Record the baseline (`/context`, `/memory`) and add `scripts/measure-context.sh`
+- [x] Add `scripts/measure-context.sh` (per-layer size table, double-loading count)
+- [ ] Record the baseline in a fresh Claude Code session (`/context`, `/memory`) and compare with the script's estimate
 - [ ] Fix the double loading of rules (`~/.claude/rules` auto-load + `@imports`); keep experimental files out of auto-loaded directories
 - [ ] Integrity test: no file reachable through two loading paths; commit `docs/metrics/baseline-0.6.1.md`
 ### R1 — Settings hardening (0.6.3, breaking)

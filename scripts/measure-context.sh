@@ -9,18 +9,24 @@ SCRIPT_VERSION="$(cat "${SCRIPT_DIR}/../VERSION" 2>/dev/null || echo "unknown")"
 
 ROOT="${SCRIPT_DIR}/.."
 SHOW_FILES=0
+# Calibrated against /context (2026-11-19, 26.8k tokens for 71,680 bytes of rules); model dependent
+BYTES_PER_TOKEN="2.7"
 
 usage() {
   cat <<EOF
 Usage: ${SCRIPT_NAME} [options]
 
-Print byte, line and approximate token counts (bytes / 4, rounded up) for each
-layer that loads rules into an agent session. Output is a Markdown table.
-Token counts are an estimate: confirm with /context in a real session.
+Print byte, line and approximate token counts (bytes / bytes-per-token, rounded
+up) for each layer that loads rules into an agent session. Output is a Markdown
+table. Token counts are an estimate calibrated on one model: confirm with
+/context in a real session.
 
 Options:
   -r|--root <path>   Repository root (default: parent of this script)
   --files            Also list every file of the rules/ directory
+  --bytes-per-token <n>
+                     Bytes per token used for the estimate (default: ${BYTES_PER_TOKEN},
+                     measured with /context; plain prose is closer to 4)
   -h|--help          Display this help message and exit
   -V|--version       Display script version and exit
   --debug            Enable trace mode (set -x)
@@ -32,6 +38,11 @@ EOF
 die() {
   echo "Error: $1" >&2
   exit 2
+}
+
+# Print the ceiling of <bytes> / BYTES_PER_TOKEN.
+estimate_tokens() {
+  awk -v bytes="$1" -v ratio="$BYTES_PER_TOKEN" 'BEGIN { t = bytes / ratio; n = int(t); if (t - n > 1e-9) n++; print n }'
 }
 
 # Print "<files> <bytes> <lines>" for the files passed as arguments.
@@ -51,7 +62,7 @@ print_row() {
   shift
   local files bytes lines
   read -r files bytes lines <<< "$(count_files "$@")"
-  printf '| %s | %s | %s | %s | %s |\n' "$label" "$files" "$bytes" "$lines" "$(((bytes + 3) / 4))"
+  printf '| %s | %s | %s | %s | %s |\n' "$label" "$files" "$bytes" "$lines" "$(estimate_tokens "$bytes")"
 }
 
 # Print the rule files imported by an entry point (@rules/x.md or @./rules/x.md).
@@ -70,6 +81,14 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     --files) SHOW_FILES=1; shift ;;
+    --bytes-per-token)
+      [[ $# -ge 2 ]] || die "--bytes-per-token requires a value"
+      if ! [[ "$2" =~ ^[0-9]+(\.[0-9]+)?$ ]] || ! awk -v v="$2" 'BEGIN { exit !(v > 0) }'; then
+        die "--bytes-per-token must be a positive number, got '$2'"
+      fi
+      BYTES_PER_TOKEN="$2"
+      shift 2
+      ;;
     -h|--help) usage; exit 0 ;;
     -V|--version) echo "${SCRIPT_NAME} ${SCRIPT_VERSION}"; exit 0 ;;
     --debug) set -x; shift ;;
@@ -95,15 +114,15 @@ print_row "rules/ directory" "${rules_dir[@]}"
 print_row "Gemini @imports" "$gemini_entry" "${gemini_imports[@]}"
 print_row "Codex flat file" "${ROOT}/agents/codex/AGENTS.md"
 
-double_loaded=()
+overlapping=()
 for imported in "${claude_imports[@]}"; do
   for candidate in "${rules_dir[@]}"; do
-    [[ "$imported" == "$candidate" ]] && double_loaded+=("$(basename "$imported")")
+    [[ "$imported" == "$candidate" ]] && overlapping+=("$(basename "$imported")")
   done
 done
 
 echo
-echo "Double-loaded: ${#double_loaded[@]} files (imported by CLAUDE.md and also present in rules/, which is auto-loaded when deployed to ~/.claude/rules)"
+echo "Overlap: ${#overlapping[@]} files are both imported by CLAUDE.md and present in rules/ (auto-loaded when deployed to ~/.claude/rules). Claude Code loads each once when both resolve to the same real path (symlink deployment); verify with /context."
 
 if [[ "$SHOW_FILES" -eq 1 ]]; then
   echo

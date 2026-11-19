@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [0.6.3] - 2026-11-19
+
+### Added
 - Managed JSON merge for agent settings (`[[agents.*.settings_merge]]` in `agents.toml`, `src/ai_rules/settings_merge.py`): ai-rules writes only the key paths it owns, records additions in `$XDG_STATE_HOME/ai-rules/state/`, and `update` / `remove` retire or revert exactly those entries; `status` reports the merged file
 
 ### Changed

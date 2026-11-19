@@ -44,14 +44,30 @@ def test_measure_context_counts_import_bytes_and_approximate_tokens(sample_repo)
     imports_row = next(line for line in result.stdout.splitlines() if "Claude Code @imports" in line)
     cells = [cell.strip() for cell in imports_row.strip("|").split("|")]
     assert cells[2] == str(len("@rules/a.md\n@rules/b.md\n") + 400 + 800)
+    assert cells[4] == str(-(-int(cells[2]) * 10 // 27))
+
+
+def test_measure_context_bytes_per_token_option_overrides_calibration(sample_repo):
+    result = run_script("--root", str(sample_repo), "--bytes-per-token", "4")
+
+    imports_row = next(line for line in result.stdout.splitlines() if "Claude Code @imports" in line)
+    cells = [cell.strip() for cell in imports_row.strip("|").split("|")]
     assert cells[4] == str(-(-int(cells[2]) // 4))
 
 
-def test_measure_context_reports_double_loaded_files(sample_repo):
+def test_measure_context_rejects_invalid_bytes_per_token(sample_repo):
+    result = run_script("--root", str(sample_repo), "--bytes-per-token", "abc")
+
+    assert result.returncode == 2
+    assert "Error: --bytes-per-token must be a positive number" in result.stderr
+
+
+def test_measure_context_reports_overlapping_files(sample_repo):
     result = run_script("--root", str(sample_repo))
 
-    assert "Double-loaded: 2 files" in result.stdout
-    assert "orphan.md" not in result.stdout.split("Double-loaded")[1]
+    assert "Overlap: 2 files" in result.stdout
+    assert "Claude Code loads each once" in result.stdout
+    assert "orphan.md" not in result.stdout.split("Overlap")[1]
 
 
 def test_measure_context_files_option_lists_each_rule_file(sample_repo):

@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `TODO.md`: points to `ROADMAP.md`, adds the roadmap phases as `R0`–`R8` checklists; the deferred rules compaction and version header items and the duplicated template-validation item are folded into them
 
 ### Fixed
+- `scripts/measure-context.sh`: token estimate calibrated against `/context` (2.7 bytes per token instead of 4, which under-estimated by about 50 %), overridable with `--bytes-per-token`; the "double-loaded" warning is reworded as an overlap note, since Claude Code loads each file once when imports and `rules/` resolve to the same real path
 
 ## [0.6.1] - 2026-10-29
 

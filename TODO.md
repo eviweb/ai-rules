@@ -74,13 +74,14 @@
 - [ ] Apply the template to 1-2 more real projects; if it holds up, promote it into `rules/ci.md` as a standing requirement and update `rules/git.md`'s branching model section to cross-reference it (fate decided in R8: reference file of the `hardening-ci` skill)
 
 ## Roadmap 0.6.2 → 1.0.0 (see ROADMAP.md)
-### R0 — Baseline and double-load fix (0.6.2)
+### R0 — Baseline and loading hygiene (0.6.2)
 - [x] Integrate `ROADMAP.md` and align this tracker
-- [x] Add `scripts/measure-context.sh` (per-layer size table, double-loading count)
+- [x] Add `scripts/measure-context.sh` (per-layer size table, overlap count)
 - [x] Record the baseline in a fresh Claude Code session (`/context`) and compare with the script's estimate: `docs/metrics/baseline-0.6.1.md`
 - [x] Calibrate `measure-context.sh` on `/context` (2.7 bytes/token) and reword the overlap warning: baseline of 2026-11-19 shows no double loading (symlink deployment)
 - [x] Keep experimental files out of the auto-loaded `rules/` directory: `ci-triggers-template.md` moved to `templates/ci-triggers.md` (~2.4k tokens per session); integrity test requires every `rules/` file to be imported
-- [ ] Integrity test: no file reachable through two loading paths
+- [x] Settle the double-loading question: none with the symlink deployment (measured); integrity test = every `rules/` file is imported
+- [x] Document the effective loading mechanism in `README.md`
 ### R1 — Settings hardening (0.6.3, breaking)
 - [ ] Replace the `settings.json` symlink with a managed JSON merge (generalize `config_patches`)
 - [ ] Tighten permissions (`ask` for commit/push/rm/npx/chmod, extended `deny`), drop `autoApprove`, migrate legacy symlink in `update`
@@ -99,7 +100,7 @@
 ### R7 — Evals and measurement (gate for 1.0.0)
 - [ ] `evals/` with 3 reference tasks, metrics per version in `docs/metrics/`, regression thresholds
 ### R8 — Wording and consistency cleanup (alongside R2–R4)
-- [ ] Agent-neutral rules, TDD scope clause, single owner per topic, docs refresh, fate of `ci-triggers-template.md`
+- [ ] Agent-neutral rules, TDD scope clause, single owner per topic, docs refresh, fate of `templates/ci-triggers.md`
 
 ---
 

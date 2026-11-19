@@ -1,5 +1,7 @@
 # TODO
 
+> Forward-looking plan (0.6.2 → 1.0.0): see [`ROADMAP.md`](ROADMAP.md) — design, rationale, acceptance criteria. This file is the tracker; roadmap phases are prefixed `R` to avoid clashing with the historical phases below.
+
 ## Phase 1 — Core infrastructure
 ### CLI
 - [x] Bootstrap Python CLI (`install`, `update`, `status`, `list`)
@@ -69,13 +71,39 @@
 - [x] Lint workflow files in CI with `actionlint` (pinned version, checksum-verified download)
 ### Trigger scoping (experimental)
 - [x] `rules/ci-triggers-template.md` — scope `push`/`pull_request` triggers (branch prefixes, no tags, PR target restricted to `main`), skip `lint`/`test` on docs-only changes via job-level `if:` (not trigger-level `paths-ignore`, to avoid stalling required status checks). Marked experimental — not yet folded into `rules/ci.md`'s mandatory checklist
-- [ ] Apply the template to 1-2 more real projects; if it holds up, promote it into `rules/ci.md` as a standing requirement and update `rules/git.md`'s branching model section to cross-reference it
+- [ ] Apply the template to 1-2 more real projects; if it holds up, promote it into `rules/ci.md` as a standing requirement and update `rules/git.md`'s branching model section to cross-reference it (fate decided in R8: reference file of the `hardening-ci` skill)
+
+## Roadmap 0.6.2 → 1.0.0 (see ROADMAP.md)
+### R0 — Baseline and double-load fix (0.6.2)
+- [x] Integrate `ROADMAP.md` and align this tracker
+- [ ] Record the baseline (`/context`, `/memory`) and add `scripts/measure-context.sh`
+- [ ] Fix the double loading of rules (`~/.claude/rules` auto-load + `@imports`); keep experimental files out of auto-loaded directories
+- [ ] Integrity test: no file reachable through two loading paths; commit `docs/metrics/baseline-0.6.1.md`
+### R1 — Settings hardening (0.6.3, breaking)
+- [ ] Replace the `settings.json` symlink with a managed JSON merge (generalize `config_patches`)
+- [ ] Tighten permissions (`ask` for commit/push/rm/npx/chmod, extended `deny`), drop `autoApprove`, migrate legacy symlink in `update`
+### R2 — Core slimming and scoped rules (0.7.0, breaking)
+- [ ] `core/` (always loaded, ≤ 200 lines / 10 KB) + scoped rules with `paths:` frontmatter + CI size budgets
+- [ ] Compaction pass with `ai-engineering-expert.md` (replaces the former deferred "compact the rules" item; baseline: 25 imported files = 62.8 KB, `condense` alone saves 12 %)
+### R3 — Skills infrastructure (0.8.0)
+- [ ] `skills` link type, `ai-rules skills list|status|verify`, skill integrity tests, Codex native skills
+### R4 — Process skills adapted from Superpowers (0.9.0)
+- [ ] Bootstrap, brainstorming, plans, TDD, debugging, verification, review, finishing a branch, releasing, `writing-rules-and-skills` (+ `NOTICE.md` attribution)
+### R5 — Hooks (0.9.x)
+- [ ] `session-start` bootstrap and `pre-tool-guard` (bats-tested, latency budget)
+### R6 — Cross-agent parity (0.10.0, breaking)
+- [ ] Replace `gemini` by `antigravity`, Codex execution policy, single `permissions.toml` source
+- [ ] Embed a rules version header in generated flat files (former deferred item), extend `verify` to skills and scoped outputs
+### R7 — Evals and measurement (gate for 1.0.0)
+- [ ] `evals/` with 3 reference tasks, metrics per version in `docs/metrics/`, regression thresholds
+### R8 — Wording and consistency cleanup (alongside R2–R4)
+- [ ] Agent-neutral rules, TDD scope clause, single owner per topic, docs refresh, fate of `ci-triggers-template.md`
 
 ---
 
 ## Future / Postponed
 - [ ] Bash installer from GitHub: `curl | bash` one-liner with checksum verification, HTTPS, version pinning — secure installation without cloning the repo
-- [ ] Agent coverage: Cursor (`.cursor/rules/*.mdc`), GitHub Copilot (`.github/copilot-instructions.md`), Windsurf (`.windsurfrules`)
+- [ ] Agent coverage: Cursor (`.cursor/rules/*.mdc`), GitHub Copilot (`.github/copilot-instructions.md`), Windsurf (`.windsurfrules`) — not before the R3 skills layer is stable (roadmap non-goal)
 - [ ] Agent coverage: Cline / Continue.dev / Aider — investigate config format first
 - [ ] `rules/docker.md`: Dockerfile best practices, multi-stage builds, compose conventions
 - [ ] `rules/database.md`: migration conventions, naming, indexing, query patterns
@@ -83,11 +111,8 @@
 - [ ] `rules/frontend.md`: React/Vue conventions, state management, component structure
 - [ ] `rules/monitoring.md`: metrics, alerting, observability patterns for services
 - [ ] Apply GitHub rulesets to this repo (standby): merge-commit only, signed commits, PR required with 0 approvals (solo), required checks `Lint` / `Test (Python 3.11)` / `Test (Python 3.12)`, semver tag protection `refs/tags/[0-9]*`; depends on new templates in `gh-rulesets`
-- [ ] Validate `rules/ci-triggers-template.md` on a second real project, then promote it into `rules/ci.md` or drop it
 
 ## Deferred / Under Consideration
 - [ ] Web UI or TUI for managing agent installations
-- [ ] Embed rules version header in generated flat files (traceability)
-- [ ] Compact the rules with `ai-engineering-expert.md` (imperative style, no loss of meaning): start with a pilot on `quality.md`, compare agent behaviour before/after on 3 typical tasks; measured baseline: 25 imported files = 62.8 KB, `condense` alone saves 12 %
 - [ ] `rules/performance.md`: profiling, benchmarking, performance budgets
 - [ ] `rules/accessibility.md`: a11y standards, ARIA, color contrast

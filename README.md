@@ -62,7 +62,7 @@ ai-rules/
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest, 169 tests)
+├── tests/                    # Test suite (pytest, 190 tests)
 ├── .github/workflows/
 │   └── ci.yml                # CI pipeline (lint + test + coverage)
 ├── agents.toml               # Agent registry and link declarations
@@ -175,6 +175,7 @@ For each declared link in `agents.toml`, `ai-rules install`:
 3. Applies config patches (updates specific keys in existing config files)
 4. Merges settings files key by key (see below)
 5. Skips links that are already correctly in place
+6. Links skill folders one by one (see below)
 
 | Symlink                    | Source                            |
 |----------------------------|-----------------------------------|
@@ -198,6 +199,8 @@ Settings merge (`[[agents.*.settings_merge]]` in `agents.toml`):
 
 `~/.claude/settings.json` is a regular file, not a symlink: Claude Code writes its own keys into it (plugins, `/permissions`, theme), which would otherwise land in this repository. ai-rules adds its list entries and scalars (`allow`, `ask` and `deny` rules; `git commit`, `git push`, `rm`, `npx` and `chmod` ask first, destructive variants such as `rm -r`, `git push --force`, `git reset --hard` and `git clean` are denied, `--force-with-lease` still asks), never touches other keys, and records what it added in `$XDG_STATE_HOME/ai-rules/state/claude-settings.json`. `ai-rules update` retires entries that left the fragment. A legacy symlinked install is migrated automatically: the content is backed up to `$XDG_STATE_HOME/ai-rules/backups/claude/` and replaced by a regular file with the same content.
 
+Skill directories (`[[agents.*.skill_dirs]]` in `agents.toml`): each sub-folder of `source` that holds a `SKILL.md` is linked to `<install_dir>/<target>/<folder name>`, one symlink per skill, so skills you write yourself live in the same directory and are never touched. `ai-rules update` unlinks the skills that were deleted from the repository (only symlinks pointing into the source directory are considered ai-rules', never other entries); a real folder with the same name is backed up first. `status` lists one line per skill (`ok`, `not installed`, `symlink mismatch`, `exists (not a symlink)`, `stale`). No agent declares a skill directory yet: the first skills arrive in a later PR of 0.7.0.
+
 ### What remove does
 
 `ai-rules remove` is the inverse of `install`:
@@ -206,6 +209,7 @@ Settings merge (`[[agents.*.settings_merge]]` in `agents.toml`):
 2. Restores the most recent backup if one exists
 3. Reverts config patches (restores `.bak` backup, or removes the patched key)
 4. Reverts settings merges: removes only the entries ai-rules added and restores the scalars it replaced (the file is deleted if it ends up empty)
+5. Unlinks the skills deployed by ai-rules and restores a backed-up folder of the same name; other skills are left alone
 
 ### How rules are loaded (Claude Code)
 

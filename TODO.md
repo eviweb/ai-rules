@@ -89,9 +89,11 @@
 - [x] `skill_dirs` link type in `agents.toml` (one symlink per skill; install, update pruning, remove, status)
 - [x] Skill format, integrity tests, `ai-rules skills list|status|verify`
 - [ ] Codex native skills (after checking its documentation)
-- [ ] Transition skills with unchanged wording: `starting-a-project`, `quality-dimensions`, `reviewing-changes`, `pull-requests-and-issues`; skills index in `CLAUDE.md`
+- [x] Transition skills with unchanged wording: `ai-rules-starting-a-project`, `ai-rules-quality-dimensions`, `ai-rules-reviewing-changes`, `ai-rules-pull-requests-and-issues` (parity test with their rules)
+- [ ] Measure the skill listing cost with `/context` (estimate: ~310 tokens) and the trigger quality over the 0.7.0 cycle
 ### R3 — Core slimming and scoped rules (0.8.0, breaking)
 - [ ] `core/` (always loaded, ≤ 200 lines / 10 KB) + scoped rules with `paths:` frontmatter + CI size budgets
+- [ ] Skills index in `CLAUDE.md` (moved from R2: redundant with the automatic skill listing while the rules are loaded, and it would leak into the Codex flat file before Codex has skills)
 - [ ] Targeted condensation of what `core/` needs to meet its budget (`git`, `security`, `commits` gate) with an invariants test; no global rewrite; language split of `naming`/`error-handling`/`logging` only if measured worthwhile
 ### R4 — Process skills adapted from Superpowers (0.9.0)
 - [ ] Bootstrap, brainstorming, plans, TDD, debugging, verification, review, finishing a branch, releasing, `writing-rules-and-skills` (+ `NOTICE.md` attribution)

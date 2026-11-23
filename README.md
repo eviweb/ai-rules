@@ -57,7 +57,7 @@ ai-rules/
 ├── templates/              # On-demand references, not auto-loaded
 │   └── ci-triggers.md      # experimental CI triggers pattern
 ├── docs/
-│   ├── metrics/            # Context-cost measurements per version (baseline-0.6.1.md)
+│   ├── metrics/            # Context-cost measurements per version (baseline-0.6.1.md, 0.7.0.md)
 │   └── skills.md           # How to write a skill (format, description style, derived skills)
 ├── scripts/
 │   ├── extract-changelog.sh  # Extract release notes from CHANGELOG.md

@@ -146,28 +146,30 @@ Expected outcome: always-on context drops from ~65 KB to ≤ 13 KB (core + boots
 
 **Goal:** make skills a first-class, deployable, testable unit, and give the rules that Phase 3 will take out of the always-on context a home that exists first. Reordered before core slimming (decision 2026-11-23): moving rules out of the always-on context before skills exist would leave `release`, `pr`, `review`, `issues` and `quality` unloaded.
 
-- [ ] `agents.toml`: new link type `skills` (directory of skill folders → `~/.claude/skills/<name>`), one symlink per skill so user-authored skills coexist
-- [ ] Skill format (Agent Skills convention): `SKILL.md` with YAML frontmatter `name`, `description`; optional `references/`, `scripts/`
-- [ ] Description style guide: start with the trigger ("Use when…"), name the task types, ≤ 300 characters; descriptions are the only part always visible, so they carry the activation logic
-- [ ] `ai-rules skills list|status|verify` subcommands
-- [ ] Integrity tests:
+- [x] `agents.toml`: new link type `skill_dirs` (directory of skill folders → `<install_dir>/<target>/<name>`), one symlink per skill so user-authored skills coexist; `update` prunes deleted skills, `remove` unlinks only ai-rules skills
+- [x] Skill format (Agent Skills convention): `SKILL.md` with YAML frontmatter `name`, `description`; optional `references/`, `scripts/`; strict frontmatter parser, no YAML dependency (`docs/skills.md`)
+- [x] Description style guide: start with the trigger ("Use when…"), name the task types, ≤ 300 characters; descriptions are the only part always visible, so they carry the activation logic
+- [x] `ai-rules skills list|status|verify` subcommands
+- [x] Integrity tests (`tests/test_skills.py`, `tests/test_skills_integrity.py`):
   - frontmatter present and valid; `name` matches folder
   - `SKILL.md` ≤ 8 KB
   - every referenced sibling file exists; scripts are executable and pass `shellcheck`
-  - no skill duplicates core content (heuristic: shared headings)
-- [ ] Codex: native skills — deploy each skill as a symlink into `$HOME/.agents/skills/ai-rules-<name>/` (Codex follows symlinked skill folders); no skill index needed in the flat file
-  - Keep descriptions ≤ 300 characters: the initial skills list is capped at 2 % of the context window (8,000 characters if unknown) and descriptions are shortened first
-  - Optional `agents/openai.yaml` per skill: set `policy.allow_implicit_invocation: false` for manual-only skills (e.g. `releasing`)
+- [ ] Integrity test: no skill duplicates core content (heuristic: shared headings): moved to Phase 3, since `core/` does not exist yet and the transition skills duplicate loaded rules on purpose
+- [x] Codex: native skills — each skill is a symlink into `~/.agents/skills/ai-rules-<name>/` (Codex follows symlinked skill folders); no skill index needed in the flat file; confirmed in Codex (`/skills`, `$ai-rules` filter)
+  - [x] Keep descriptions ≤ 300 characters: the initial skills list is capped at 2 % of the context window (8,000 characters if unknown) and descriptions are shortened first
+  - [ ] Optional `agents/openai.yaml` per skill: set `policy.allow_implicit_invocation: false` for manual-only skills (e.g. `releasing`): with the first manual-only skill (Phase 4)
 - [ ] Antigravity: native skills — deploy to `~/.gemini/config/skills/ai-rules-<name>/` (see Phase 6)
-- [ ] Namespace all skills (`ai-rules:<name>` in descriptions or folder prefix) to avoid collisions with plugins
-- [ ] **Transition skills**: port existing rules as skills, wording unchanged (no rewrite), so Phase 3 can unload them without a behavior gap:
-  - `starting-a-project` (from `editor`, project-start parts of `docs` and `security`: `.editorconfig`, mandatory files, `.gitignore`; a `paths:` rule cannot trigger on a missing file)
-  - `quality-dimensions` (from `quality`)
-  - `reviewing-changes` (from `review`)
-  - `pull-requests-and-issues` (from `pr`, `issues`)
-- [ ] Skills index in `CLAUDE.md` (3–5 lines naming each skill with its trigger) until the Phase 5 bootstrap hook injects it
+- [x] Namespace all skills: folder and `name` carry the `ai-rules-` prefix (enforced by `skills verify`); plugin skills are namespaced by Claude Code anyway, the prefix protects against same-named personal or project skills
+- [x] **Transition skills**: port existing rules as skills, wording unchanged (no rewrite), so Phase 3 can unload them without a behavior gap; a parity test keeps each skill identical to its rule while both exist:
+  - `ai-rules-starting-a-project` (from `editor`, project-start parts of `docs` and `security`: `.editorconfig`, mandatory files, `.gitignore`; a `paths:` rule cannot trigger on a missing file)
+  - `ai-rules-quality-dimensions` (from `quality`; the full text is in `references/dimensions.md` because `quality.md` exceeds the 8 KB limit of a `SKILL.md`)
+  - `ai-rules-reviewing-changes` (from `review`)
+  - `ai-rules-pull-requests-and-issues` (from `pr`, `issues`)
+- [ ] Skills index in `CLAUDE.md` (3–5 lines naming each skill with its trigger): moved to Phase 3, when the rules are unloaded; redundant with the automatic skill listing while they are loaded, and it would leak into the Codex flat file before the generator handles skills
 
-**Acceptance:** `ai-rules install claude` deploys skills; `/skills` (or equivalent) lists them; `remove` cleans only ai-rules skills; the four transition skills reproduce the content of the rules they come from (no text change).
+**Known cost until Phase 3:** the transition skills duplicate rules that are still loaded at launch. The listing costs about 0.3k tokens (measured, `docs/metrics/0.7.0.md`); invoking a skill adds its text on top of the same text already in context (worst case `ai-rules-quality-dimensions` with its reference, about +3.2k). Accepted for the additive 0.7.0, bounded to the 0.7.0 → 0.8.0 window and guarded by the parity test.
+
+**Acceptance:** `ai-rules install claude` deploys skills; `/skills` (or equivalent) lists them; `remove` cleans only ai-rules skills; the four transition skills reproduce the content of the rules they come from (no text change). (met for Claude Code and Codex; Antigravity follows in Phase 6).
 
 ---
 
@@ -181,13 +183,15 @@ Expected outcome: always-on context drops from ~65 KB to ≤ 13 KB (core + boots
 - [ ] Unload task-type material now hosted by skills: `review`, `pr`, `issues`, `quality` (Phase 2 transition skills), and later the Phase 4 skills (`release`, `changelog`, `versioning`, `docs`, `dependencies`, `compatibility` stay path-scoped until then)
 - [ ] Targeted condensation, only what `core/` needs to meet its budget (`git`, `security`, `commits` gate): the six core candidates weigh 11.5 KB against a 10 KB budget. No global rewrite of the other rules: they load on demand, so the saving is small and the risk of changing a rule's meaning is not worth it (decision 2026-11-23). Guard: an invariants test lists the normative statements of the core (e.g. never commit autonomously, propose before implementing, English only) and fails when one disappears; the removed rationale stays in git history and, where useful, in a skill reference
 - [ ] Split `naming`, `error-handling`, `logging` by language only if the measured saving justifies it (separate PR, after the classification)
+- [ ] Skills index in `CLAUDE.md` (3–5 lines naming each skill with its trigger), moved from Phase 2, until the Phase 5 bootstrap hook injects it
 - [ ] Generator: Codex flat file = core + scoped rules inlined under "When editing X" headings + skill index (name + description + path)
 - [ ] CI size budgets (new tests in `test_rules_integrity.py`):
   - core ≤ 200 lines and ≤ 10 KB
   - each scoped rule ≤ 6 KB
   - every non-core rule has `paths:` frontmatter or lives under `skills/`
+  - no skill duplicates core content (heuristic: shared headings), moved from Phase 2
 
-**Acceptance:** always-on size ≤ 10 KB (before bootstrap); Codex flat file ≤ 32 KB, `project_doc_max_bytes` patch no longer required; behavior checks from Phase 7 show no regression on the 3 reference tasks.
+**Acceptance:** `/context` no longer lists `review`, `pr`, `issues` and `quality` as memory files and the memory total drops accordingly (expected about -3.7k: 2.6k + ~0.7k + ~0.2k + ~0.2k); always-on size ≤ 10 KB (before bootstrap); Codex flat file ≤ 32 KB, `project_doc_max_bytes` patch no longer required; behavior checks from Phase 7 show no regression on the 3 reference tasks.
 
 ---
 

@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Skill format and `ai-rules skills list|verify|status` (`src/ai_rules/skills.py`, `docs/skills.md`): strict frontmatter parser without YAML dependency; `verify` checks name = folder name with the `ai-rules-` prefix, description starting with `Use when` (≤ 300 characters), supported fields only, `SKILL.md` ≤ 8 KiB, existing references, executable and shellcheck-clean scripts, and the `derived-from` / `license-of-origin` / `THIRD_PARTY.md` chain for skills derived from another project; the same checks run in the test suite
 
 ### Changed
+- `ROADMAP.md` Phase 2 aligned with what shipped (skill link type named `skill_dirs`, `ai-rules-` namespacing, Codex confirmed); the skills index in `CLAUDE.md` and the "no skill duplicates core content" test move to Phase 3, which also gains the acceptance criterion that `review`, `pr`, `issues` and `quality` leave the loaded memory files (about -3.7k tokens); documented the temporary duplication between the transition skills and the loaded rules
+- Skills layer measured with `/context`: the listing of the four skills costs about 0.3k tokens (`docs/metrics/0.7.0.md`)
 - Roadmap reordered: skills infrastructure and four transition skills (`starting-a-project`, `quality-dimensions`, `reviewing-changes`, `pull-requests-and-issues`) now come first (0.7.0, additive), then core slimming and scoped rules (0.8.0, breaking), so no rule is unloaded before its skill exists; the global compaction pass is replaced by a targeted condensation of the core with an invariants test
 
 ### Fixed

@@ -12,6 +12,14 @@
 #   source   Path relative to repo root
 #   target   Path relative to install_dir
 #
+# [[agents.*.skill_dirs]] — Directory of skill folders (one symlink per skill)
+#   source   Directory relative to repo root; each sub-folder holding a SKILL.md
+#            is a skill
+#   target   Directory relative to install_dir; skills are linked as
+#            <target>/<folder name>, so user-authored skills live alongside.
+#            Only symlinks pointing into `source` are managed (update prunes
+#            deleted skills, remove unlinks them).
+#
 # [[agents.*.settings_merge]] — JSON settings file merged key by key
 #   file     Target file name in install_dir
 #   source   Fragment relative to repo root

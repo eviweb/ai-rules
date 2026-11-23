@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- Skill directory link type (`[[agents.*.skill_dirs]]` in `agents.toml`): `install` / `update` link each skill folder (a folder holding a `SKILL.md`) under the agent's skills directory, one symlink per skill so user-authored skills coexist; `update` unlinks skills removed from the repository, `remove` unlinks only ai-rules skills (restoring backed-up folders), `status` reports each skill. No agent declares one yet
 
 ### Changed
 - Roadmap reordered: skills infrastructure and four transition skills (`starting-a-project`, `quality-dimensions`, `reviewing-changes`, `pull-requests-and-issues`) now come first (0.7.0, additive), then core slimming and scoped rules (0.8.0, breaking), so no rule is unloaded before its skill exists; the global compaction pass is replaced by a targeted condensation of the core with an invariants test

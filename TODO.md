@@ -86,7 +86,9 @@
 - [x] Replace the `settings.json` symlink with a managed JSON merge (generalize `config_patches`), including legacy symlink migration in `update`
 - [x] Tighten permissions (`ask` for commit/push/rm/npx/chmod, extended `deny`), drop `autoApprove`
 ### R2 — Skills infrastructure and transition skills (0.7.0)
-- [ ] `skills` link type, `ai-rules skills list|status|verify`, skill integrity tests, Codex native skills
+- [x] `skill_dirs` link type in `agents.toml` (one symlink per skill; install, update pruning, remove, status)
+- [ ] Skill format, integrity tests, `ai-rules skills list|status|verify`
+- [ ] Codex native skills (after checking its documentation)
 - [ ] Transition skills with unchanged wording: `starting-a-project`, `quality-dimensions`, `reviewing-changes`, `pull-requests-and-issues`; skills index in `CLAUDE.md`
 ### R3 — Core slimming and scoped rules (0.8.0, breaking)
 - [ ] `core/` (always loaded, ≤ 200 lines / 10 KB) + scoped rules with `paths:` frontmatter + CI size budgets

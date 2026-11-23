@@ -7,7 +7,7 @@ import tomllib
 from datetime import datetime
 from pathlib import Path
 
-from ai_rules.agent import Agent, ConfigPatch, ConfigValue, Link
+from ai_rules.agent import Agent, ConfigPatch, ConfigValue, Link, SkillDir
 from ai_rules.settings_merge import merge_settings, status_settings, unmerge_settings
 
 _BOOL_TOML = {True: "true", False: "false"}
@@ -140,6 +140,143 @@ def _unpatch_toml_file(
     return [f"UNPATCH {patch.file}: removed {patch.key}"]
 
 
+def _skill_names(source_dir: Path) -> list[str]:
+    """Names of the skill folders in *source_dir* (those holding a SKILL.md)."""
+    if not source_dir.is_dir():
+        return []
+    return sorted(
+        d.name for d in source_dir.iterdir() if (d / "SKILL.md").is_file()
+    )
+
+
+def _owned_skill_links(source_dir: Path, target_root: Path) -> list[Path]:
+    """Symlinks in *target_root* that point into *source_dir* (live or dangling)."""
+    if not target_root.is_dir() or target_root.is_symlink():
+        return []
+    source_dir = source_dir.resolve()
+    return sorted(
+        entry
+        for entry in target_root.iterdir()
+        if entry.is_symlink() and entry.resolve().parent == source_dir
+    )
+
+
+def _install_skill_dir(
+    repo_root: Path,
+    agent: Agent,
+    skill_dir: SkillDir,
+    dry_run: bool,
+) -> list[str]:
+    source_dir = (repo_root / skill_dir.source).resolve()
+    target_root = agent.install_path / skill_dir.target
+    label = skill_dir.target
+
+    if not source_dir.is_dir():
+        return [f"SKIP    {label}: source not found ({source_dir})"]
+    if target_root.is_symlink():
+        return [f"SKIP    {label}: target is a symlink, refusing to write through it"]
+
+    actions: list[str] = []
+    backup_dir: Path | None = None
+    names = _skill_names(source_dir)
+
+    for entry in _owned_skill_links(source_dir, target_root):
+        if entry.name in names:
+            continue
+        actions.append(f"UNLINK  {label}/{entry.name}: skill removed from repository")
+        if not dry_run:
+            entry.unlink()
+
+    if names and not dry_run:
+        target_root.mkdir(parents=True, exist_ok=True)
+
+    for name in names:
+        source = source_dir / name
+        target = target_root / name
+        item = f"{label}/{name}"
+
+        if target.is_symlink():
+            if target.resolve() == source:
+                actions.append(f"OK      {item}: already linked")
+            else:
+                actions.append(f"UPDATE  {item}: re-linking to new source")
+                if not dry_run:
+                    target.unlink()
+                    target.symlink_to(source)
+            continue
+
+        if target.exists():
+            if backup_dir is None:
+                backup_dir = _backup_dir(agent.key)
+            actions.append(f"BACKUP  {item}: moving to {backup_dir.name}/")
+            if not dry_run:
+                backup_dir.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(target), backup_dir / target.name)
+
+        actions.append(f"LINK    {item}: {target} -> {source}")
+        if not dry_run:
+            target.symlink_to(source)
+
+    return actions
+
+
+def _remove_skill_dir(
+    repo_root: Path,
+    agent: Agent,
+    skill_dir: SkillDir,
+    dry_run: bool,
+) -> list[str]:
+    source_dir = (repo_root / skill_dir.source).resolve()
+    target_root = agent.install_path / skill_dir.target
+    label = skill_dir.target
+    actions: list[str] = []
+
+    for entry in _owned_skill_links(source_dir, target_root):
+        actions.append(f"UNLINK  {label}/{entry.name}")
+        if not dry_run:
+            entry.unlink()
+        backup = _find_link_backup(agent.key, entry.name)
+        if backup:
+            actions.append(f"RESTORE {label}/{entry.name}: from {backup.parent.name}/")
+            if not dry_run:
+                shutil.move(str(backup), entry)
+                _cleanup_backup_dir(backup.parent)
+
+    if not actions:
+        actions.append(f"SKIP    {label}: no skill managed by ai-rules")
+    return actions
+
+
+def _status_skill_dir(
+    repo_root: Path, agent: Agent, skill_dir: SkillDir
+) -> list[tuple[str, str]]:
+    source_dir = (repo_root / skill_dir.source).resolve()
+    target_root = agent.install_path / skill_dir.target
+    label = skill_dir.target
+    results: list[tuple[str, str]] = []
+    names = _skill_names(source_dir)
+
+    for name in names:
+        source = source_dir / name
+        target = target_root / name
+        item = f"{label}/{name}"
+        if not target.exists() and not target.is_symlink():
+            results.append((item, "not installed"))
+        elif target.is_symlink() and target.resolve() == source:
+            results.append((item, "ok"))
+        elif target.is_symlink():
+            results.append((item, f"symlink mismatch -> {target.resolve()}"))
+        else:
+            results.append((item, "exists (not a symlink)"))
+
+    for entry in _owned_skill_links(source_dir, target_root):
+        if entry.name not in names:
+            results.append(
+                (f"{label}/{entry.name}", "stale (skill removed from repository)")
+            )
+    return results
+
+
 def install_agent(
     repo_root: Path, agent: Agent, dry_run: bool = False
 ) -> list[str]:
@@ -182,6 +319,9 @@ def install_agent(
         if not dry_run:
             target.symlink_to(source)
 
+    for skill_dir in agent.skill_dirs:
+        actions.extend(_install_skill_dir(repo_root, agent, skill_dir, dry_run))
+
     for patch in agent.config_patches:
         target_file = agent.install_path / patch.file
         actions.extend(_patch_toml_file(target_file, patch, agent.key, dry_run=dry_run))
@@ -223,6 +363,9 @@ def remove_agent(
             if not dry_run:
                 shutil.move(str(backup), target)
                 _cleanup_backup_dir(backup.parent)
+
+    for skill_dir in agent.skill_dirs:
+        actions.extend(_remove_skill_dir(repo_root, agent, skill_dir, dry_run))
 
     for patch in agent.config_patches:
         target_file = agent.install_path / patch.file
@@ -286,6 +429,9 @@ def status_agent(repo_root: Path, agent: Agent) -> list[tuple[str, str]]:
             results.append((link.target, f"symlink mismatch -> {target.resolve()}"))
         else:
             results.append((link.target, "exists (not a symlink)"))
+
+    for skill_dir in agent.skill_dirs:
+        results.extend(_status_skill_dir(repo_root, agent, skill_dir))
 
     for patch in agent.config_patches:
         target_file = agent.install_path / patch.file

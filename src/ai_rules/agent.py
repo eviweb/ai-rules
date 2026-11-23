@@ -34,6 +34,19 @@ class SettingsMerge:
 
 
 @dataclass
+class SkillDir:
+    """A directory of skill folders, linked one symlink per skill.
+
+    Each sub-folder of *source* that holds a ``SKILL.md`` is linked to
+    ``<install_dir>/<target>/<folder name>``, so skills written by the user
+    live next to the ai-rules ones in the same target directory.
+    """
+
+    source: str
+    target: str
+
+
+@dataclass
 class Agent:
     key: str
     name: str
@@ -44,6 +57,7 @@ class Agent:
     links: list[Link]
     config_patches: list[ConfigPatch] = field(default_factory=list)
     settings_merges: list[SettingsMerge] = field(default_factory=list)
+    skill_dirs: list[SkillDir] = field(default_factory=list)
 
     @property
     def install_path(self) -> Path:
@@ -69,6 +83,10 @@ def load_agents(config_path: Path) -> dict[str, Agent]:
             SettingsMerge(file=m["file"], source=m["source"], owned=list(m["owned"]))
             for m in agent_data.get("settings_merge", [])
         ]
+        skill_dirs = [
+            SkillDir(source=d["source"], target=d["target"])
+            for d in agent_data.get("skill_dirs", [])
+        ]
         agents[key] = Agent(
             key=key,
             name=agent_data["name"],
@@ -79,6 +97,7 @@ def load_agents(config_path: Path) -> dict[str, Agent]:
             links=links,
             config_patches=config_patches,
             settings_merges=settings_merges,
+            skill_dirs=skill_dirs,
         )
 
     return agents

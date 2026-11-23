@@ -15,7 +15,8 @@
 # [[agents.*.skill_dirs]] — Directory of skill folders (one symlink per skill)
 #   source   Directory relative to repo root; each sub-folder holding a SKILL.md
 #            is a skill
-#   target   Directory relative to install_dir; skills are linked as
+#   target   Directory relative to install_dir (or starting with ~ / absolute
+#            when the agent reads skills elsewhere); skills are linked as
 #            <target>/<folder name>, so user-authored skills live alongside.
 #            Only symlinks pointing into `source` are managed (update prunes
 #            deleted skills, remove unlinks them).
@@ -63,6 +64,11 @@ condense_flat_file = false
   [[agents.codex.links]]
   source = "agents/codex/AGENTS.md"
   target = "AGENTS.md"
+
+  # Codex reads user skills from $HOME/.agents/skills, not from ~/.codex.
+  [[agents.codex.skill_dirs]]
+  source = "skills"
+  target = "~/.agents/skills"
 
   [[agents.codex.config_patches]]
   file  = "config.toml"

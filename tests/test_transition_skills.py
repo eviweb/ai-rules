@@ -49,3 +49,9 @@ def test_claude_deploys_the_skills_directory() -> None:
     claude = load_agents(REPO_ROOT / "agents.toml")["claude"]
 
     assert SkillDir(source="skills", target="skills") in claude.skill_dirs
+
+
+def test_codex_deploys_the_skills_to_its_user_skills_directory() -> None:
+    codex = load_agents(REPO_ROOT / "agents.toml")["codex"]
+
+    assert SkillDir(source="skills", target="~/.agents/skills") in codex.skill_dirs

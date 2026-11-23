@@ -140,6 +140,15 @@ def _unpatch_toml_file(
     return [f"UNPATCH {patch.file}: removed {patch.key}"]
 
 
+def _skill_target_root(agent: Agent, skill_dir: SkillDir) -> Path:
+    """Directory receiving the skill links.
+
+    Relative targets live under the agent's install_dir; ``~`` and absolute
+    targets point elsewhere (Codex reads user skills from ``~/.agents/skills``).
+    """
+    return agent.install_path / Path(skill_dir.target).expanduser()
+
+
 def _skill_names(source_dir: Path) -> list[str]:
     """Names of the skill folders in *source_dir* (those holding a SKILL.md)."""
     if not source_dir.is_dir():
@@ -168,7 +177,7 @@ def _install_skill_dir(
     dry_run: bool,
 ) -> list[str]:
     source_dir = (repo_root / skill_dir.source).resolve()
-    target_root = agent.install_path / skill_dir.target
+    target_root = _skill_target_root(agent, skill_dir)
     label = skill_dir.target
 
     if not source_dir.is_dir():
@@ -227,7 +236,7 @@ def _remove_skill_dir(
     dry_run: bool,
 ) -> list[str]:
     source_dir = (repo_root / skill_dir.source).resolve()
-    target_root = agent.install_path / skill_dir.target
+    target_root = _skill_target_root(agent, skill_dir)
     label = skill_dir.target
     actions: list[str] = []
 
@@ -251,7 +260,7 @@ def _status_skill_dir(
     repo_root: Path, agent: Agent, skill_dir: SkillDir
 ) -> list[tuple[str, str]]:
     source_dir = (repo_root / skill_dir.source).resolve()
-    target_root = agent.install_path / skill_dir.target
+    target_root = _skill_target_root(agent, skill_dir)
     label = skill_dir.target
     results: list[tuple[str, str]] = []
     names = _skill_names(source_dir)

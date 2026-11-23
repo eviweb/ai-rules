@@ -414,6 +414,14 @@ def migrate_agent_backups(agent: Agent, dry_run: bool = False) -> list[str]:
     return actions
 
 
+def status_skill_dirs(repo_root: Path, agent: Agent) -> list[tuple[str, str]]:
+    """Return the deployment status of every skill declared for an agent."""
+    results: list[tuple[str, str]] = []
+    for skill_dir in agent.skill_dirs:
+        results.extend(_status_skill_dir(repo_root, agent, skill_dir))
+    return results
+
+
 def status_agent(repo_root: Path, agent: Agent) -> list[tuple[str, str]]:
     """Return the installation status of each declared link and config patch."""
     results: list[tuple[str, str]] = []
@@ -430,8 +438,7 @@ def status_agent(repo_root: Path, agent: Agent) -> list[tuple[str, str]]:
         else:
             results.append((link.target, "exists (not a symlink)"))
 
-    for skill_dir in agent.skill_dirs:
-        results.extend(_status_skill_dir(repo_root, agent, skill_dir))
+    results.extend(status_skill_dirs(repo_root, agent))
 
     for patch in agent.config_patches:
         target_file = agent.install_path / patch.file

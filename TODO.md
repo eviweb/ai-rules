@@ -85,11 +85,12 @@
 ### R1 — Settings hardening (0.6.3, breaking)
 - [x] Replace the `settings.json` symlink with a managed JSON merge (generalize `config_patches`), including legacy symlink migration in `update`
 - [x] Tighten permissions (`ask` for commit/push/rm/npx/chmod, extended `deny`), drop `autoApprove`
-### R2 — Core slimming and scoped rules (0.7.0, breaking)
-- [ ] `core/` (always loaded, ≤ 200 lines / 10 KB) + scoped rules with `paths:` frontmatter + CI size budgets
-- [ ] Compaction pass with `ai-engineering-expert.md` (replaces the former deferred "compact the rules" item; baseline: 25 imported files = 62.8 KB, `condense` alone saves 12 %)
-### R3 — Skills infrastructure (0.8.0)
+### R2 — Skills infrastructure and transition skills (0.7.0)
 - [ ] `skills` link type, `ai-rules skills list|status|verify`, skill integrity tests, Codex native skills
+- [ ] Transition skills with unchanged wording: `starting-a-project`, `quality-dimensions`, `reviewing-changes`, `pull-requests-and-issues`; skills index in `CLAUDE.md`
+### R3 — Core slimming and scoped rules (0.8.0, breaking)
+- [ ] `core/` (always loaded, ≤ 200 lines / 10 KB) + scoped rules with `paths:` frontmatter + CI size budgets
+- [ ] Targeted condensation of what `core/` needs to meet its budget (`git`, `security`, `commits` gate) with an invariants test; no global rewrite; language split of `naming`/`error-handling`/`logging` only if measured worthwhile
 ### R4 — Process skills adapted from Superpowers (0.9.0)
 - [ ] Bootstrap, brainstorming, plans, TDD, debugging, verification, review, finishing a branch, releasing, `writing-rules-and-skills` (+ `NOTICE.md` attribution)
 ### R5 — Hooks (0.9.x)
@@ -106,7 +107,7 @@
 
 ## Future / Postponed
 - [ ] Bash installer from GitHub: `curl | bash` one-liner with checksum verification, HTTPS, version pinning — secure installation without cloning the repo
-- [ ] Agent coverage: Cursor (`.cursor/rules/*.mdc`), GitHub Copilot (`.github/copilot-instructions.md`), Windsurf (`.windsurfrules`) — not before the R3 skills layer is stable (roadmap non-goal)
+- [ ] Agent coverage: Cursor (`.cursor/rules/*.mdc`), GitHub Copilot (`.github/copilot-instructions.md`), Windsurf (`.windsurfrules`) — not before the R2 skills layer is stable (roadmap non-goal)
 - [ ] Agent coverage: Cline / Continue.dev / Aider — investigate config format first
 - [ ] `rules/docker.md`: Dockerfile best practices, multi-stage builds, compose conventions
 - [ ] `rules/database.md`: migration conventions, naming, indexing, query patterns

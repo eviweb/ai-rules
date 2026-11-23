@@ -11,7 +11,14 @@ from ai_rules import __version__
 from ai_rules.agent import load_agents
 from ai_rules.config import find_repo_root
 from ai_rules.generator import generate_flat_file, verify_flat_file
-from ai_rules.installer import install_agent, migrate_agent_backups, remove_agent, status_agent
+from ai_rules.installer import (
+    install_agent,
+    migrate_agent_backups,
+    remove_agent,
+    status_agent,
+    status_skill_dirs,
+)
+from ai_rules.skills import describe_skill, discover_skills, verify_skills
 
 app = typer.Typer(
     name="ai-rules",
@@ -336,6 +343,76 @@ def update(
                 _echo(f"  regenerated {output.relative_to(repo_root)}")
 
     _echo("\nDone.")
+
+
+skills_app = typer.Typer(
+    name="skills",
+    help="Inspect and verify the skills shipped by this repository.",
+    no_args_is_help=True,
+)
+app.add_typer(skills_app, name="skills")
+
+SKILLS_DIR = "skills"
+
+
+@skills_app.command(name="list")
+def skills_list() -> None:
+    """List the skills of the repository with their size and description."""
+    repo_root = _repo_root()
+    folders = discover_skills(repo_root / SKILLS_DIR)
+    if not folders:
+        _echo("No skills found.")
+        return
+    for folder in folders:
+        info = describe_skill(folder, repo_root)
+        description = info.description
+        if len(description) > 70:
+            description = description[:69] + "…"
+        marker = "" if info.valid else "  (invalid)"
+        _echo(f"  {info.name:<36} {info.size:>6} B  {description}{marker}")
+
+
+@skills_app.command(name="verify")
+def skills_verify() -> None:
+    """Check every skill against the format rules; exit 1 on any problem."""
+    repo_root = _repo_root()
+    skills_dir = repo_root / SKILLS_DIR
+    count = len(discover_skills(skills_dir))
+    problems = verify_skills(skills_dir, repo_root)
+    if not problems:
+        _echo(f"{count} {'skill' if count == 1 else 'skills'} verified.")
+        return
+    for name, messages in problems.items():
+        _echo(f"{name}:", err=True)
+        for message in messages:
+            _echo(f"  - {message}", err=True)
+    raise typer.Exit(1)
+
+
+@skills_app.command(name="status")
+def skills_status(
+    agent: Annotated[
+        Optional[str],
+        typer.Argument(help="Agent key (e.g. claude). Defaults to all agents."),
+    ] = None,
+) -> None:
+    """Show how the skills are deployed for each agent that declares a skill directory."""
+    repo_root = _repo_root()
+    agents = {
+        key: ag for key, ag in _select_agents(repo_root, agent).items() if ag.skill_dirs
+    }
+    if not agents:
+        _echo("No agent deploys skills.")
+        return
+    for key, ag in agents.items():
+        _echo(f"\n[{key}] {ag.name}")
+        results = status_skill_dirs(repo_root, ag)
+        if not results:
+            _echo("  (no skill in the repository)")
+        for name, state in results:
+            icon = "✓" if state == "ok" else "✗"
+            _echo(f"  {icon}  {name:<40} {state}")
+    _echo()
 
 
 if __name__ == "__main__":

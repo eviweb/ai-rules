@@ -55,14 +55,16 @@ ai-rules/
 │   └── release.md
 ├── templates/              # On-demand references, not auto-loaded
 │   └── ci-triggers.md      # experimental CI triggers pattern
-├── docs/metrics/           # Context-cost measurements per version (baseline-0.6.1.md)
+├── docs/
+│   ├── metrics/            # Context-cost measurements per version (baseline-0.6.1.md)
+│   └── skills.md           # How to write a skill (format, description style, derived skills)
 ├── scripts/
 │   ├── extract-changelog.sh  # Extract release notes from CHANGELOG.md
 │   └── measure-context.sh    # Size of each rule-loading layer (bytes, lines, ~tokens)
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest, 190 tests)
+├── tests/                    # Test suite (pytest, 242 tests)
 ├── .github/workflows/
 │   └── ci.yml                # CI pipeline (lint + test + coverage)
 ├── agents.toml               # Agent registry and link declarations
@@ -127,6 +129,7 @@ Commands:
   remove    Remove rules for one or all agents, restoring original configuration.
   generate  Generate flat rule files for agents without native import support.
   verify    Verify flat rule files are in sync with current rules.
+  skills    Inspect and verify the skills shipped by this repository.
 ```
 
 ### Examples
@@ -138,6 +141,11 @@ ai-rules list
 # Check installation status
 ai-rules status
 ai-rules status claude
+
+# Skills: list, check the format rules (exit 1 on any problem), deployment state
+ai-rules skills list
+ai-rules skills verify
+ai-rules skills status
 
 # Install all agents
 ai-rules install

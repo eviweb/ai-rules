@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - Skill directory link type (`[[agents.*.skill_dirs]]` in `agents.toml`): `install` / `update` link each skill folder (a folder holding a `SKILL.md`) under the agent's skills directory, one symlink per skill so user-authored skills coexist; `update` unlinks skills removed from the repository, `remove` unlinks only ai-rules skills (restoring backed-up folders), `status` reports each skill. No agent declares one yet
+- Skill format and `ai-rules skills list|verify|status` (`src/ai_rules/skills.py`, `docs/skills.md`): strict frontmatter parser without YAML dependency; `verify` checks name = folder name with the `ai-rules-` prefix, description starting with `Use when` (≤ 300 characters), supported fields only, `SKILL.md` ≤ 8 KiB, existing references, executable and shellcheck-clean scripts, and the `derived-from` / `license-of-origin` / `THIRD_PARTY.md` chain for skills derived from another project; the same checks run in the test suite
 
 ### Changed
 - Roadmap reordered: skills infrastructure and four transition skills (`starting-a-project`, `quality-dimensions`, `reviewing-changes`, `pull-requests-and-issues`) now come first (0.7.0, additive), then core slimming and scoped rules (0.8.0, breaking), so no rule is unloaded before its skill exists; the global compaction pass is replaced by a targeted condensation of the core with an invariants test

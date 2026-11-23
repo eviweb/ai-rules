@@ -87,7 +87,7 @@
 - [x] Tighten permissions (`ask` for commit/push/rm/npx/chmod, extended `deny`), drop `autoApprove`
 ### R2 — Skills infrastructure and transition skills (0.7.0)
 - [x] `skill_dirs` link type in `agents.toml` (one symlink per skill; install, update pruning, remove, status)
-- [ ] Skill format, integrity tests, `ai-rules skills list|status|verify`
+- [x] Skill format, integrity tests, `ai-rules skills list|status|verify`
 - [ ] Codex native skills (after checking its documentation)
 - [ ] Transition skills with unchanged wording: `starting-a-project`, `quality-dimensions`, `reviewing-changes`, `pull-requests-and-issues`; skills index in `CLAUDE.md`
 ### R3 — Core slimming and scoped rules (0.8.0, breaking)

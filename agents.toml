@@ -41,6 +41,11 @@ supports_imports = true
   source = "rules"
   target = "rules"
 
+  # One symlink per skill folder, so skills written by the user coexist.
+  [[agents.claude.skill_dirs]]
+  source = "skills"
+  target = "skills"
+
   # settings.json is merged key by key, never symlinked: Claude Code writes its
   # own keys (plugins, /permissions, theme) into the deployed file.
   [[agents.claude.settings_merge]]

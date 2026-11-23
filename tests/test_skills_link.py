@@ -331,3 +331,57 @@ def test_status_reports_stale_skill(repo_root: Path, install_dir: Path) -> None:
     states = dict(status_agent(repo_root, agent))
 
     assert states["skills/ai-rules-gone"].startswith("stale")
+
+
+# --- targets outside install_dir ---------------------------------------------
+
+
+def make_agent_with_target(install_dir: Path, target: str) -> Agent:
+    agent = make_skills_agent(install_dir)
+    agent.skill_dirs = [SkillDir(source="skills", target=target)]
+    return agent
+
+
+def test_install_expands_home_in_skill_target(
+    repo_root: Path, install_dir: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    home = tmp_path / "home"
+    home.mkdir()
+    monkeypatch.setenv("HOME", str(home))
+    source = make_skill(repo_root, "ai-rules-a")
+
+    actions = install_agent(
+        repo_root, make_agent_with_target(install_dir, "~/.agents/skills")
+    )
+
+    assert (home / ".agents" / "skills" / "ai-rules-a").resolve() == source.resolve()
+    assert not (install_dir / "skills").exists()
+    assert any("LINK" in a and "~/.agents/skills/ai-rules-a" in a for a in actions)
+
+
+def test_install_accepts_absolute_skill_target(
+    repo_root: Path, install_dir: Path, tmp_path: Path
+) -> None:
+    make_skill(repo_root, "ai-rules-a")
+    elsewhere = tmp_path / "elsewhere"
+
+    install_agent(repo_root, make_agent_with_target(install_dir, str(elsewhere)))
+
+    assert (elsewhere / "ai-rules-a").is_symlink()
+
+
+def test_remove_and_status_follow_the_home_target(
+    repo_root: Path, install_dir: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    home = tmp_path / "home"
+    home.mkdir()
+    monkeypatch.setenv("HOME", str(home))
+    make_skill(repo_root, "ai-rules-a")
+    agent = make_agent_with_target(install_dir, "~/.agents/skills")
+    install_agent(repo_root, agent)
+
+    states = dict(status_agent(repo_root, agent))
+    remove_agent(repo_root, agent)
+
+    assert states["~/.agents/skills/ai-rules-a"] == "ok"
+    assert not (home / ".agents" / "skills" / "ai-rules-a").exists()

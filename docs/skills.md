@@ -54,4 +54,4 @@ metadata:
 
 ## Deployment
 
-`ai-rules install` / `update` symlink each skill folder into the agent's skills directory, one link per skill; skills you write yourself are never touched. `ai-rules status` and `ai-rules skills status` show the state.
+`ai-rules install` / `update` symlink each skill folder into the agent's skills directory (`~/.claude/skills/` for Claude Code, `~/.agents/skills/` for Codex), one link per skill; skills you write yourself are never touched. `ai-rules status` and `ai-rules skills status` show the state.

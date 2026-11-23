@@ -88,7 +88,7 @@
 ### R2 — Skills infrastructure and transition skills (0.7.0)
 - [x] `skill_dirs` link type in `agents.toml` (one symlink per skill; install, update pruning, remove, status)
 - [x] Skill format, integrity tests, `ai-rules skills list|status|verify`
-- [ ] Codex native skills (after checking its documentation)
+- [x] Codex native skills (`~/.agents/skills`); to confirm in a Codex session with `/skills`
 - [x] Transition skills with unchanged wording: `ai-rules-starting-a-project`, `ai-rules-quality-dimensions`, `ai-rules-reviewing-changes`, `ai-rules-pull-requests-and-issues` (parity test with their rules)
 - [ ] Measure the skill listing cost with `/context` (estimate: ~310 tokens) and the trigger quality over the 0.7.0 cycle
 ### R3 — Core slimming and scoped rules (0.8.0, breaking)

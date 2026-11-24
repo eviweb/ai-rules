@@ -60,7 +60,7 @@ ai-rules/
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest, 453 tests)
+├── tests/                    # Test suite (pytest, 456 tests)
 ├── .github/workflows/
 │   ├── ci.yml                # CI pipeline (lint + test + coverage)
 │   └── sources-review.yml    # Monthly check of docs/sources.md; opens an issue when sources are due

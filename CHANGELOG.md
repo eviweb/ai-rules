@@ -37,6 +37,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- `scripts/check-sources-age.sh --check-upstream` failed in the monthly workflow with "Failure writing output": it parsed the GitHub response through `curl | grep -m1`, and `grep` closing the pipe made `curl` fail under `pipefail`. The response is now read in full before parsing, and the workflow passes its token to the API call to avoid anonymous rate limits. Three tests reproduce the failure with a `curl` that keeps writing after the first line
+
 ## [0.8.0] - 2026-11-24
 
 Roadmap phase 3: core slimming and scoped rules. **Breaking:** run `ai-rules update` after upgrading (see the migration note in the README).

@@ -172,3 +172,65 @@ def test_the_workflow_opens_one_issue_and_does_not_block_merges() -> None:
     assert "gh issue list" in text
     assert "check-sources-age.sh --check-upstream" in text
     assert "pull_request:" not in text and "push:" not in text
+
+
+def _fake_curl(tmp_path: Path, sha: str) -> Path:
+    """A curl that keeps writing after the first line, like a real HTTP response."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    curl = bin_dir / "curl"
+    curl.write_text(
+        "#!/usr/bin/env bash\n"
+        f"printf '[\\n  {{\\n    \"sha\": \"{sha}\",\\n'\n"
+        "sleep 0.3\n"
+        "printf '    \"node_id\": \"x\",\\n    \"commit\": {\"tree\": {\"sha\": \"0000000000000000000000000000000000000000\"}}\\n  }\\n]\\n'\n"
+    )
+    curl.chmod(0o755)
+    return bin_dir
+
+
+def _run_with_fake_curl(register: Path, bin_dir: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    import os
+
+    env = {**os.environ, "PATH": f"{bin_dir}:{os.environ['PATH']}"}
+    return subprocess.run(
+        [str(SCRIPT), "--file", str(register), "--today", "2026-11-25", "--check-upstream", *args],
+        capture_output=True,
+        text=True,
+        check=False,
+        env=env,
+    )
+
+
+def test_upstream_check_survives_a_response_that_is_still_being_written(tmp_path: Path) -> None:
+    pinned = "22f0b46"
+    register = write_register(tmp_path, row("Superpowers (obra/superpowers)", "2026-11-24", 3, version=f"v7.0.2 @ {pinned}"))
+    bin_dir = _fake_curl(tmp_path, "22f0b463e7a5e579904dd6211a520321035526f7")
+
+    result = _run_with_fake_curl(register, bin_dir)
+
+    assert result.returncode == 0, result.stderr
+    assert "up to date" in result.stdout
+
+
+def test_upstream_check_reports_a_moved_upstream_read_from_the_response(tmp_path: Path) -> None:
+    register = write_register(tmp_path, row("Superpowers (obra/superpowers)", "2026-11-24", 3, version="v7.0.2 @ 22f0b46"))
+    bin_dir = _fake_curl(tmp_path, "abcdef1234567890abcdef1234567890abcdef12")
+
+    result = _run_with_fake_curl(register, bin_dir)
+
+    assert result.returncode == 1
+    assert "upstream moved from 22f0b46 to abcdef1" in result.stdout
+
+
+def test_upstream_check_fails_cleanly_when_the_response_has_no_commit(tmp_path: Path) -> None:
+    register = write_register(tmp_path, row("Superpowers (obra/superpowers)", "2026-11-24", 3, version="v7.0.2 @ 22f0b46"))
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    (bin_dir / "curl").write_text("#!/usr/bin/env bash\necho '[]'\n")
+    (bin_dir / "curl").chmod(0o755)
+
+    result = _run_with_fake_curl(register, bin_dir)
+
+    assert result.returncode == 2
+    assert "no upstream commit found" in result.stderr

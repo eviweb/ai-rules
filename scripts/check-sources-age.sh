@@ -110,9 +110,15 @@ if [[ "$CHECK_UPSTREAM" -eq 1 ]]; then
   latest="$LATEST_UPSTREAM"
   if [[ -z "$latest" ]]; then
     command -v curl >/dev/null 2>&1 || die "curl is required for --check-upstream"
-    latest="$(curl -fsS "https://api.github.com/repos/${UPSTREAM_REPO}/commits?per_page=1" \
-      | grep -m1 '"sha"' | sed -E 's/.*"sha": *"([0-9a-f]+)".*/\1/')" \
+    auth=()
+    [[ -z "${GH_TOKEN:-}" ]] || auth=(-H "Authorization: Bearer ${GH_TOKEN}")
+    # Read the whole response before parsing it: closing a pipe early would
+    # make curl fail with "Failure writing output" under pipefail.
+    response="$(curl -fsS "${auth[@]}" "https://api.github.com/repos/${UPSTREAM_REPO}/commits?per_page=1")" \
       || die "could not read the latest commit of ${UPSTREAM_REPO}"
+    if [[ "$response" =~ \"sha\":[[:space:]]*\"([0-9a-f]{40})\" ]]; then
+      latest="${BASH_REMATCH[1]}"
+    fi
   fi
   [[ -n "$latest" ]] || die "no upstream commit found"
   if [[ "${latest:0:${#upstream_pin}}" != "$upstream_pin" ]]; then

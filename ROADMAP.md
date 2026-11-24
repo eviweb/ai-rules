@@ -364,7 +364,7 @@ Each phase follows the strict profile: one PR per phase item, merge commit, CI g
 | Settings merge corrupts user config | Broken Claude Code setup | Backup before every write, JSON schema validation, idempotency tests |
 | Skills format diverges between agents | Parity loss | Native mode per agent, index/inline fallback, compatibility tests per agent |
 | Eval cost | Spend on quota | Small fixed task set, run per minor release only, cheap model where possible |
-| Upstream Superpowers evolves | Adapted skills drift | `derived-from:` field with upstream commit; quarterly diff review |
+| Upstream Superpowers evolves | Adapted skills drift | `derived-from:` field with upstream commit; monthly automated check of the pinned commit (`docs/sources.md`, `sources-review.yml`) that opens an issue when upstream has moved |
 
 ---
 

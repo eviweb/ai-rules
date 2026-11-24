@@ -1,0 +1,54 @@
+name: Sources review
+
+# Monthly check of docs/sources.md: opens an issue when a source is due for a
+# review or when the upstream project behind derived skills has moved. It never
+# runs on pushes or pull requests, so it cannot block a merge.
+on:
+  schedule:
+    - cron: "17 6 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  review:
+    name: Review sources
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Check the register
+        id: check
+        run: |
+          status=0
+          scripts/check-sources-age.sh --check-upstream > "${RUNNER_TEMP}/sources-report.md" || status=$?
+          cat "${RUNNER_TEMP}/sources-report.md"
+          echo "status=${status}" >> "${GITHUB_OUTPUT}"
+          if [ "${status}" -gt 1 ]; then
+            echo "The check itself failed (exit ${status})" >&2
+            exit "${status}"
+          fi
+
+      - name: Open an issue when sources are due
+        if: steps.check.outputs.status == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          title="Sources review due"
+          open=$(gh issue list --state open --search "\"${title}\" in:title" --json number --jq 'length')
+          if [ "${open}" != "0" ]; then
+            echo "An issue is already open; nothing to create."
+            exit 0
+          fi
+          gh label create chore --description "Maintenance, tooling, refactoring" --force
+          gh issue create --title "${title}" --label chore --body-file "${RUNNER_TEMP}/sources-report.md"

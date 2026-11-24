@@ -51,16 +51,19 @@ ai-rules/
 │   └── ci-triggers.md      # experimental CI triggers pattern
 ├── docs/
 │   ├── metrics/            # Context-cost measurements per version (baseline-0.6.1.md, 0.7.0.md, 0.8.0.md)
-│   └── skills.md           # How to write a skill (format, description style, derived skills)
+│   ├── skills.md           # How to write a skill (format, description style, derived skills)
+│   └── sources.md          # Register of the standards and upstream projects relied on, with review dates
 ├── scripts/
 │   ├── extract-changelog.sh  # Extract release notes from CHANGELOG.md
-│   └── measure-context.sh    # Size of each rule-loading layer (bytes, lines, ~tokens)
+│   ├── measure-context.sh    # Size of each rule-loading layer (bytes, lines, ~tokens)
+│   └── check-sources-age.sh  # Lists the sources of docs/sources.md that are due for a review
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest, 423 tests)
+├── tests/                    # Test suite (pytest, 453 tests)
 ├── .github/workflows/
-│   └── ci.yml                # CI pipeline (lint + test + coverage)
+│   ├── ci.yml                # CI pipeline (lint + test + coverage)
+│   └── sources-review.yml    # Monthly check of docs/sources.md; opens an issue when sources are due
 ├── agents.toml               # Agent registry and link declarations
 ├── THIRD_PARTY.md            # Notices for the upstream projects some skills are derived from
 └── pyproject.toml            # Python package definition

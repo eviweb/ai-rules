@@ -45,7 +45,7 @@ metadata:
   license-of-origin: MIT
 ```
 
-`verify` then requires a `THIRD_PARTY.md` at the repository root that names the upstream project (copyright and license text). Verify the upstream license before copying anything.
+`verify` then requires a `THIRD_PARTY.md` at the repository root that names the upstream project (copyright and license text). Verify the upstream license before copying anything. The pinned upstream version is also recorded in `docs/sources.md`, which a monthly workflow compares with the latest upstream commit.
 
 ## References and scripts
 

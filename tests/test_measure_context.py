@@ -18,8 +18,8 @@ def sample_repo(tmp_path: Path) -> Path:
     (tmp_path / "rules" / "a.md").write_text("a" * 400)
     (tmp_path / "rules" / "b.md").write_text("b" * 800)
     (tmp_path / "rules" / "orphan.md").write_text("o" * 200)
-    (tmp_path / "agents" / "claude" / "CLAUDE.md").write_text("@rules/a.md\n@rules/b.md\n")
-    (tmp_path / "agents" / "gemini" / "GEMINI.md").write_text("@./rules/a.md\n")
+    (tmp_path / "agents" / "claude" / "CLAUDE.md").write_text("@../../rules/a.md\n@../../rules/b.md\n")
+    (tmp_path / "agents" / "gemini" / "GEMINI.md").write_text("g" * 700)
     (tmp_path / "agents" / "codex" / "AGENTS.md").write_text("c" * 1000)
     return tmp_path
 
@@ -43,7 +43,7 @@ def test_measure_context_counts_import_bytes_and_approximate_tokens(sample_repo)
 
     imports_row = next(line for line in result.stdout.splitlines() if "Claude Code @imports" in line)
     cells = [cell.strip() for cell in imports_row.strip("|").split("|")]
-    assert cells[2] == str(len("@rules/a.md\n@rules/b.md\n") + 400 + 800)
+    assert cells[2] == str(len("@../../rules/a.md\n@../../rules/b.md\n") + 400 + 800)
     assert cells[4] == str(-(-int(cells[2]) * 10 // 27))
 
 
@@ -66,7 +66,7 @@ def test_measure_context_reports_overlapping_files(sample_repo):
     result = run_script("--root", str(sample_repo))
 
     assert "Overlap: 2 files" in result.stdout
-    assert "Claude Code loads each once" in result.stdout
+    assert "verify with /context" in result.stdout
     assert "orphan.md" not in result.stdout.split("Overlap")[1]
 
 
@@ -100,14 +100,14 @@ def test_measure_context_counts_core_imports_of_the_entry_point(sample_repo):
     (sample_repo / "core").mkdir()
     (sample_repo / "core" / "git.md").write_text("g" * 300)
     claude = sample_repo / "agents" / "claude" / "CLAUDE.md"
-    claude.write_text("@core/git.md\n@rules/a.md\n")
+    claude.write_text("@../../core/git.md\n@../../rules/a.md\n")
 
     result = run_script("--root", str(sample_repo))
 
     imports_row = next(line for line in result.stdout.splitlines() if "Claude Code @imports" in line)
     cells = [cell.strip() for cell in imports_row.strip("|").split("|")]
     assert cells[1] == "3"
-    assert cells[2] == str(len("@core/git.md\n@rules/a.md\n") + 300 + 400)
+    assert cells[2] == str(len("@../../core/git.md\n@../../rules/a.md\n") + 300 + 400)
 
 
 def _row(output: str, label: str) -> list[str]:
@@ -182,3 +182,16 @@ def test_measure_context_help_exits_zero():
 
     assert result.returncode == 0
     assert "Usage:" in result.stdout
+
+
+def test_measure_context_ignores_and_reports_an_import_that_does_not_resolve(sample_repo):
+    claude = sample_repo / "agents" / "claude" / "CLAUDE.md"
+    claude.write_text("@rules/a.md\n@../../rules/b.md\n")
+
+    result = run_script("--root", str(sample_repo))
+
+    imports_row = next(line for line in result.stdout.splitlines() if "Claude Code @imports" in line)
+    cells = [cell.strip() for cell in imports_row.strip("|").split("|")]
+    assert cells[1] == "2"
+    assert "does not resolve" in result.stderr
+    assert "rules/a.md" in result.stderr

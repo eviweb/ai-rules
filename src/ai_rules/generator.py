@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-_IMPORT_RE = re.compile(r"^@(core|rules|skills)/(.+)$")
+_IMPORT_RE = re.compile(r"^@(?:\.\./\.\./)?(core|rules|skills)/(.+)$")
 _PATH_ITEM_RE = re.compile(r'^\s+-\s+["\']?(.*?)["\']?\s*$')
 
 

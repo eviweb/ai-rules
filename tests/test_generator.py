@@ -223,3 +223,13 @@ def test_resolve_imports_keeps_files_without_frontmatter_unchanged(repo_root: Pa
     source.write_text("@rules/language.md\n")
 
     assert resolve_imports(source, repo_root) == "# Language\n\nWrite in English.\n"
+
+
+def test_resolve_imports_accepts_the_entry_point_relative_form(repo_root: Path) -> None:
+    core = repo_root / "core"
+    core.mkdir()
+    (core / "git.md").write_text("# Git\n\nUse merge commits.\n")
+    source = repo_root / "CLAUDE.md"
+    source.write_text("@../../core/git.md\n")
+
+    assert "Use merge commits." in resolve_imports(source, repo_root)

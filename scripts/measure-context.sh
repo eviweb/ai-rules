@@ -95,12 +95,21 @@ print_listing_row() {
   printf '| %s | %s | %s | - | %s |\n' "$label" "$files" "$bytes" "$(estimate_tokens "$bytes")"
 }
 
-# Print the rule files imported by an entry point (@core/x.md, @rules/x.md or the @./ form).
+# Print the files imported by an entry point. Claude Code resolves a relative
+# import against the real path of the file that holds it, so do the same;
+# an import that does not resolve loads nothing and is reported on stderr.
 list_imports() {
-  local entry_point="$1"
+  local entry_point="$1" real_dir import resolved
   [[ -f "$entry_point" ]] || return 0
-  { grep -oE '^@(\./)?(core|rules)/[^[:space:]]+' "$entry_point" || true; } \
-    | sed -E 's#^@(\./)?#'"${ROOT}"'/#'
+  real_dir="$(dirname "$(realpath "$entry_point")")"
+  while IFS= read -r import; do
+    resolved="$(realpath -m "${real_dir}/${import#@}")"
+    if [[ -f "$resolved" ]]; then
+      printf '%s\n' "$resolved"
+    else
+      echo "${SCRIPT_NAME}: import does not resolve from ${real_dir}: ${import}" >&2
+    fi
+  done < <(grep -E '^@[^[:space:]]+' "$entry_point" || true)
 }
 
 while [[ $# -gt 0 ]]; do
@@ -132,7 +141,6 @@ ROOT="$(cd "$ROOT" && pwd)"
 claude_entry="${ROOT}/agents/claude/CLAUDE.md"
 gemini_entry="${ROOT}/agents/gemini/GEMINI.md"
 mapfile -t claude_imports < <(list_imports "$claude_entry")
-mapfile -t gemini_imports < <(list_imports "$gemini_entry")
 mapfile -t rules_dir < <(find "${ROOT}/rules" -maxdepth 1 -name '*.md' 2>/dev/null | sort)
 
 echo "| Layer | Files | Bytes | Lines | ~Tokens |"
@@ -147,7 +155,7 @@ if [[ -d "${ROOT}/skills" ]]; then
   print_row "skills/ SKILL.md (on demand)" "${skill_files[@]}"
   [[ ${#skill_references[@]} -gt 0 ]] && print_row "skills/ references (on demand)" "${skill_references[@]}"
 fi
-print_row "Gemini @imports" "$gemini_entry" "${gemini_imports[@]}"
+print_row "Gemini flat file" "$gemini_entry"
 print_row "Codex flat file" "${ROOT}/agents/codex/AGENTS.md"
 
 overlapping=()
@@ -163,7 +171,7 @@ if [[ -d "${ROOT}/skills" ]]; then
 fi
 
 echo
-echo "Overlap: ${#overlapping[@]} files are both imported by CLAUDE.md and present in rules/ (auto-loaded when deployed to ~/.claude/rules). Claude Code loads each once when both resolve to the same real path (symlink deployment); verify with /context."
+echo "Overlap: ${#overlapping[@]} files are both imported by CLAUDE.md and present in rules/ (the same file would be reachable through the import and through the ~/.claude/rules auto-load); verify with /context."
 
 if [[ "$SHOW_FILES" -eq 1 ]]; then
   echo

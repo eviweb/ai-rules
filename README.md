@@ -58,7 +58,7 @@ ai-rules/
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest, 287 tests)
+├── tests/                    # Test suite (pytest, 289 tests)
 ├── .github/workflows/
 │   └── ci.yml                # CI pipeline (lint + test + coverage)
 ├── agents.toml               # Agent registry and link declarations
@@ -182,7 +182,6 @@ For each declared link in `agents.toml`, `ai-rules install`:
 | Symlink                    | Source                            |
 |----------------------------|-----------------------------------|
 | `~/.claude/CLAUDE.md`      | `agents/claude/CLAUDE.md`         |
-| `~/.claude/core`           | `core/`                           |
 | `~/.claude/rules`          | `rules/`                          |
 | `~/.codex/AGENTS.md`       | `agents/codex/AGENTS.md`          |
 | `~/.gemini/GEMINI.md`      | `agents/gemini/GEMINI.md`         |
@@ -215,11 +214,11 @@ Skill directories (`[[agents.*.skill_dirs]]` in `agents.toml`): each sub-folder 
 
 ### How rules are loaded (Claude Code)
 
-- `~/.claude/CLAUDE.md` imports only the core (`@core/<name>.md`): five files, always in context.
+- `~/.claude/CLAUDE.md` imports only the core (`@../../core/<name>.md`): five files, always in context. Claude Code resolves a relative import against the **real path** of the file that holds it, and `~/.claude/CLAUDE.md` is a symlink into this repository, so the paths are written relative to `agents/claude/` (checked by a test). `@core/…` would look for `agents/claude/core/` and silently load nothing.
 - `~/.claude/rules/` holds the topic rules. Each has a `paths:` frontmatter, so Claude Code loads it only when it reads or writes a matching file (patterns are relative to the session's working directory). A rule is never imported: an `@import` always loads its file. The tests enforce both.
 - Task-type material (project start, quality dimensions, review, pull requests and issues) lives in skills, loaded on demand; Codex and Gemini receive the same texts in their generated flat files (Gemini has no skills; Codex has native skills for them).
 - Always-on cost: the core is about 9.5 KB (about 3.5k tokens) plus the skill listing (about 0.3k). Estimate it with `scripts/measure-context.sh` and confirm with `/context`.
-- Migration from 0.7.x: run `ai-rules update`. It links `~/.claude/core`; the old `~/.gemini/core` and `~/.gemini/rules` links are no longer used and can be deleted by hand.
+- Migration from 0.7.x: run `ai-rules update`. The `~/.claude/core` (0.8.0-dev builds only), `~/.gemini/core` and `~/.gemini/rules` links are not used and can be deleted by hand.
 
 ### Agents with a generated flat file (Codex, Gemini)
 

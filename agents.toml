@@ -42,10 +42,6 @@ supports_imports = true
   target = "CLAUDE.md"
 
   [[agents.claude.links]]
-  source = "core"
-  target = "core"
-
-  [[agents.claude.links]]
   source = "rules"
   target = "rules"
 

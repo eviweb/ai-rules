@@ -15,7 +15,7 @@ Read when the project is reachable over a network, handles authentication, secre
 
 ## Threat modelling (small, at design time)
 
-Answer Shostack's four questions on a one-page data-flow diagram: what are we building, what can go wrong, what will we do about it, did we do a good job. Use **STRIDE** to prompt: spoofing, tampering, repudiation, information disclosure, denial of service, elevation of privilege. Record the threats and decisions in the design document or an ADR.
+Answer Shostack's four questions on a one-page data-flow diagram: what are we working on, what can go wrong, what are we going to do about it, did we do a good job. Use **STRIDE** to prompt: spoofing, tampering, repudiation, information disclosure, denial of service, elevation of privilege. Record the threats and decisions in the design document or an ADR.
 
 ## Checklists
 

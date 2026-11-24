@@ -6,7 +6,7 @@ Read when the project is meant to live beyond a one-off: anything with users, ve
 
 - **Hotspots**: the files that change most are where structure matters most (`git log --name-only | sort | uniq -c | sort -rn`). Combine with complexity before deciding where to refactor (`ai-rules-refactoring-and-design`).
 - **Change coupling**: files that always change together belong together or hide a missing abstraction.
-- Watch the DORA indicators: deployment frequency, lead time for changes, change failure rate and time to restore service. Use them to see trends, not to rank people.
+- Watch the five DORA metrics: change lead time, deployment frequency, failed deployment recovery time, change fail rate and deployment rework rate. Use them to see trends, not to rank people.
 
 ## Technical debt
 

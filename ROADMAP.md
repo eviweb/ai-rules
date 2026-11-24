@@ -162,7 +162,7 @@ Expected outcome: always-on context drops from ~65 KB to ≤ 13 KB (core + boots
 - [x] Namespace all skills: folder and `name` carry the `ai-rules-` prefix (enforced by `skills verify`); plugin skills are namespaced by Claude Code anyway, the prefix protects against same-named personal or project skills
 - [x] **Transition skills**: port existing rules as skills, wording unchanged (no rewrite), so Phase 3 can unload them without a behavior gap; a parity test keeps each skill identical to its rule while both exist:
   - `ai-rules-starting-a-project` (from `editor`, project-start parts of `docs` and `security`: `.editorconfig`, mandatory files, `.gitignore`; a `paths:` rule cannot trigger on a missing file)
-  - `ai-rules-quality-dimensions` (from `quality`; the full text is in `references/dimensions.md` because `quality.md` exceeds the 8 KB limit of a `SKILL.md`)
+  - `ai-rules-quality-dimensions` (from `quality`; the full text is in `references/dimensions/`, one file per dimension, because `quality.md` exceeds the 8 KB limit of a `SKILL.md`)
   - `ai-rules-reviewing-changes` (from `review`)
   - `ai-rules-pull-requests-and-issues` (from `pr`, `issues`)
 - [ ] Skills index in `CLAUDE.md` (3–5 lines naming each skill with its trigger): moved to Phase 3, when the rules are unloaded; redundant with the automatic skill listing while they are loaded, and it would leak into the Codex flat file before the generator handles skills

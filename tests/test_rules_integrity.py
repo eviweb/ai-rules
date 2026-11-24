@@ -157,3 +157,11 @@ def test_attribution_rule_names_no_specific_tool():
     section = commits.split("No attribution", 1)[1].split("\n", 3)[0]
 
     assert "Claude" not in section
+
+
+def test_cli_rule_exempts_internal_read_only_helper_scripts():
+    cli_rule = (REPO_ROOT / "rules" / "cli.md").read_text()
+
+    assert "user-facing" in cli_rule
+    assert "internal" in cli_rule and "read-only" in cli_rule
+    assert "`-h|--help`" in cli_rule

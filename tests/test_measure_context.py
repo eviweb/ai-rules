@@ -93,7 +93,67 @@ def test_measure_context_includes_core_and_skills_layers_when_present(sample_rep
     result = run_script("--root", str(sample_repo))
 
     assert "| core/ | 1 | 100 |" in result.stdout
-    assert "| skills/ | 1 | 50 |" in result.stdout
+    assert "| skills/ SKILL.md (on demand) | 1 | 50 |" in result.stdout
+
+
+def _row(output: str, label: str) -> list[str]:
+    line = next(line for line in output.splitlines() if line.startswith(f"| {label} |"))
+    return [cell.strip() for cell in line.strip("|").split("|")]
+
+
+@pytest.fixture
+def repo_with_skills(sample_repo: Path) -> Path:
+    first = sample_repo / "skills" / "ai-rules-one"
+    first.mkdir(parents=True)
+    (first / "SKILL.md").write_text(
+        '---\nname: ai-rules-one\ndescription: "Use when testing: one"\n---\n' + "b" * 100
+    )
+    (first / "references").mkdir()
+    (first / "references" / "more.md").write_text("r" * 70)
+    second = sample_repo / "skills" / "ai-rules-two"
+    second.mkdir()
+    (second / "SKILL.md").write_text(
+        "---\nname: ai-rules-two\ndescription: Use when testing two\n---\nbody"
+    )
+    return sample_repo
+
+
+def test_measure_context_reports_the_always_on_skill_listing(repo_with_skills):
+    result = run_script("--root", str(repo_with_skills))
+
+    cells = _row(result.stdout, "skills/ listing (always on)")
+    listing = len("ai-rules-one") + len("Use when testing: one")
+    listing += len("ai-rules-two") + len("Use when testing two")
+    assert cells[1] == "2"
+    assert cells[2] == str(listing)
+    assert cells[4] == str(-(-listing * 10 // 27))
+
+
+def test_measure_context_labels_skill_bodies_and_references_as_on_demand(repo_with_skills):
+    result = run_script("--root", str(repo_with_skills))
+
+    bodies = _row(result.stdout, "skills/ SKILL.md (on demand)")
+    references = _row(result.stdout, "skills/ references (on demand)")
+    assert bodies[1] == "2"
+    assert references[1:3] == ["1", "70"]
+
+
+def test_measure_context_omits_the_references_row_without_references(sample_repo):
+    (sample_repo / "skills" / "demo").mkdir(parents=True)
+    (sample_repo / "skills" / "demo" / "SKILL.md").write_text(
+        "---\nname: demo\ndescription: Use when x\n---\n"
+    )
+
+    result = run_script("--root", str(sample_repo))
+
+    assert "skills/ references" not in result.stdout
+    assert "skills/ listing (always on)" in result.stdout
+
+
+def test_measure_context_explains_the_always_on_versus_on_demand_split(repo_with_skills):
+    result = run_script("--root", str(repo_with_skills))
+
+    assert "only the skill listing is paid at every turn" in result.stdout
 
 
 def test_measure_context_unknown_root_exits_with_error(tmp_path):

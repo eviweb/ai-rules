@@ -143,10 +143,27 @@ gemini_entry="${ROOT}/agents/gemini/GEMINI.md"
 mapfile -t claude_imports < <(list_imports "$claude_entry")
 mapfile -t rules_dir < <(find "${ROOT}/rules" -maxdepth 1 -name '*.md' 2>/dev/null | sort)
 
+# True when the file opens with a frontmatter block that declares paths:
+# (a scoped rule: loaded when a matching file is touched, not at launch).
+declares_paths() {
+  awk 'NR == 1 { if ($0 != "---") exit 1; next }
+       $0 == "---" { exit found ? 0 : 1 }
+       /^paths:/ { found = 1 }
+       END { exit found ? 0 : 1 }' "$1"
+}
+
+rules_label="rules/ directory"
+if [[ ${#rules_dir[@]} -gt 0 ]]; then
+  rules_label="rules/ scoped (on demand)"
+  for rule_file in "${rules_dir[@]}"; do
+    declares_paths "$rule_file" || { rules_label="rules/ directory"; break; }
+  done
+fi
+
 echo "| Layer | Files | Bytes | Lines | ~Tokens |"
 echo "|-------|-------|-------|-------|---------|"
 print_row "Claude Code @imports" "$claude_entry" "${claude_imports[@]}"
-print_row "rules/ directory" "${rules_dir[@]}"
+print_row "$rules_label" "${rules_dir[@]}"
 [[ -d "${ROOT}/core" ]] && print_row "core/" "${ROOT}"/core/*.md
 if [[ -d "${ROOT}/skills" ]]; then
   mapfile -t skill_files < <(find "${ROOT}/skills" -mindepth 2 -maxdepth 2 -name SKILL.md | sort)

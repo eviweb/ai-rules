@@ -205,3 +205,22 @@ def test_measure_context_explains_that_scoped_rules_are_not_always_on(sample_rep
 
     assert "Scoped rules" in result.stdout
     assert "not at launch" in result.stdout
+
+
+def test_measure_context_labels_rules_on_demand_when_every_rule_declares_paths(sample_repo):
+    for rule in (sample_repo / "rules").glob("*.md"):
+        rule.write_text('---\npaths:\n  - "**/*.sh"\n---\n' + rule.read_text())
+
+    result = run_script("--root", str(sample_repo))
+
+    assert "| rules/ scoped (on demand) | 3 |" in result.stdout
+    assert "| rules/ directory |" not in result.stdout
+
+
+def test_measure_context_keeps_the_plain_label_when_a_rule_has_no_paths(sample_repo):
+    rule = sample_repo / "rules" / "a.md"
+    rule.write_text('---\npaths:\n  - "**/*.sh"\n---\n' + rule.read_text())
+
+    result = run_script("--root", str(sample_repo))
+
+    assert "| rules/ directory | 3 |" in result.stdout

@@ -50,7 +50,7 @@ ai-rules/
 ├── templates/              # On-demand references, not auto-loaded
 │   └── ci-triggers.md      # experimental CI triggers pattern
 ├── docs/
-│   ├── metrics/            # Context-cost measurements per version (baseline-0.6.1.md, 0.7.0.md)
+│   ├── metrics/            # Context-cost measurements per version (baseline-0.6.1.md, 0.7.0.md, 0.8.0.md)
 │   └── skills.md           # How to write a skill (format, description style, derived skills)
 ├── scripts/
 │   ├── extract-changelog.sh  # Extract release notes from CHANGELOG.md
@@ -58,7 +58,7 @@ ai-rules/
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest, 289 tests)
+├── tests/                    # Test suite (pytest, 291 tests)
 ├── .github/workflows/
 │   └── ci.yml                # CI pipeline (lint + test + coverage)
 ├── agents.toml               # Agent registry and link declarations

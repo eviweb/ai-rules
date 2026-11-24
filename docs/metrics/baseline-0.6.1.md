@@ -33,7 +33,7 @@ Not counted because deferred: MCP tools (269.7k), system tools (23.5k).
 - `~/.claude/CLAUDE.md`: 296 tokens (imports 25 rule files)
 - `~/.claude/rules/`: 26 files, about 26.8k tokens; the directory is auto-loaded in full, so `ci-triggers-template.md` (not imported) was loaded too
 - Auto-memory index (`MEMORY.md`): 127 tokens
-- Each rule file is listed once: the imports and the auto-loaded directory resolve to the same real paths, so there is no double loading with the symlink deployment
+- Each rule file is listed once. *Correction (2026-11-24):* the original explanation, that the imports and the auto-loaded directory resolve to the same real paths, was wrong. The `@rules/…` imports did not resolve from the symlinked `CLAUDE.md` (see `docs/metrics/0.8.0.md`); the `~/.claude/rules/` auto-load alone loaded the rules. The figures are unchanged.
 
 ## Rules, per file
 

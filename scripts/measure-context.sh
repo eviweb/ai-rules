@@ -170,6 +170,11 @@ if [[ -d "${ROOT}/skills" ]]; then
   echo "Skills: only the skill listing is paid at every turn (name + description, bytes of the frontmatter values); SKILL.md and references are read when a skill is invoked."
 fi
 
+if [[ -d "${ROOT}/core" ]]; then
+  echo
+  echo "Scoped rules: files of rules/ with a paths: frontmatter are loaded when a matching file is read or written, not at launch; the always-on cost is the CLAUDE.md @imports row (core/) plus the skills listing."
+fi
+
 echo
 echo "Overlap: ${#overlapping[@]} files are both imported by CLAUDE.md and present in rules/ (the same file would be reachable through the import and through the ~/.claude/rules auto-load); verify with /context."
 

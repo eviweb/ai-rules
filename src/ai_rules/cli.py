@@ -110,6 +110,19 @@ def main(
     _setup_file_logging(log_dir)
 
 
+def _complete_agent_keys(incomplete: str) -> list[tuple[str, str]]:
+    """Shell completion of the agent argument: keys of agents.toml, with the display name as help.
+
+    Completion runs inside the user's shell, so it must never print an error:
+    when the register cannot be found or read, there is simply nothing to propose.
+    """
+    try:
+        agents = load_agents(find_repo_root() / "agents.toml")
+    except (OSError, ValueError, KeyError):
+        return []
+    return [(key, agent.name) for key, agent in agents.items() if key.startswith(incomplete)]
+
+
 def _repo_root() -> Path:
     try:
         return find_repo_root()
@@ -173,7 +186,7 @@ def list_agents() -> None:
 def status(
     agent: Annotated[
         Optional[str],
-        typer.Argument(help="Agent key (e.g. claude). Defaults to all agents."),
+        typer.Argument(help="Agent key (e.g. claude). Defaults to all agents.", autocompletion=_complete_agent_keys),
     ] = None,
 ) -> None:
     """Show installation status for one or all agents."""
@@ -192,7 +205,7 @@ def status(
 def install(
     agent: Annotated[
         Optional[str],
-        typer.Argument(help="Agent key (e.g. claude). Defaults to all agents."),
+        typer.Argument(help="Agent key (e.g. claude). Defaults to all agents.", autocompletion=_complete_agent_keys),
     ] = None,
     dry_run: Annotated[
         bool,
@@ -218,7 +231,7 @@ def install(
 def generate(
     agent: Annotated[
         Optional[str],
-        typer.Argument(help="Agent key to generate flat file for. Defaults to all agents without native import support."),
+        typer.Argument(help="Agent key to generate flat file for. Defaults to all agents without native import support.", autocompletion=_complete_agent_keys),
     ] = None,
     dry_run: Annotated[
         bool,
@@ -256,7 +269,7 @@ def generate(
 def verify(
     agent: Annotated[
         Optional[str],
-        typer.Argument(help="Agent key to verify. Defaults to all agents without native import support."),
+        typer.Argument(help="Agent key to verify. Defaults to all agents without native import support.", autocompletion=_complete_agent_keys),
     ] = None,
 ) -> None:
     """Verify flat rule files are in sync with current rules.
@@ -295,7 +308,7 @@ def verify(
 def remove(
     agent: Annotated[
         Optional[str],
-        typer.Argument(help="Agent key (e.g. claude). Defaults to all agents."),
+        typer.Argument(help="Agent key (e.g. claude). Defaults to all agents.", autocompletion=_complete_agent_keys),
     ] = None,
     dry_run: Annotated[
         bool,
@@ -321,7 +334,7 @@ def remove(
 def update(
     agent: Annotated[
         Optional[str],
-        typer.Argument(help="Agent key (e.g. claude). Defaults to all agents."),
+        typer.Argument(help="Agent key (e.g. claude). Defaults to all agents.", autocompletion=_complete_agent_keys),
     ] = None,
     dry_run: Annotated[
         bool,
@@ -409,7 +422,7 @@ def skills_verify() -> None:
 def skills_status(
     agent: Annotated[
         Optional[str],
-        typer.Argument(help="Agent key (e.g. claude). Defaults to all agents."),
+        typer.Argument(help="Agent key (e.g. claude). Defaults to all agents.", autocompletion=_complete_agent_keys),
     ] = None,
 ) -> None:
     """Show how the skills are deployed for each agent that declares a skill directory."""

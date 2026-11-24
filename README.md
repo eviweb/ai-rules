@@ -60,7 +60,7 @@ ai-rules/
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest, 461 tests)
+├── tests/                    # Test suite (pytest, 474 tests)
 ├── .github/workflows/
 │   ├── ci.yml                # CI pipeline (lint + test + coverage)
 │   └── sources-review.yml    # Monthly check of docs/sources.md; opens an issue when sources are due
@@ -171,6 +171,8 @@ ai-rules verify
 # Shell completion (bash/zsh/fish)
 ai-rules --install-completion
 ```
+
+Completion covers commands and options, and the `agent` argument of `install`, `remove`, `update`, `status`, `generate`, `verify` and `skills status` (keys read from `agents.toml`, with the agent's display name as help in zsh and fish). Paths such as `--log-dir` are completed by the shell. Completion stays silent when `agents.toml` cannot be found.
 
 ### What install does
 

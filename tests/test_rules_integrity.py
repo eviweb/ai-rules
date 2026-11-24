@@ -165,3 +165,19 @@ def test_cli_rule_exempts_internal_read_only_helper_scripts():
     assert "user-facing" in cli_rule
     assert "internal" in cli_rule and "read-only" in cli_rule
     assert "`-h|--help`" in cli_rule
+
+
+def test_tdd_rule_makes_the_refactor_step_explicit_and_points_to_the_skill():
+    tdd_rule = (REPO_ROOT / "rules" / "tdd.md").read_text()
+
+    assert "TDD is mandatory" in tdd_rule
+    assert "Refactor" in tdd_rule and "nothing to refactor" in tdd_rule
+    assert "ai-rules-test-driven-development" in tdd_rule
+    assert "ai-rules-refactoring-and-design" in tdd_rule
+
+
+def test_tdd_rule_limits_the_mandate_to_code_with_testable_behavior():
+    tdd_rule = (REPO_ROOT / "rules" / "tdd.md").read_text()
+
+    assert "testable behavior" in tdd_rule
+    assert "ai-rules-verification-before-completion" in tdd_rule

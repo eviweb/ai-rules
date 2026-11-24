@@ -234,3 +234,41 @@ def test_upstream_check_fails_cleanly_when_the_response_has_no_commit(tmp_path: 
 
     assert result.returncode == 2
     assert "no upstream commit found" in result.stderr
+
+
+def _register_rows() -> list[list[str]]:
+    lines = [line for line in REGISTER.read_text().splitlines() if line.startswith("| ") and "---" not in line][1:]
+    return [[cell.strip() for cell in line.strip().strip("|").split("|")] for line in lines]
+
+
+def test_a_verified_source_carries_a_verification_date() -> None:
+    undated = [r[0] for r in _register_rows() if r[5] == "verified" and r[3] == "never"]
+
+    assert undated == []
+
+
+def test_register_statuses_are_the_documented_ones() -> None:
+    unknown = [(r[0], r[5]) for r in _register_rows() if r[5] not in {"verified", "to confirm", "not checked"}]
+
+    assert unknown == []
+
+
+def test_no_source_is_left_never_verified_after_the_first_review() -> None:
+    never = [r[0] for r in _register_rows() if r[3] == "never"]
+
+    assert never == []
+
+
+def test_dora_guidance_uses_the_current_five_metrics() -> None:
+    evolvability = (REPO_ROOT / "skills" / "ai-rules-quality-dimensions" / "references" / "contexts" / "evolvability.md").read_text()
+    reliability = (REPO_ROOT / "skills" / "ai-rules-quality-dimensions" / "references" / "dimensions" / "reliability.md").read_text()
+
+    for name in ("Change lead time", "Deployment frequency", "Failed deployment recovery time", "Change fail rate", "Deployment rework rate"):
+        assert name.lower() in evolvability.lower()
+    assert "failed deployment recovery time" in reliability.lower()
+
+
+def test_threat_modelling_uses_shostacks_wording() -> None:
+    text = (REPO_ROOT / "skills" / "ai-rules-quality-dimensions" / "references" / "contexts" / "security-by-design.md").read_text()
+
+    assert "what are we working on" in text.lower()

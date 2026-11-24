@@ -1431,7 +1431,7 @@ The system delivers correct service continuously over time.
 - Write a short runbook for the failures you expect (what to check, what to run, who to ask), and a blameless post-mortem after an incident
 - Remove single points of failure, test failures on purpose (stop a dependency, restore a backup, roll back), and test capacity before the load arrives
 - Watch the four golden signals (latency, traffic, errors, saturation); separate liveness from readiness probes; roll out progressively (canary) with a quick rollback
-- Track the time to restore service and the share of changes that fail (DORA indicators, see [evolvability](../contexts/evolvability.md))
+- Track the failed deployment recovery time and the change fail rate, two of the five DORA metrics (see [evolvability](../contexts/evolvability.md))
 
 Red flags: backups never restored, no rollback plan, no stated availability target, the same incident twice, silent data corruption possible.
 

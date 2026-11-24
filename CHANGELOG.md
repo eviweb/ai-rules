@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
@@ -22,6 +22,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `ai-rules-verification-before-completion` skill (rewritten from Superpowers' `verification-before-completion`): run the proving command and show its output before any success claim, with an evidence table including an infrastructure variant, and ai-rules specifics (checks before `COMMIT_MESSAGE`, CI read with `gh pr checks`)
 
 ### Changed
+
+- `docs/sources.md` first review (issue #57): 14 sources checked at their official source on 2026-11-24 (European Accessibility Act applies from 28 June 2025; ISO/IEC 25010 edition 2 of November 2023; ISO 9241-210:2019; Section 508 harmonised with WCAG 2.0; SLSA 1.2; Saltzer and Schroeder's eight principles; Shostack's four questions; Nielsen's ten heuristics; Conventional Commits 1.0.0; Keep a Changelog 1.1.0; Semantic Versioning 2.0.0; DORA). Two stay `to confirm` with a three-month period (EN 301 549 quoted from the RGAA page, Privacy by Design: the primary document could not be read)
+- Corrections that came out of the review: DORA now has five metrics with new names (change lead time, deployment frequency, failed deployment recovery time, change fail rate, deployment rework rate) and the reliability and evolvability guidance follows; the threat-modelling questions use Shostack's wording ("what are we working on"); the changelog header points to Keep a Changelog 1.1.0
 
 - `ai-rules-quality-dimensions` follows ISO/IEC 25010 (2023): 17 dimensions instead of 12, each in its own file under `references/dimensions/` so that a project reads only the ones it needs. Added Correctness, Reliability (with a practice scaled to the size of the project: SLO, error budget, runbooks, failure tests, DORA indicators), Interoperability, Safety and Accessibility; Extensibility is replaced by the deeper Evolvability. New `references/iso-25010.md` maps each ISO characteristic to the dimensions, and five context files are read only when their condition holds: `accessibility.md` (any interface), `privacy-by-design.md` (personal data), `security-by-design.md` (network exposure, secrets, dependencies), `user-centric.md` (end users), `evolvability.md` (anything meant to last: debt, ADR, fitness functions, deprecation). References were checked against official sources on 2026-11-24 (WCAG 2.2, GDPR, OWASP Top 10 2025, ASVS 5.0, API Top 10 2023, RGAA 4.1.2 built on WCAG 2.1). Tests check the table against the files, the ISO mapping, the context index and sizes
 

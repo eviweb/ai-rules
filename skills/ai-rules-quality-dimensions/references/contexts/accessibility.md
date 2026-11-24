@@ -5,7 +5,7 @@ Read when the project has any interface: web, GUI, TUI or CLI, documentation, er
 ## Target and references
 
 - **WCAG 2.2, level AA** is the default target. Four principles: **perceivable** (alternatives, contrast, adaptable), **operable** (keyboard, enough time, no seizures, navigable), **understandable** (readable, predictable, input help), **robust** (works with assistive technology).
-- Legal frames to ask the user about: **RGAA** (France; version 4.1.2, which is built on WCAG 2.1; a version 5 was announced for late 2026; public services and large companies, with an accessibility statement), **EN 301 549** (EU), the **European Accessibility Act** (Directive (EU) 2019/882: transposition was due in June 2022; requirements for many consumer products and services apply from June 2025, to be confirmed on EUR-Lex), Section 508 (US). Ask which apply; do not assume.
+- Legal frames to ask the user about: **RGAA** (France; version 4.1.2, which is built on WCAG 2.1; a version 5 was announced for late 2026; public services and large companies, with an accessibility statement), **EN 301 549** (EU), the **European Accessibility Act** (Directive (EU) 2019/882: transposition was due in June 2022; requirements for many consumer products and services apply from 28 June 2025 to products placed on the market and services provided after that date, with transition periods), Section 508 (US; harmonised with WCAG 2.0). Ask which apply; do not assume.
 - RGAA is based on WCAG 2.1: the WCAG 2.2 criteria below are good practice that RGAA does not yet require.
 
 ## Web

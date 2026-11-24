@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `scripts/measure-context.sh` separates the skills layer: `skills/ listing (always on)` (name + description, the only skill text paid at every turn; 842 bytes, ~312 tokens today), then `SKILL.md` and `references/` rows labelled `(on demand)`, with a note under the table
 - Skill directory link type (`[[agents.*.skill_dirs]]` in `agents.toml`): `install` / `update` link each skill folder (a folder holding a `SKILL.md`) under the agent's skills directory, one symlink per skill so user-authored skills coexist; `update` unlinks skills removed from the repository, `remove` unlinks only ai-rules skills (restoring backed-up folders), `status` reports each skill; a target starting with `~` or an absolute path is not relative to `install_dir`
 - Four transition skills for Claude Code in `skills/`, with the wording of their rules unchanged: `ai-rules-starting-a-project` (`docs.md`, `editor.md`), `ai-rules-quality-dimensions` (`quality.md`, full text in `references/dimensions.md`), `ai-rules-reviewing-changes` (`review.md`), `ai-rules-pull-requests-and-issues` (`pr.md`, `issues.md`). The rules stay loaded at launch in 0.7.0 (additive release); a test keeps each skill identical to its rule until 0.8.0 unloads the rules. The four skills add about 840 characters (~310 tokens) to the skill listing
 - Codex native skills: the same four skills are linked under `~/.agents/skills/` (user skills directory scanned by Codex); Gemini has none until phase 6

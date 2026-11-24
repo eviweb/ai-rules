@@ -65,6 +65,36 @@ print_row() {
   printf '| %s | %s | %s | %s | %s |\n' "$label" "$files" "$bytes" "$lines" "$(estimate_tokens "$bytes")"
 }
 
+# Print the value of a top-level frontmatter <key> of a SKILL.md, without quotes.
+frontmatter_value() {
+  local file="$1" key="$2"
+  awk -v key="$key" '
+    NR == 1 && $0 != "---" { exit }
+    NR > 1 && $0 == "---" { exit }
+    index($0, key ": ") == 1 {
+      value = substr($0, length(key) + 3)
+      gsub(/^["\047]|["\047]$/, "", value)
+      print value
+      exit
+    }' "$file"
+}
+
+# Print one table row for the skill listing: name + description of every SKILL.md,
+# the only skill text the agent pays at every turn.
+print_listing_row() {
+  local label="$1"
+  shift
+  local files=0 bytes=0 file name description
+  for file in "$@"; do
+    [[ -f "$file" ]] || continue
+    name="$(frontmatter_value "$file" name)"
+    description="$(frontmatter_value "$file" description)"
+    files=$((files + 1))
+    bytes=$((bytes + $(printf '%s%s' "$name" "$description" | wc -c)))
+  done
+  printf '| %s | %s | %s | - | %s |\n' "$label" "$files" "$bytes" "$(estimate_tokens "$bytes")"
+}
+
 # Print the rule files imported by an entry point (@rules/x.md or @./rules/x.md).
 list_imports() {
   local entry_point="$1"
@@ -110,7 +140,13 @@ echo "|-------|-------|-------|-------|---------|"
 print_row "Claude Code @imports" "$claude_entry" "${claude_imports[@]}"
 print_row "rules/ directory" "${rules_dir[@]}"
 [[ -d "${ROOT}/core" ]] && print_row "core/" "${ROOT}"/core/*.md
-[[ -d "${ROOT}/skills" ]] && print_row "skills/" "${ROOT}"/skills/*/SKILL.md
+if [[ -d "${ROOT}/skills" ]]; then
+  mapfile -t skill_files < <(find "${ROOT}/skills" -mindepth 2 -maxdepth 2 -name SKILL.md | sort)
+  mapfile -t skill_references < <(find "${ROOT}/skills" -mindepth 3 -path '*/references/*' -name '*.md' | sort)
+  print_listing_row "skills/ listing (always on)" "${skill_files[@]}"
+  print_row "skills/ SKILL.md (on demand)" "${skill_files[@]}"
+  [[ ${#skill_references[@]} -gt 0 ]] && print_row "skills/ references (on demand)" "${skill_references[@]}"
+fi
 print_row "Gemini @imports" "$gemini_entry" "${gemini_imports[@]}"
 print_row "Codex flat file" "${ROOT}/agents/codex/AGENTS.md"
 
@@ -120,6 +156,11 @@ for imported in "${claude_imports[@]}"; do
     [[ "$imported" == "$candidate" ]] && overlapping+=("$(basename "$imported")")
   done
 done
+
+if [[ -d "${ROOT}/skills" ]]; then
+  echo
+  echo "Skills: only the skill listing is paid at every turn (name + description, bytes of the frontmatter values); SKILL.md and references are read when a skill is invoked."
+fi
 
 echo
 echo "Overlap: ${#overlapping[@]} files are both imported by CLAUDE.md and present in rules/ (auto-loaded when deployed to ~/.claude/rules). Claude Code loads each once when both resolve to the same real path (symlink deployment); verify with /context."

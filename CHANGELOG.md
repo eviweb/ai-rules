@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-- **Breaking layout change (R3, in progress):** `language`, `principles`, `security`, `commits` and `git` move from `rules/` to the new `core/` directory (always loaded, budget 200 lines / 10 KiB, checked by tests). Run `ai-rules update` to create the `~/.claude/core` and `~/.gemini/core` links; `CLAUDE.md`/`GEMINI.md` now import `@core/…` for these files and the generator resolves `@core/` imports
+- **Breaking layout change (R3, in progress):** `language`, `principles`, `security`, `commits` and `git` move from `rules/` to the new `core/` directory (always loaded, budget 200 lines / 10 KiB, checked by tests). `CLAUDE.md` imports them as `@../../core/…` and the generator resolves `@core/` and `@../../core/` imports
 - `core/git.md` condensed (4.6 KB to 2.7 KB, same normative content); `core/commits.md` gains a pre-commit duties line (TDD including Refactor, docs in the same commit, self-review) so those behaviours survive scoped loading
 - `scripts/measure-context.sh` and `scripts/pre-commit` handle `core/`
 - **Breaking: scoped rules.** The 15 topic rules in `rules/` now carry a `paths:` frontmatter and are no longer imported by `CLAUDE.md`, which imports only the core: Claude Code loads each rule when it reads or writes a matching file. Always-on memory drops from about 65 KB to the 9.5 KB core
@@ -21,6 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - New tests: every scoped rule declares `paths:`, scoped rules ≤ 6 KiB, `CLAUDE.md` imports exactly the core, no skill duplicates core content, skill-owned rules are not rule files
 
 ### Fixed
+
+- `CLAUDE.md` imports of the core did not resolve: Claude Code resolves a relative `@import` against the real path of the symlinked `~/.claude/CLAUDE.md` (`agents/claude/`), so `@core/…` found nothing and the core was never loaded (`/context` showed 451 memory tokens instead of about 3.8k). The imports are now relative to `agents/claude/` (`@../../core/…`), confirmed with a controlled test through a symlinked entry point; the `~/.claude/core` link is no longer needed. A test now resolves every entry-point import from its real path, and `scripts/measure-context.sh` resolves imports the same way and reports those that do not resolve
 
 ## [0.7.0] - 2026-11-24
 

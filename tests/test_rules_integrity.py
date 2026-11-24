@@ -13,17 +13,26 @@ def test_language_rule_requires_english_for_project_artifacts():
     assert "French" in content
 
 
-def test_claude_entry_point_imports_only_existing_rule_files():
-    entry_point = (REPO_ROOT / "agents" / "claude" / "CLAUDE.md").read_text()
-    imported = [
-        line.removeprefix("@").strip()
-        for line in entry_point.splitlines()
-        if line.startswith(("@rules/", "@core/"))
+ENTRY_POINT = REPO_ROOT / "agents" / "claude" / "CLAUDE.md"
+
+
+def _imported_files(entry_point: Path) -> list[Path]:
+    """Files an entry point imports, resolved the way Claude Code does it.
+
+    Claude Code resolves a relative ``@import`` against the real path of the
+    file that holds it (``~/.claude/CLAUDE.md`` is a symlink into this repo).
+    """
+    return [
+        (entry_point.parent / line.removeprefix("@").strip()).resolve()
+        for line in entry_point.read_text().splitlines()
+        if line.startswith("@")
     ]
 
-    missing = [name for name in imported if not (REPO_ROOT / name).is_file()]
 
-    assert missing == []
+def test_claude_entry_point_imports_resolve_from_its_real_path():
+    unresolved = [str(path) for path in _imported_files(ENTRY_POINT) if not path.is_file()]
+
+    assert unresolved == []
 
 
 def test_rules_examples_do_not_use_unpinned_action_tags():
@@ -37,21 +46,17 @@ def test_rules_examples_do_not_use_unpinned_action_tags():
 
 
 def test_claude_entry_point_imports_exactly_the_core_files():
-    entry_point = (REPO_ROOT / "agents" / "claude" / "CLAUDE.md").read_text()
-    imported = sorted(
-        line.removeprefix("@core/").strip()
-        for line in entry_point.splitlines()
-        if line.startswith("@")
-    )
-    core_files = sorted(f.name for f in (REPO_ROOT / "core").glob("*.md"))
+    imported = sorted(path for path in _imported_files(ENTRY_POINT))
+    core_files = sorted(f.resolve() for f in (REPO_ROOT / "core").glob("*.md"))
 
     assert imported == core_files
 
 
 def test_scoped_rules_are_not_imported_because_an_import_always_loads_the_file():
-    entry_point = (REPO_ROOT / "agents" / "claude" / "CLAUDE.md").read_text()
+    rules_dir = (REPO_ROOT / "rules").resolve()
+    imported_rules = [p for p in _imported_files(ENTRY_POINT) if p.is_relative_to(rules_dir)]
 
-    assert "@rules/" not in entry_point
+    assert imported_rules == []
 
 
 def _paths_of(rule_file: Path) -> list[str]:

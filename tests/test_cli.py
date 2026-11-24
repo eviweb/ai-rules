@@ -45,6 +45,7 @@ entry_point        = "agents/codex/AGENTS.md"
 install_dir        = "{install_root}/codex"
 supports_imports   = false
 condense_flat_file = false
+flat_source        = "agents/codex/AGENTS.src.md"
 
   [[agents.codex.links]]
   source = "agents/codex/AGENTS.md"

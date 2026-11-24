@@ -1,3 +1,8 @@
+---
+paths:
+  - "VERSION"
+  - "CHANGELOG.md"
+---
 # Release Workflow
 
 ## Pre-release checklist

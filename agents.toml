@@ -5,6 +5,9 @@
 #   entry_point        Path to the agent's main config file (relative to repo root)
 #   install_dir        Target directory on the user's machine
 #   supports_imports   Whether the agent supports native file imports
+#   flat_source        Template the generated flat file is built from (lines
+#                      `@core/x.md`, `@rules/x.md`, `@skills/<skill>/<file>`); defaults
+#                      to the entry point of the first agent with native imports
 #   condense_flat_file Strip code blocks when generating the flat file (for
 #                      agents with tight context budgets)
 #
@@ -64,6 +67,7 @@ entry_point        = "agents/codex/AGENTS.md"
 install_dir        = "~/.codex"
 supports_imports   = false
 condense_flat_file = false
+flat_source        = "agents/codex/AGENTS.src.md"
 
   [[agents.codex.links]]
   source = "agents/codex/AGENTS.md"
@@ -83,16 +87,9 @@ condense_flat_file = false
 name             = "Gemini"
 entry_point      = "agents/gemini/GEMINI.md"
 install_dir      = "~/.gemini"
-supports_imports = true
+supports_imports = false
+flat_source      = "agents/gemini/GEMINI.src.md"
 
   [[agents.gemini.links]]
   source = "agents/gemini/GEMINI.md"
   target = "GEMINI.md"
-
-  [[agents.gemini.links]]
-  source = "core"
-  target = "core"
-
-  [[agents.gemini.links]]
-  source = "rules"
-  target = "rules"

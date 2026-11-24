@@ -118,6 +118,25 @@ def _repo_root() -> Path:
         raise typer.Exit(1)
 
 
+def _default_flat_source(repo_root: Path, agents: dict, targets: dict) -> Path | None:
+    """Entry point of the first agent with native imports, used when a target has no ``flat_source``."""
+    if all(t.flat_source for t in targets.values()):
+        return None
+    source_agent = next((a for a in agents.values() if a.supports_imports), None)
+    if source_agent is None:
+        _echo("Error: no agent with supports_imports=True found to use as source.", err=True)
+        raise typer.Exit(1)
+    return repo_root / source_agent.entry_point
+
+
+def _flat_source(repo_root: Path, agent, default_source: Path | None) -> Path:
+    """Template a flat file is generated from: the agent's own, else the default."""
+    if agent.flat_source:
+        return repo_root / agent.flat_source
+    assert default_source is not None
+    return default_source
+
+
 def _select_agents(repo_root: Path, agent_key: Optional[str]) -> dict:
     agents = load_agents(repo_root / "agents.toml")
     if not agents:
@@ -210,14 +229,9 @@ def generate(
     repo_root = _repo_root()
     agents = load_agents(repo_root / "agents.toml")
 
-    source_agent = next((a for a in agents.values() if a.supports_imports), None)
-    if source_agent is None:
-        _echo("Error: no agent with supports_imports=True found to use as source.", err=True)
-        raise typer.Exit(1)
-    source = repo_root / source_agent.entry_point
-
     targets = _select_agents(repo_root, agent)
     targets = {k: v for k, v in targets.items() if not v.supports_imports}
+    default_source = _default_flat_source(repo_root, agents, targets)
 
     if not targets:
         _echo("No agents requiring flat file generation.")
@@ -228,7 +242,10 @@ def generate(
         if dry_run:
             _echo(f"  [dry-run] would generate {output.relative_to(repo_root)}")
         else:
-            generate_flat_file(repo_root, source, output, condense=ag.condense_flat_file)
+            generate_flat_file(
+                repo_root, _flat_source(repo_root, ag, default_source), output,
+                condense=ag.condense_flat_file,
+            )
             _echo(f"  generated {output.relative_to(repo_root)}")
 
     if not dry_run:
@@ -250,14 +267,9 @@ def verify(
     repo_root = _repo_root()
     agents = load_agents(repo_root / "agents.toml")
 
-    source_agent = next((a for a in agents.values() if a.supports_imports), None)
-    if source_agent is None:
-        _echo("Error: no agent with supports_imports=True found to use as source.", err=True)
-        raise typer.Exit(1)
-    source = repo_root / source_agent.entry_point
-
     targets = _select_agents(repo_root, agent)
     targets = {k: v for k, v in targets.items() if not v.supports_imports}
+    default_source = _default_flat_source(repo_root, agents, targets)
 
     if not targets:
         _echo("No agents requiring flat file verification.")
@@ -266,7 +278,10 @@ def verify(
     all_ok = True
     for key, ag in targets.items():
         output = repo_root / ag.entry_point
-        if verify_flat_file(repo_root, source, output, condense=ag.condense_flat_file):
+        if verify_flat_file(
+            repo_root, _flat_source(repo_root, ag, default_source), output,
+            condense=ag.condense_flat_file,
+        ):
             _echo(f"  OK      {output.relative_to(repo_root)}")
         else:
             _echo(f"  STALE   {output.relative_to(repo_root)}: run 'ai-rules generate'")
@@ -322,7 +337,8 @@ def update(
     all_agents = load_agents(repo_root / "agents.toml")
     selected = _select_agents(repo_root, agent)
 
-    source_agent = next((a for a in all_agents.values() if a.supports_imports), None)
+    flat_targets = {k: v for k, v in selected.items() if not v.supports_imports}
+    default_source = _default_flat_source(repo_root, all_agents, flat_targets)
 
     if dry_run:
         _echo("Dry run — no changes will be made.\n")
@@ -333,8 +349,8 @@ def update(
             _echo(f"  {action}")
         for action in install_agent(repo_root, ag, dry_run=dry_run):
             _echo(f"  {action}")
-        if not ag.supports_imports and source_agent is not None:
-            source = repo_root / source_agent.entry_point
+        if not ag.supports_imports:
+            source = _flat_source(repo_root, ag, default_source)
             output = repo_root / ag.entry_point
             if dry_run:
                 _echo(f"  [dry-run] would regenerate {output.relative_to(repo_root)}")

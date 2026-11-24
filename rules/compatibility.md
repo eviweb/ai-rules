@@ -1,3 +1,11 @@
+---
+paths:
+  - "**/*.sh"
+  - "pyproject.toml"
+  - "package.json"
+  - ".github/workflows/**"
+  - ".forgejo/workflows/**"
+---
 # Compatibility
 
 ## Shell

@@ -1,3 +1,15 @@
+---
+paths:
+  - "package.json"
+  - "package-lock.json"
+  - "pyproject.toml"
+  - "uv.lock"
+  - "requirements*.txt"
+  - "go.mod"
+  - "go.sum"
+  - "Cargo.toml"
+  - "Cargo.lock"
+---
 # Dependencies
 
 - Pin dependency versions explicitly — never use unpinned or wildcard versions in production

@@ -1,3 +1,11 @@
+---
+paths:
+  - "tests/**"
+  - "**/test_*.py"
+  - "**/*.test.{js,ts}"
+  - "**/*_test.go"
+  - "**/*.bats"
+---
 # Test-Driven Development
 
 > **TDD is mandatory.** There are no exceptions. Every feature, fix, or refactor must be driven by tests.

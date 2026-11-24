@@ -187,3 +187,39 @@ def test_resolve_imports_inlines_core_file(repo_root: Path) -> None:
     assert "Use merge commits." in result
     assert "Write in English." in result
     assert "@core/git.md" not in result
+
+
+def test_resolve_imports_strips_frontmatter_and_states_where_the_rule_applies(
+    repo_root: Path,
+) -> None:
+    (repo_root / "rules" / "shell.md").write_text(
+        '---\npaths:\n  - "**/*.sh"\n  - "bin/**"\n---\n# Shell\n\nUse strict mode.\n'
+    )
+    source = repo_root / "AGENTS.src.md"
+    source.write_text("@rules/shell.md\n")
+
+    result = resolve_imports(source, repo_root)
+
+    assert "paths:" not in result
+    assert "---" not in result
+    assert result.startswith("# Shell\n\n*Applies when working on: `**/*.sh`, `bin/**`.*\n")
+    assert "Use strict mode." in result
+
+
+def test_resolve_imports_inlines_skill_file_without_its_frontmatter(repo_root: Path) -> None:
+    skill = repo_root / "skills" / "ai-rules-demo"
+    skill.mkdir(parents=True)
+    (skill / "SKILL.md").write_text("---\nname: ai-rules-demo\ndescription: Use when demo\n---\n# Demo\n\nBody.\n")
+    source = repo_root / "GEMINI.src.md"
+    source.write_text("@skills/ai-rules-demo/SKILL.md\n")
+
+    result = resolve_imports(source, repo_root)
+
+    assert result == "# Demo\n\nBody.\n"
+
+
+def test_resolve_imports_keeps_files_without_frontmatter_unchanged(repo_root: Path) -> None:
+    source = repo_root / "CLAUDE.md"
+    source.write_text("@rules/language.md\n")
+
+    assert resolve_imports(source, repo_root) == "# Language\n\nWrite in English.\n"

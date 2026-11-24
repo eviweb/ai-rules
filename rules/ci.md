@@ -1,3 +1,8 @@
+---
+paths:
+  - ".github/workflows/**"
+  - ".forgejo/workflows/**"
+---
 # Continuous Integration
 
 ## Setup

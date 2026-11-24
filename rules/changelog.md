@@ -1,3 +1,8 @@
+---
+paths:
+  - "VERSION"
+  - "CHANGELOG.md"
+---
 # Changelog
 
 Follow the [Keep a Changelog](https://keepachangelog.com) format.

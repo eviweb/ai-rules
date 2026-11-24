@@ -1,3 +1,11 @@
+---
+paths:
+  - "README.md"
+  - "CHANGELOG.md"
+  - "TODO.md"
+  - "VERSION"
+  - "docs/**"
+---
 # Documentation
 
 Every project must include the following files from the start:

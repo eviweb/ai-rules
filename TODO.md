@@ -93,7 +93,9 @@
 - [x] Skill listing cost measured with `/context`: ~0.3k tokens for the four skills (`docs/metrics/0.7.0.md`)
 - [ ] Observe the trigger quality of the descriptions over the 0.7.0 cycle
 ### R3 — Core slimming and scoped rules (0.8.0, breaking)
-- [ ] `core/` (always loaded, ≤ 200 lines / 10 KB) + scoped rules with `paths:` frontmatter + CI size budgets
+- [x] `core/` (always loaded, ≤ 200 lines / 10 KB) + scoped rules with `paths:` frontmatter + CI size budgets
+- [x] Gemini and Codex flat files generated from templates (`flat_source`); skill-owned rules unloaded from `rules/`
+- [ ] Metrics `docs/metrics/0.8.0.md`, README migration check, `/context` measurement after `ai-rules update`
 - [ ] Skills index in `CLAUDE.md` (moved from R2: redundant with the automatic skill listing while the rules are loaded, and it would leak into the Codex flat file before Codex has skills)
 - [ ] Targeted condensation of what `core/` needs to meet its budget (`git`, `security`, `commits` gate) with an invariants test; no global rewrite; language split of `naming`/`error-handling`/`logging` only if measured worthwhile
 ### R4 — Process skills adapted from Superpowers (0.9.0)

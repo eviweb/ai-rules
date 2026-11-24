@@ -1,3 +1,10 @@
+---
+paths:
+  - "**/*.sh"
+  - "bin/**"
+  - "**/cli.*"
+  - "**/__main__.py"
+---
 # CLI Projects
 
 ## Default options

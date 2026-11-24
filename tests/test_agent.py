@@ -74,3 +74,17 @@ def test_load_agents_empty_file(tmp_path: Path) -> None:
     config = tmp_path / "agents.toml"
     config.write_text("")
     assert load_agents(config) == {}
+
+
+def test_load_agents_reads_flat_source_and_defaults_it_to_none(tmp_path: Path) -> None:
+    path = tmp_path / "agents.toml"
+    path.write_text(
+        '[agents.codex]\nname = "Codex"\nentry_point = "agents/codex/AGENTS.md"\n'
+        'install_dir = "~/.codex"\nflat_source = "agents/codex/AGENTS.src.md"\n\n'
+        '[agents.other]\nname = "Other"\nentry_point = "o.md"\ninstall_dir = "~/.o"\n'
+    )
+
+    agents = load_agents(path)
+
+    assert agents["codex"].flat_source == "agents/codex/AGENTS.src.md"
+    assert agents["other"].flat_source is None

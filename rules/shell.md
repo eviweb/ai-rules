@@ -1,3 +1,10 @@
+---
+paths:
+  - "**/*.sh"
+  - "**/*.bash"
+  - "bin/**"
+  - "scripts/**"
+---
 # Shell Scripts
 
 - Always enable strict mode at the top of every script: `set -euo pipefail`

@@ -1,3 +1,9 @@
+---
+paths:
+  - "**/api/**"
+  - "**/routes/**"
+  - "**/openapi*.{yml,yaml,json}"
+---
 # API Design
 
 Applies to HTTP/REST APIs. For GraphQL or gRPC, adapt the principles but follow the conventions of the respective ecosystem.

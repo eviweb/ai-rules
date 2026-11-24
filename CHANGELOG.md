@@ -8,25 +8,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Normative-invariants test: cross-cutting rules (no autonomous commit, propose before implementing, TDD, docs in the same commit, ...) must stay present in `core/`, `rules/` or `skills/` while R3 relocates rule text
-
 ### Changed
-
-- **Breaking layout change (R3, in progress):** `language`, `principles`, `security`, `commits` and `git` move from `rules/` to the new `core/` directory (always loaded, budget 200 lines / 10 KiB, checked by tests). `CLAUDE.md` imports them as `@../../core/…` and the generator resolves `@core/` and `@../../core/` imports
-- `core/git.md` condensed (4.6 KB to 2.7 KB, same normative content); `core/commits.md` gains a pre-commit duties line (TDD including Refactor, docs in the same commit, self-review) so those behaviours survive scoped loading
-- `scripts/measure-context.sh` and `scripts/pre-commit` handle `core/`
-- **Breaking: scoped rules.** The 15 topic rules in `rules/` now carry a `paths:` frontmatter and are no longer imported by `CLAUDE.md`, which imports only the core: Claude Code loads each rule when it reads or writes a matching file. Always-on memory drops from about 65 KB to the 9.5 KB core
-- **Breaking: skill-owned rules removed from `rules/`.** `editor`, `quality`, `review`, `pr` and `issues` now live only in their skills (`ai-rules-starting-a-project`, `ai-rules-quality-dimensions`, `ai-rules-reviewing-changes`, `ai-rules-pull-requests-and-issues`); the 0.7.0 parity test now covers only `docs.md`, still a scoped rule
-- Codex and Gemini flat files are generated from templates (`agents/codex/AGENTS.src.md`, `agents/gemini/GEMINI.src.md`) via the new optional `flat_source` key of `agents.toml`; the generator resolves `@skills/…` imports, strips frontmatter and adds a scope note to scoped rules. Gemini is now a generated flat file (no more `~/.gemini/core` and `~/.gemini/rules` links; delete them by hand); its content stays equivalent, Codex drops the texts its native skills carry
-- `docs/metrics/0.8.0.md`: third reference measurement (memory files 25k to 3.7k tokens, `CLAUDE.md` plus core 3,537 tokens, measured cost of scoped rules per file read); `docs/metrics/baseline-0.6.1.md` gets a correction note on import resolution
-- `CLAUDE.md` indexes the four skills (one line each, checked by a test); `scripts/measure-context.sh` explains that scoped rules are not always-on
-- New tests: every scoped rule declares `paths:`, scoped rules ≤ 6 KiB, `CLAUDE.md` imports exactly the core, no skill duplicates core content, skill-owned rules are not rule files
 
 ### Fixed
 
-- Scoped rules loaded too often: reading one shell script loaded six rules (17.4 KB, about 6.4k tokens), reading `CHANGELOG.md` four (9.1 KB). `logging` and `compatibility` no longer match `**/*.sh`, and `release` no longer matches `CHANGELOG.md` (it loads with `VERSION`); a shell script now loads four rules (11.2 KB), `CHANGELOG.md` three (6.3 KB). New `tests/test_scoped_rules_triggering.py` pins the rules loaded per file kind and bounds their size
+## [0.8.0] - 2026-11-24
 
-- `CLAUDE.md` imports of the core did not resolve: Claude Code resolves a relative `@import` against the real path of the symlinked `~/.claude/CLAUDE.md` (`agents/claude/`), so `@core/…` found nothing and the core was never loaded (`/context` showed 451 memory tokens instead of about 3.8k). The imports are now relative to `agents/claude/` (`@../../core/…`), confirmed with a controlled test through a symlinked entry point; the `~/.claude/core` link is no longer needed. A test now resolves every entry-point import from its real path, and `scripts/measure-context.sh` resolves imports the same way and reports those that do not resolve
+Roadmap phase 3: core slimming and scoped rules. **Breaking:** run `ai-rules update` after upgrading (see the migration note in the README).
+
+### Added
+
+- `core/`: the five always-loaded rules (`language`, `principles`, `security`, `commits`, `git`), 9.5 KB / 139 lines, within a CI budget of 200 lines and 10 KiB. `core/commits.md` carries a pre-commit duties line (TDD including the Refactor step, docs in the same commit, self-review) so these behaviours survive scoped loading
+- Scoped rules: the 15 topic rules in `rules/` carry a `paths:` frontmatter, and Claude Code loads each one when it reads or writes a matching file. Always-on memory drops from about 25k to 3.7k tokens (`CLAUDE.md` plus core 3,537 tokens, −86 %), measured in `/context`
+- `flat_source` key in `agents.toml`: Codex (`agents/codex/AGENTS.src.md`) and Gemini (`agents/gemini/GEMINI.src.md`) flat files are generated from templates. The generator resolves `@core/`, `@rules/` and `@skills/` imports, strips frontmatter and adds an "Applies when working on" note to scoped rules
+- `CLAUDE.md` indexes the four skills, one line each
+- Tests: normative invariants (cross-cutting rules stay present wherever they are hosted), core budget, every scoped rule declares `paths:` and stays ≤ 6 KiB, `CLAUDE.md` imports exactly the core, no skill duplicates core content, a glob simulator pinning which rules each file kind loads and bounding their size (`tests/test_scoped_rules_triggering.py`)
+- `docs/metrics/0.8.0.md`: third reference measurement, including the measured cost of scoped rules per file read; `docs/metrics/baseline-0.6.1.md` gets a correction note on import resolution
+
+### Changed
+
+- **Breaking: `language`, `principles`, `security`, `commits` and `git` move from `rules/` to `core/`.** `CLAUDE.md` imports them as `@../../core/…`; `core/git.md` is condensed from 4.6 KB to 2.7 KB with the same normative content
+- **Breaking: topic rules are no longer imported by `CLAUDE.md`**, which imports only the core. A relative `@import` always loads its file, so scoped rules must not be imported
+- **Breaking: `editor`, `quality`, `review`, `pr` and `issues` leave `rules/`.** They live only in their skills (`ai-rules-starting-a-project`, `ai-rules-quality-dimensions`, `ai-rules-reviewing-changes`, `ai-rules-pull-requests-and-issues`); the parity test now covers only `docs.md`, still a scoped rule
+- **Breaking: Gemini becomes a generated flat file** (no more `~/.gemini/core` and `~/.gemini/rules` links; delete them by hand). Its content stays equivalent and now also inlines the skill texts, since Gemini has no skills. The Codex flat file drops the texts its native skills carry (54 KB, down from 66 KB; the 32 KB target is not met, so the `project_doc_max_bytes` patch stays)
+- `scripts/measure-context.sh` resolves imports from the real path of the entry point, reports imports that do not resolve, and explains that scoped rules are not always-on; `scripts/pre-commit` also triggers on `skills/` and the flat-file templates
+
+### Fixed
+
+- The core was never loaded: Claude Code resolves a relative `@import` against the real path of the symlinked `~/.claude/CLAUDE.md` (`agents/claude/`), so `@core/…` found nothing (`/context` showed 451 memory tokens instead of about 3.8k). Imports are now `@../../core/…`, confirmed with a controlled test; the earlier `@rules/…` imports never resolved either, and the `~/.claude/rules/` auto-load alone loaded the rules. A test now resolves every entry-point import from its real path
+- Scoped rules loaded too often: reading one shell script loaded six rules (17.4 KB, about 6.4k tokens). `logging` and `compatibility` no longer match `**/*.sh` and `release` loads with `VERSION` only; a shell script now loads four rules (11.2 KB), `CHANGELOG.md` three (6.3 KB)
 
 ## [0.7.0] - 2026-11-24
 

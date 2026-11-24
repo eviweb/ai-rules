@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- `ai-rules-refactoring-and-design` skill (original): arbiters in order (correct, simple, readable, DRY, patterns), two hats, Chesterton's fence, a smell-to-technique scan for the Refactor step, and a refactoring proposal format for deeper structural problems (evidence, why now, options including doing nothing, technique, wait for the user). References: design principles, code smells, refactoring techniques (including large-scale and legacy), design patterns (index of the 23 GoF patterns, 15 detailed, 8 on request) and per-language bundles read only for the project's languages (shell, Python, JS/TS, Go, Rust, PHP, common tools); tests check the index against the files and the size of each bundle
+
 - `ai-rules-test-driven-development` skill (rewritten from Superpowers' `test-driven-development`): Red, verify red, Green, verify green, Refactor as a step with the explicit statement "nothing to refactor"; scope clause (code with testable behavior; configuration and infrastructure are verified instead); bug-first reproduction; code written before its test is reported and a test-first redo is proposed
 
 - `ai-rules-systematic-debugging` skill (rewritten from Superpowers' `systematic-debugging`): root cause before any fix in four phases (investigate, compare, one hypothesis at a time, fix with a failing reproduction), stop after three failed fixes and discuss the design with the user, and a reference of infrastructure examples (DNS, reverse proxies, containers, services, CI)
@@ -16,6 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `ai-rules-verification-before-completion` skill (rewritten from Superpowers' `verification-before-completion`): run the proving command and show its output before any success claim, with an evidence table including an infrastructure variant, and ai-rules specifics (checks before `COMMIT_MESSAGE`, CI read with `gh pr checks`)
 
 ### Changed
+
+- `core/principles.md`: "No refactoring without explicit request" now scopes refactoring to the current change (the TDD Refactor step covers the code the change writes or modifies; anything else noticed is reported and proposed separately, not done in passing), and "No dead code" asks to find out why code exists (history, callers, tests) before removing something that looks unused or odd. The core stays within its budget (9.9 KB of 10 KiB)
 
 - `rules/tdd.md`: the mandate covers code with testable behavior, the Refactor step is explicit (scope: the cycle's code and its surroundings; wider restructurings are proposed to the user), and it points to `ai-rules-test-driven-development` and `ai-rules-refactoring-and-design`
 

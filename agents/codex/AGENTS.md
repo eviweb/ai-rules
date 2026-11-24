@@ -24,13 +24,13 @@ For any structuring choice (architecture, tooling, git strategy, framework, etc.
 Make the smallest change that correctly solves the problem. Do not touch code outside the scope of the request, even to fix style or improve readability.
 
 ## No refactoring without explicit request
-Never restructure, rename, or reorganize existing code unless the user has explicitly asked for it. Refactoring mixed with feature changes makes review harder and increases risk.
+Never restructure, rename, or reorganize code outside the current change unless the user has asked for it. The Refactor step of TDD applies to the code this change writes or modifies. Anything else you notice: report it (what, where, why) and propose it separately; do not do it in passing. Refactoring mixed with feature changes makes review harder and increases risk.
 
 ## No speculative additions
 Do not add features, options, abstractions, or error handling for hypothetical future needs. Implement only what is currently required.
 
 ## No dead code
-Do not leave commented-out code, unused variables, or untracked TODOs. Either resolve them or open a tracked issue.
+Do not leave commented-out code, unused variables, or untracked TODOs. Either resolve them or open a tracked issue. Before removing code that looks unused or odd (a guard, a workaround, a pin, a config entry, a CI step), find out why it exists: history, callers, tests. If you cannot tell, ask or leave it.
 
 ## Confirm before irreversible actions
 Any action that is hard or impossible to undo (file deletion, branch deletion, `git reset --hard`, force-push, database drop, etc.) must be explicitly described to the user and confirmed before execution. Never perform destructive operations autonomously.
@@ -774,7 +774,7 @@ addopts = "--cov=src --cov-fail-under=80"
 At the start of a project, propose one or more suitable test frameworks with a clear recommendation. Use the framework validated by the user throughout the project.
 
 - Follow the Red-Green-Refactor cycle: write a failing test first, watch it fail for the expected reason, make it pass with minimal code, then refactor.
-- **Refactor is a step, not an option.** After green, review the diff: remove duplication, improve names, simplify. If nothing needs changing, say "nothing to refactor" and why. The scope is the code written in this cycle and its immediate surroundings; a wider restructuring is proposed to the user with its justification, not done in passing.
+- **Refactor is a step, not an option.** After green, review the diff: remove duplication, improve names, simplify. If nothing needs changing, say "nothing to refactor" and why. The scope is the code this cycle writes or modifies; anything wider is reported and proposed to the user with its justification, not done in passing.
 - Never ship code without a corresponding test. If code was written before its test, say so and propose to redo it test-first.
 - Keep tests in a `tests/` directory with a dedicated runner script.
 - For shell scripts: bats-core is the standard choice.

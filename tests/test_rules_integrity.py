@@ -181,3 +181,24 @@ def test_tdd_rule_limits_the_mandate_to_code_with_testable_behavior():
 
     assert "testable behavior" in tdd_rule
     assert "ai-rules-verification-before-completion" in tdd_rule
+
+
+def test_core_scopes_refactoring_to_the_current_change_and_asks_to_report_the_rest():
+    principles = (REPO_ROOT / "core" / "principles.md").read_text()
+
+    assert "outside the current change" in principles
+    assert "Refactor step of TDD" in principles
+    assert "report it" in principles
+
+
+def test_core_asks_to_find_why_code_exists_before_removing_it():
+    principles = (REPO_ROOT / "core" / "principles.md").read_text()
+
+    assert "find out why it exists" in principles
+
+
+def test_tdd_rule_scopes_the_refactor_step_to_the_code_the_cycle_touches():
+    tdd_rule = (REPO_ROOT / "rules" / "tdd.md").read_text()
+
+    assert "writes or modifies" in tdd_rule
+    assert "immediate surroundings" not in tdd_rule

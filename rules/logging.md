@@ -1,3 +1,10 @@
+---
+paths:
+  - "**/*.sh"
+  - "**/*.py"
+  - "**/*.{js,ts,tsx}"
+  - "**/*.go"
+---
 # Logging (application-level)
 
 Applies to non-CLI projects (libraries, services, daemons, APIs). For CLI-specific logging see `rules/cli.md`.

@@ -1,3 +1,10 @@
+---
+paths:
+  - "**/*.sh"
+  - "**/*.py"
+  - "**/*.{js,ts,tsx}"
+  - "**/*.go"
+---
 # Naming Conventions
 
 ## Shell scripts

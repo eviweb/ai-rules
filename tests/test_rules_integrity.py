@@ -36,16 +36,52 @@ def test_rules_examples_do_not_use_unpinned_action_tags():
     assert unpinned == []
 
 
-def test_every_core_and_rules_file_is_imported_by_claude_entry_point():
+def test_claude_entry_point_imports_exactly_the_core_files():
     entry_point = (REPO_ROOT / "agents" / "claude" / "CLAUDE.md").read_text()
-    not_imported = [
-        f"{directory}/{rule_file.name}"
-        for directory in ("core", "rules")
-        for rule_file in sorted((REPO_ROOT / directory).glob("*.md"))
-        if f"@{directory}/{rule_file.name}" not in entry_point
+    imported = sorted(
+        line.removeprefix("@core/").strip()
+        for line in entry_point.splitlines()
+        if line.startswith("@")
+    )
+    core_files = sorted(f.name for f in (REPO_ROOT / "core").glob("*.md"))
+
+    assert imported == core_files
+
+
+def test_scoped_rules_are_not_imported_because_an_import_always_loads_the_file():
+    entry_point = (REPO_ROOT / "agents" / "claude" / "CLAUDE.md").read_text()
+
+    assert "@rules/" not in entry_point
+
+
+def _paths_of(rule_file: Path) -> list[str]:
+    from ai_rules.generator import split_frontmatter
+
+    return split_frontmatter(rule_file.read_text())[0]
+
+
+def test_every_scoped_rule_declares_paths():
+    without_paths = [
+        f.name for f in sorted((REPO_ROOT / "rules").glob("*.md")) if not _paths_of(f)
     ]
 
-    assert not_imported == []
+    assert without_paths == []
+
+
+def test_scoped_rules_stay_within_their_size_budget():
+    too_big = [
+        f"{f.name} ({f.stat().st_size} bytes)"
+        for f in sorted((REPO_ROOT / "rules").glob("*.md"))
+        if f.stat().st_size > 6 * 1024
+    ]
+
+    assert too_big == []
+
+
+def test_core_files_have_no_paths_because_they_are_always_loaded():
+    scoped_core = [f.name for f in (REPO_ROOT / "core").glob("*.md") if _paths_of(f)]
+
+    assert scoped_core == []
 
 
 def test_core_stays_within_its_budget():
@@ -99,7 +135,9 @@ def test_package_version_falls_back_to_version_file_when_not_installed(monkeypat
 
 def test_rules_forbid_attribution_lines_in_every_published_message():
     commits = (REPO_ROOT / "core" / "commits.md").read_text()
-    pr = (REPO_ROOT / "rules" / "pr.md").read_text()
+    pr = (
+        REPO_ROOT / "skills" / "ai-rules-pull-requests-and-issues" / "SKILL.md"
+    ).read_text()
     release = (REPO_ROOT / "rules" / "release.md").read_text()
 
     assert "No attribution" in commits

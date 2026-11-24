@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Breaking layout change (R3, in progress):** `language`, `principles`, `security`, `commits` and `git` move from `rules/` to the new `core/` directory (always loaded, budget 200 lines / 10 KiB, checked by tests). Run `ai-rules update` to create the `~/.claude/core` and `~/.gemini/core` links; `CLAUDE.md`/`GEMINI.md` now import `@core/…` for these files and the generator resolves `@core/` imports
 - `core/git.md` condensed (4.6 KB to 2.7 KB, same normative content); `core/commits.md` gains a pre-commit duties line (TDD including Refactor, docs in the same commit, self-review) so those behaviours survive scoped loading
 - `scripts/measure-context.sh` and `scripts/pre-commit` handle `core/`
+- **Breaking: scoped rules.** The 15 topic rules in `rules/` now carry a `paths:` frontmatter and are no longer imported by `CLAUDE.md`, which imports only the core: Claude Code loads each rule when it reads or writes a matching file. Always-on memory drops from about 65 KB to the 9.5 KB core
+- **Breaking: skill-owned rules removed from `rules/`.** `editor`, `quality`, `review`, `pr` and `issues` now live only in their skills (`ai-rules-starting-a-project`, `ai-rules-quality-dimensions`, `ai-rules-reviewing-changes`, `ai-rules-pull-requests-and-issues`); the 0.7.0 parity test now covers only `docs.md`, still a scoped rule
+- Codex and Gemini flat files are generated from templates (`agents/codex/AGENTS.src.md`, `agents/gemini/GEMINI.src.md`) via the new optional `flat_source` key of `agents.toml`; the generator resolves `@skills/…` imports, strips frontmatter and adds a scope note to scoped rules. Gemini is now a generated flat file (no more `~/.gemini/core` and `~/.gemini/rules` links; delete them by hand); its content stays equivalent, Codex drops the texts its native skills carry
+- New tests: every scoped rule declares `paths:`, scoped rules ≤ 6 KiB, `CLAUDE.md` imports exactly the core, no skill duplicates core content, skill-owned rules are not rule files
 
 ### Fixed
 

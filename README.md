@@ -22,21 +22,18 @@ supported AI assistants.
 ai-rules/
 ├── agents/
 │   ├── claude/
-│   │   └── CLAUDE.md       # Claude Code entry point (imports via @core/ and @rules/)
+│   │   └── CLAUDE.md       # Claude Code entry point (imports the core only)
 │   ├── codex/
-│   │   └── AGENTS.md       # Codex entry point (flat file, generated via `ai-rules generate`)
+│   │   ├── AGENTS.md       # Codex entry point (flat file, generated via `ai-rules generate`)
+│   │   └── AGENTS.src.md   # Template of the Codex flat file (core and scoped rules)
 │   └── gemini/
-│       └── GEMINI.md       # Gemini entry point (imports via @./core/ and @./rules/)
+│       ├── GEMINI.md       # Gemini entry point (flat file, generated from GEMINI.src.md)
+│       └── GEMINI.src.md   # Template of the Gemini flat file (core, rules and skill texts)
 ├── core/                   # Always-loaded core rules (5 files, ≤ 200 lines / 10 KiB)
-├── rules/                  # Other rule files by topic (20 files, all imported for now)
-│   ├── principles.md
-│   ├── language.md
+├── rules/                  # Scoped rules (15 files, `paths:` frontmatter, loaded when a matching file is touched)
 │   ├── naming.md
-│   ├── editor.md
-│   ├── quality.md
 │   ├── tdd.md
 │   ├── testing.md
-│   ├── security.md
 │   ├── dependencies.md
 │   ├── compatibility.md
 │   ├── docs.md
@@ -47,11 +44,6 @@ ai-rules/
 │   ├── logging.md
 │   ├── error-handling.md
 │   ├── api.md
-│   ├── git.md
-│   ├── commits.md
-│   ├── issues.md
-│   ├── pr.md
-│   ├── review.md
 │   ├── ci.md
 │   └── release.md
 ├── skills/                 # Skills (ai-rules-<topic>/SKILL.md), loaded on demand; see docs/skills.md
@@ -66,7 +58,7 @@ ai-rules/
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest, 278 tests)
+├── tests/                    # Test suite (pytest, 287 tests)
 ├── .github/workflows/
 │   └── ci.yml                # CI pipeline (lint + test + coverage)
 ├── agents.toml               # Agent registry and link declarations
@@ -194,8 +186,6 @@ For each declared link in `agents.toml`, `ai-rules install`:
 | `~/.claude/rules`          | `rules/`                          |
 | `~/.codex/AGENTS.md`       | `agents/codex/AGENTS.md`          |
 | `~/.gemini/GEMINI.md`      | `agents/gemini/GEMINI.md`         |
-| `~/.gemini/core`           | `core/`                           |
-| `~/.gemini/rules`          | `rules/`                          |
 
 Config patches applied:
 
@@ -225,16 +215,21 @@ Skill directories (`[[agents.*.skill_dirs]]` in `agents.toml`): each sub-folder 
 
 ### How rules are loaded (Claude Code)
 
-- `~/.claude/CLAUDE.md` imports each rule (`@core/<name>.md` or `@rules/<name>.md`): it is the table of contents, and also the source from which the Codex flat file is generated and the Gemini entry point mirrored.
-- `~/.claude/rules/` is auto-loaded in full by Claude Code: every file in `rules/` is in context, imported or not. Hence every `core/` and `rules/` file must be imported (checked by the tests), and on-demand or experimental material lives in `templates/`.
-- With the symlink deployment created by `ai-rules install`, the imports and the auto-loaded directory resolve to the same files, and Claude Code loads each one once (measured, see `docs/metrics/baseline-0.6.1.md`). A copied deployment was not tested.
-- Always-on cost of the rules: about 65 KB, roughly 24.5k tokens. Estimate it with `scripts/measure-context.sh` and confirm with `/context`.
+- `~/.claude/CLAUDE.md` imports only the core (`@core/<name>.md`): five files, always in context.
+- `~/.claude/rules/` holds the topic rules. Each has a `paths:` frontmatter, so Claude Code loads it only when it reads or writes a matching file (patterns are relative to the session's working directory). A rule is never imported: an `@import` always loads its file. The tests enforce both.
+- Task-type material (project start, quality dimensions, review, pull requests and issues) lives in skills, loaded on demand; Codex and Gemini receive the same texts in their generated flat files (Gemini has no skills; Codex has native skills for them).
+- Always-on cost: the core is about 9.5 KB (about 3.5k tokens) plus the skill listing (about 0.3k). Estimate it with `scripts/measure-context.sh` and confirm with `/context`.
+- Migration from 0.7.x: run `ai-rules update`. It links `~/.claude/core`; the old `~/.gemini/core` and `~/.gemini/rules` links are no longer used and can be deleted by hand.
 
-### Agents without native import support (Codex)
+### Agents with a generated flat file (Codex, Gemini)
 
-Codex does not support file imports natively. Its entry point is a flat file
-generated from the Claude entry point with all imports resolved inline.
-Regenerate it after updating any rule file:
+Codex and Gemini load a single flat file. Each is generated from its template
+(`flat_source` in `agents.toml`: `agents/codex/AGENTS.src.md`,
+`agents/gemini/GEMINI.src.md`) with every `@core/`, `@rules/` and `@skills/`
+line resolved inline, frontmatter removed and each scoped rule introduced by a
+one-line "Applies when working on" note. Codex gets the core and the scoped rules
+(its native skills carry the rest); Gemini, which has no skills, also gets the
+skill texts. Regenerate after updating any rule or skill:
 
 ```bash
 ai-rules generate codex

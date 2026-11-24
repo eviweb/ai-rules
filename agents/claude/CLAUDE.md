@@ -1,40 +1,10 @@
 # Global Rules
 
-## Language & style
+## Always loaded (core)
 @core/language.md
-@rules/naming.md
-@rules/editor.md
-
-## General principles
 @core/principles.md
-@rules/quality.md
-
-## Development practices
-@rules/tdd.md
-@rules/testing.md
 @core/security.md
-@rules/dependencies.md
-@rules/compatibility.md
-
-## Project structure & documentation
-@rules/docs.md
-@rules/changelog.md
-@rules/versioning.md
-
-## Shell & CLI
-@rules/shell.md
-@rules/cli.md
-@rules/logging.md
-@rules/error-handling.md
-@rules/api.md
-
-## Git & collaboration
-@core/git.md
 @core/commits.md
-@rules/issues.md
-@rules/pr.md
-@rules/review.md
+@core/git.md
 
-## CI/CD & release
-@rules/ci.md
-@rules/release.md
+Topic rules in `rules/` carry a `paths:` frontmatter: Claude Code loads each one only when it reads or writes a matching file. Skills in `skills/` carry the rest (project start, quality dimensions, review, pull requests and issues).

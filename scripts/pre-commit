@@ -10,8 +10,8 @@ set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 VENV="${REPO_ROOT}/.venv"
 
-# Trigger when rules/ files or the Claude import source are staged
-if ! git diff --cached --name-only | grep -qE '^(rules|core)/|^agents/claude/CLAUDE\.md'; then
+# Trigger when rules, core, skills or a flat-file template are staged
+if ! git diff --cached --name-only | grep -qE '^(rules|core|skills)/|^agents/[a-z]+/[A-Z]+\.src\.md|^agents/claude/CLAUDE\.md'; then
   exit 0
 fi
 

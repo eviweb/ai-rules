@@ -1,3 +1,8 @@
+---
+paths:
+  - "VERSION"
+  - "CHANGELOG.md"
+---
 # Semantic Versioning
 
 All projects follow semver (`MAJOR.MINOR.PATCH`):

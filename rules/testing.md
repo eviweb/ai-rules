@@ -1,3 +1,11 @@
+---
+paths:
+  - "tests/**"
+  - "**/test_*.py"
+  - "**/*.test.{js,ts}"
+  - "**/*_test.go"
+  - "**/*.bats"
+---
 # Testing
 
 Complements `rules/tdd.md` (which mandates TDD and the Red-Green-Refactor cycle). This file covers test structure, naming, coverage, and per-language conventions.

@@ -1,3 +1,10 @@
+---
+paths:
+  - "**/*.sh"
+  - "**/*.py"
+  - "**/*.{js,ts,tsx}"
+  - "**/*.go"
+---
 # Error Handling
 
 ## General principles

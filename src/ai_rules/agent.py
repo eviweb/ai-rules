@@ -58,6 +58,7 @@ class Agent:
     config_patches: list[ConfigPatch] = field(default_factory=list)
     settings_merges: list[SettingsMerge] = field(default_factory=list)
     skill_dirs: list[SkillDir] = field(default_factory=list)
+    flat_source: str | None = None
 
     @property
     def install_path(self) -> Path:
@@ -98,6 +99,7 @@ def load_agents(config_path: Path) -> dict[str, Agent]:
             config_patches=config_patches,
             settings_merges=settings_merges,
             skill_dirs=skill_dirs,
+            flat_source=agent_data.get("flat_source"),
         )
 
     return agents

@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- `THIRD_PARTY.md`: notice and MIT license text of Superpowers, the upstream of the process skills rewritten for 0.9.0 (v7.0.2, `22f0b46`); tests check the notice and that derived skills pin the upstream version and declare the license of origin
+- `ai-rules-verification-before-completion` skill (rewritten from Superpowers' `verification-before-completion`): run the proving command and show its output before any success claim, with an evidence table including an infrastructure variant, and ai-rules specifics (checks before `COMMIT_MESSAGE`, CI read with `gh pr checks`)
+
 ### Changed
 
 - `docs/metrics/0.8.0.md` records the measured triggering of `testing`, `tdd`, `dependencies` and `api` (rules are paid once per session, cost versus file size, the narrowed `.sh` and `CHANGELOG.md` rule sets) and two candidates for narrowing

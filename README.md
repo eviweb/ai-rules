@@ -58,10 +58,11 @@ ai-rules/
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest, 304 tests)
+├── tests/                    # Test suite (pytest, 307 tests)
 ├── .github/workflows/
 │   └── ci.yml                # CI pipeline (lint + test + coverage)
 ├── agents.toml               # Agent registry and link declarations
+├── THIRD_PARTY.md            # Notices for the upstream projects some skills are derived from
 └── pyproject.toml            # Python package definition
 ```
 

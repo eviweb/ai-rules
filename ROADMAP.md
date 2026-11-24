@@ -205,7 +205,7 @@ Adaptation rules applying to every skill below:
 - **Propose before implementing preserved:** design and plan approval are explicit gates.
 - **Merge policy preserved:** branch completion follows the project profile (`git.md`): strict → PR + merge commit; light → PR recommended, direct commit tolerated for trivial changes.
 - **Agent-neutral wording;** Claude-specific tool names only in a "Claude Code notes" section.
-- **Attribution:** `NOTICE.md` crediting obra/superpowers (MIT) for adapted skills; each adapted `SKILL.md` carries a `derived-from:` frontmatter field.
+- **Attribution:** root `THIRD_PARTY.md` crediting obra/superpowers (MIT, with the license text) for adapted skills, upstream version pinned in `derived-from` (v7.0.2, `22f0b46`); skills are rewritten, never copied; each adapted `SKILL.md` carries a `derived-from:` frontmatter field.
 
 | Skill | Source | Adaptation |
 |-------|--------|------------|

@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- `scripts/measure-context.sh` labels the `rules/` row `rules/ scoped (on demand)` when every rule declares `paths:`, so the table no longer shows 16.5k tokens next to the always-on rows (the plain label stays for trees with unscoped rules)
+
 ### Fixed
 
 ## [0.8.0] - 2026-11-24

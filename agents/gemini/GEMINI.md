@@ -1245,6 +1245,8 @@ These apply outside the workflow files themselves, in the platform's repository 
 Forgejo exposes an equivalent set of settings under repository Settings; adapt the same principles (default least privilege, required checks, no secrets on untrusted triggers) to its UI.
 
 ## Project start, quality, review, pull requests and issues
+Before creating the structure, settle the architecture and the main technology choices with the user (`ai-rules-architecture-proposal`); this skill then creates the project skeleton.
+
 # Documentation
 
 Every project must include the following files from the start:

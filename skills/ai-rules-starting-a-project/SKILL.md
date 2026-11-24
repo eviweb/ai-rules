@@ -2,6 +2,8 @@
 name: ai-rules-starting-a-project
 description: "Use when starting a new project or repository: initial files (README, CHANGELOG, VERSION, LICENSE, TODO, .gitignore, .private), .editorconfig, community files, and the first commit."
 ---
+Before creating the structure, settle the architecture and the main technology choices with the user (`ai-rules-architecture-proposal`); this skill then creates the project skeleton.
+
 # Documentation
 
 Every project must include the following files from the start:

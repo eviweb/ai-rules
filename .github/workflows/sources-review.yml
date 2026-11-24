@@ -28,6 +28,8 @@ jobs:
 
       - name: Check the register
         id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           status=0
           scripts/check-sources-age.sh --check-upstream > "${RUNNER_TEMP}/sources-report.md" || status=$?

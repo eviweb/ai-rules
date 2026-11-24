@@ -106,7 +106,7 @@
 ### R4 — Process skills adapted from Superpowers (0.9.0)
 Scope validated 2026-11-24: ten skills, rewritten (not copied), `derived-from` pinned to Superpowers v7.0.2 (`22f0b46`, MIT verified), no skill commits. Deferred: `using-ai-rules` (R5 hook), `subagent-execution` (after R7 evals), `writing-rules-and-skills` (R7). Gemini does not receive these skills before phase 6.
 - [x] PR A: `THIRD_PARTY.md` (MIT notice) and `ai-rules-verification-before-completion`
-- [ ] PR B: `ai-rules-systematic-debugging`
+- [x] PR B: `ai-rules-systematic-debugging`
 - [ ] PR C: `ai-rules-test-driven-development`, `ai-rules-refactoring-and-design` (original skill; **the catalogue of techniques is discussed and validated with the user before any text is written**: KISS, YAGNI, design patterns, hexagonal/DDD/SOLID preferences, code smells and proven refactoring techniques, criteria against over-design), `tdd.md` with an explicit Refactor step and a pointer to the skill
 - [ ] PR D: `ai-rules-brainstorming` (with candidate ranking by value and complexity, from `ai-custom`), `ai-rules-writing-plans` (with an initial repository inspection step), `ai-rules-executing-plans`
 - [ ] PR E: `ai-rules-receiving-code-review`, `requesting-code-review` merged into `ai-rules-reviewing-changes` with a `review-package` script

@@ -312,7 +312,7 @@ Rules:
 - Express API endpoints: always use an error-handling middleware as the last middleware; never send raw error objects to the client
 # Logging (application-level)
 
-*Applies when working on: `**/*.sh`, `**/*.py`, `**/*.{js,ts,tsx}`, `**/*.go`.*
+*Applies when working on: `**/*.py`, `**/*.{js,ts,tsx}`, `**/*.go`.*
 
 Applies to non-CLI projects (libraries, services, daemons, APIs). For CLI-specific logging see `rules/cli.md`.
 
@@ -786,7 +786,7 @@ Always apply TDD. At the start of a project, propose one or more suitable test f
 - Document why each non-obvious dependency was chosen (in `README.md` or inline comment)
 # Compatibility
 
-*Applies when working on: `**/*.sh`, `pyproject.toml`, `package.json`, `.github/workflows/**`, `.forgejo/workflows/**`.*
+*Applies when working on: `pyproject.toml`, `package.json`, `.github/workflows/**`, `.forgejo/workflows/**`.*
 
 ## Shell
 - Target **Bash 5+** by default; also support **zsh** unless the project is bash-only
@@ -1011,7 +1011,7 @@ All projects follow semver (`MAJOR.MINOR.PATCH`):
 Bump `VERSION` only in the release commit (see `release.md`), never in feature or fix commits. Between releases, `VERSION` holds the next planned version with a `-dev` suffix (`X.Y.Z-dev`), set in the commit that opens that version; the release commit removes the suffix. Record the change in `CHANGELOG.md` `[Unreleased]`; the bump level (PATCH/MINOR/MAJOR) is decided at release from its content.
 # Release Workflow
 
-*Applies when working on: `VERSION`, `CHANGELOG.md`.*
+*Applies when working on: `VERSION`.*
 
 ## Pre-release checklist
 - Ensure all tests pass and CI is green

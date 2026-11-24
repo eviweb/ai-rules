@@ -1,6 +1,5 @@
 ---
 paths:
-  - "**/*.sh"
   - "pyproject.toml"
   - "package.json"
   - ".github/workflows/**"

@@ -1,7 +1,6 @@
 ---
 paths:
   - "VERSION"
-  - "CHANGELOG.md"
 ---
 # Release Workflow
 

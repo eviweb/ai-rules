@@ -173,3 +173,17 @@ def test_generate_flat_file_overwrites_existing(repo_root: Path) -> None:
     generate_flat_file(repo_root, source, output)
     assert "old content" not in output.read_text()
     assert "# Language" in output.read_text()
+
+
+def test_resolve_imports_inlines_core_file(repo_root: Path) -> None:
+    core = repo_root / "core"
+    core.mkdir()
+    (core / "git.md").write_text("# Git\n\nUse merge commits.\n")
+    source = repo_root / "CLAUDE.md"
+    source.write_text("@core/git.md\n@rules/language.md\n")
+
+    result = resolve_imports(source, repo_root)
+
+    assert "Use merge commits." in result
+    assert "Write in English." in result
+    assert "@core/git.md" not in result

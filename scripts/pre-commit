@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # pre-commit — Regenerate flat rule files for agents with supports_imports=false
-#              when rules/ or the canonical import source changes.
+#              when rules/, core/ or the canonical import source changes.
 #
 # Install:
 #   ln -sf ../../scripts/pre-commit .git/hooks/pre-commit
@@ -11,7 +11,7 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 VENV="${REPO_ROOT}/.venv"
 
 # Trigger when rules/ files or the Claude import source are staged
-if ! git diff --cached --name-only | grep -qE '^rules/|^agents/claude/CLAUDE\.md'; then
+if ! git diff --cached --name-only | grep -qE '^(rules|core)/|^agents/claude/CLAUDE\.md'; then
   exit 0
 fi
 

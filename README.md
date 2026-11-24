@@ -22,12 +22,13 @@ supported AI assistants.
 ai-rules/
 ├── agents/
 │   ├── claude/
-│   │   └── CLAUDE.md       # Claude Code entry point (imports rules via @rules/)
+│   │   └── CLAUDE.md       # Claude Code entry point (imports via @core/ and @rules/)
 │   ├── codex/
 │   │   └── AGENTS.md       # Codex entry point (flat file, generated via `ai-rules generate`)
 │   └── gemini/
-│       └── GEMINI.md       # Gemini entry point (imports rules via @./rules/)
-├── rules/                  # Shared rule files by topic (25 files, all imported)
+│       └── GEMINI.md       # Gemini entry point (imports via @./core/ and @./rules/)
+├── core/                   # Always-loaded core rules (5 files, ≤ 200 lines / 10 KiB)
+├── rules/                  # Other rule files by topic (20 files, all imported for now)
 │   ├── principles.md
 │   ├── language.md
 │   ├── naming.md
@@ -65,7 +66,7 @@ ai-rules/
 ├── bin/
 │   └── ai-rules              # Development entry point
 ├── src/ai_rules/             # Python CLI package
-├── tests/                    # Test suite (pytest, 274 tests)
+├── tests/                    # Test suite (pytest, 278 tests)
 ├── .github/workflows/
 │   └── ci.yml                # CI pipeline (lint + test + coverage)
 ├── agents.toml               # Agent registry and link declarations
@@ -189,9 +190,11 @@ For each declared link in `agents.toml`, `ai-rules install`:
 | Symlink                    | Source                            |
 |----------------------------|-----------------------------------|
 | `~/.claude/CLAUDE.md`      | `agents/claude/CLAUDE.md`         |
+| `~/.claude/core`           | `core/`                           |
 | `~/.claude/rules`          | `rules/`                          |
 | `~/.codex/AGENTS.md`       | `agents/codex/AGENTS.md`          |
 | `~/.gemini/GEMINI.md`      | `agents/gemini/GEMINI.md`         |
+| `~/.gemini/core`           | `core/`                           |
 | `~/.gemini/rules`          | `rules/`                          |
 
 Config patches applied:
@@ -222,8 +225,8 @@ Skill directories (`[[agents.*.skill_dirs]]` in `agents.toml`): each sub-folder 
 
 ### How rules are loaded (Claude Code)
 
-- `~/.claude/CLAUDE.md` imports each rule (`@rules/<name>.md`): it is the table of contents, and also the source from which the Codex flat file is generated and the Gemini entry point mirrored.
-- `~/.claude/rules/` is auto-loaded in full by Claude Code: every file in `rules/` is in context, imported or not. Hence every `rules/` file must be imported (checked by the tests), and on-demand or experimental material lives in `templates/`.
+- `~/.claude/CLAUDE.md` imports each rule (`@core/<name>.md` or `@rules/<name>.md`): it is the table of contents, and also the source from which the Codex flat file is generated and the Gemini entry point mirrored.
+- `~/.claude/rules/` is auto-loaded in full by Claude Code: every file in `rules/` is in context, imported or not. Hence every `core/` and `rules/` file must be imported (checked by the tests), and on-demand or experimental material lives in `templates/`.
 - With the symlink deployment created by `ai-rules install`, the imports and the auto-loaded directory resolve to the same files, and Claude Code loads each one once (measured, see `docs/metrics/baseline-0.6.1.md`). A copied deployment was not tested.
 - Always-on cost of the rules: about 65 KB, roughly 24.5k tokens. Estimate it with `scripts/measure-context.sh` and confirm with `/context`.
 
@@ -261,7 +264,7 @@ If upgrading from a version that stored backups in the agent install dirs (`~/.c
 
 ## Project profile
 
-`ai-rules` follows the **strict** profile defined in `rules/git.md`: every change goes through a pull request, merged with a merge commit (`gh pr merge --merge`) so that commit signatures are preserved, with CI required on `main`. Releases are bumped only in the release commit (`VERSION` is the single source of the version).
+`ai-rules` follows the **strict** profile defined in `core/git.md`: every change goes through a pull request, merged with a merge commit (`gh pr merge --merge`) so that commit signatures are preserved, with CI required on `main`. Releases are bumped only in the release commit (`VERSION` is the single source of the version).
 
 ## Development
 

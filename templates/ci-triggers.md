@@ -17,9 +17,9 @@ file change regardless of content. This template scopes all three.
 
 - **Branching model: GitHub Flow (direct-to-main)**, not GitFlow. Working
   branches (`feat/`, `fix/`, `chore/`, `docs/`, `test/`, `release/`,
-  `hotfix/` — see `rules/git.md`) merge straight into `main`. `develop` is
+  `hotfix/` — see `core/git.md`) merge straight into `main`. `develop` is
   kept in the trigger list for projects that opt into the optional
-  long-release-cycle model from `rules/git.md`, but is not required — for
+  long-release-cycle model from `core/git.md`, but is not required — for
   most projects (small team or solo, frequent releases), a two-tier
   develop/main model adds process overhead without a proportional benefit:
   it defers integration feedback to the final merge instead of validating
@@ -42,7 +42,7 @@ file change regardless of content. This template scopes all three.
 
 ## Template
 
-Adapt the branch prefix list to the project's actual `rules/git.md`
+Adapt the branch prefix list to the project's actual `core/git.md`
 conventions if it deviates, and the `docs-only` file-pattern regex to the
 project's actual documentation layout.
 
@@ -151,7 +151,7 @@ jobs:
 - `pull_request.branches` filters by the PR's *base* (target) branch —
   there is no way to filter by the PR's source branch name via triggers;
   branch-name discipline for sources is enforced by convention
-  (`rules/git.md`), not by this filter.
+  (`core/git.md`), not by this filter.
 
 ## Validated on
 

@@ -82,6 +82,7 @@ def repo(tmp_path: Path) -> Path:
 
     (repo_root / "agents.toml").write_text(_agents_toml(install_root))
     shutil.copytree(REAL_REPO / "rules", repo_root / "rules")
+    shutil.copytree(REAL_REPO / "core", repo_root / "core")
     shutil.copytree(REAL_REPO / "agents", repo_root / "agents")
     if (REAL_REPO / "settings.json").exists():
         shutil.copy2(REAL_REPO / "settings.json", repo_root / "settings.json")
@@ -286,7 +287,7 @@ def test_verify_exits_0_when_in_sync(repo: Path) -> None:
 
 def test_verify_exits_1_when_stale(repo: Path) -> None:
     invoke(["generate"], repo)
-    (repo / "rules" / "language.md").write_text("# Updated language rule\n")
+    (repo / "core" / "language.md").write_text("# Updated language rule\n")
     result = invoke(["verify"], repo)
     assert result.exit_code == 1
     assert "STALE" in result.output
@@ -335,7 +336,7 @@ def test_update_is_idempotent(repo: Path) -> None:
 
 def test_update_regenerates_flat_file_for_codex(repo: Path) -> None:
     invoke(["install"], repo)
-    (repo / "rules" / "language.md").write_text("# Language\n\nUpdated rule.\n")
+    (repo / "core" / "language.md").write_text("# Language\n\nUpdated rule.\n")
     result = invoke(["update", "codex"], repo)
     assert result.exit_code == 0
     assert "regenerated" in result.output
@@ -345,7 +346,7 @@ def test_update_regenerates_flat_file_for_codex(repo: Path) -> None:
 def test_update_dry_run_does_not_regenerate(repo: Path) -> None:
     invoke(["generate"], repo)
     original = (repo / "agents" / "codex" / "AGENTS.md").read_text()
-    (repo / "rules" / "language.md").write_text("# Language\n\nUpdated rule.\n")
+    (repo / "core" / "language.md").write_text("# Language\n\nUpdated rule.\n")
     invoke(["update", "--dry-run"], repo)
     assert (repo / "agents" / "codex" / "AGENTS.md").read_text() == original
 

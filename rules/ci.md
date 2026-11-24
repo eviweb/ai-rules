@@ -143,7 +143,7 @@ These apply outside the workflow files themselves, in the platform's repository 
 
 - **Settings > Actions > General > Workflow permissions**: keep the default read-only repository permission.
 - **Settings > Actions > General > Actions permissions**: restrict to an allow-list of the GitHub and upstream actions actually required, when the org/repo supports it.
-- **Settings > Branches**: require the CI checks as status checks on protected branches (see `rules/git.md`).
+- **Settings > Branches**: require the CI checks as status checks on protected branches (see `core/git.md`).
 - Keep the standard (non-automatic) approval policy for workflows triggered from forks.
 - Use repository or organization secrets only in trusted workflows — CI triggered by pull requests should run without privileged secrets.
 

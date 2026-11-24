@@ -28,3 +28,4 @@
 - Before proposing a commit to the user, write the message to `.private/COMMIT_MESSAGE` (create the file if absent, overwrite if present).
 - Wait for the user's explicit go-ahead before running any `git commit` command.
 - **When multiple commits are planned in sequence:** stop after each commit and wait for the user's explicit instruction to continue. Do not chain commits autonomously.
+- **Before proposing a commit**, check the cross-cutting duties even if no matching rule file is loaded: tests written first and green (TDD is mandatory, including the Refactor step); docs (`README.md`, `CHANGELOG.md`, `TODO.md`) updated in the same commit; self-review of the diff done (no debug leftovers, no secrets, shell scripts shellchecked)

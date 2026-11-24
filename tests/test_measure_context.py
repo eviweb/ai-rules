@@ -96,6 +96,20 @@ def test_measure_context_includes_core_and_skills_layers_when_present(sample_rep
     assert "| skills/ SKILL.md (on demand) | 1 | 50 |" in result.stdout
 
 
+def test_measure_context_counts_core_imports_of_the_entry_point(sample_repo):
+    (sample_repo / "core").mkdir()
+    (sample_repo / "core" / "git.md").write_text("g" * 300)
+    claude = sample_repo / "agents" / "claude" / "CLAUDE.md"
+    claude.write_text("@core/git.md\n@rules/a.md\n")
+
+    result = run_script("--root", str(sample_repo))
+
+    imports_row = next(line for line in result.stdout.splitlines() if "Claude Code @imports" in line)
+    cells = [cell.strip() for cell in imports_row.strip("|").split("|")]
+    assert cells[1] == "3"
+    assert cells[2] == str(len("@core/git.md\n@rules/a.md\n") + 300 + 400)
+
+
 def _row(output: str, label: str) -> list[str]:
     line = next(line for line in output.splitlines() if line.startswith(f"| {label} |"))
     return [cell.strip() for cell in line.strip("|").split("|")]

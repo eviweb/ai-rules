@@ -95,11 +95,11 @@ print_listing_row() {
   printf '| %s | %s | %s | - | %s |\n' "$label" "$files" "$bytes" "$(estimate_tokens "$bytes")"
 }
 
-# Print the rule files imported by an entry point (@rules/x.md or @./rules/x.md).
+# Print the rule files imported by an entry point (@core/x.md, @rules/x.md or the @./ form).
 list_imports() {
   local entry_point="$1"
   [[ -f "$entry_point" ]] || return 0
-  { grep -oE '^@(\./)?rules/[^[:space:]]+' "$entry_point" || true; } \
+  { grep -oE '^@(\./)?(core|rules)/[^[:space:]]+' "$entry_point" || true; } \
     | sed -E 's#^@(\./)?#'"${ROOT}"'/#'
 }
 

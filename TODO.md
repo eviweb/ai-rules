@@ -71,7 +71,7 @@
 - [x] Lint workflow files in CI with `actionlint` (pinned version, checksum-verified download)
 ### Trigger scoping (experimental)
 - [x] `templates/ci-triggers.md` (was `rules/ci-triggers-template.md`) — scope `push`/`pull_request` triggers (branch prefixes, no tags, PR target restricted to `main`), skip `lint`/`test` on docs-only changes via job-level `if:` (not trigger-level `paths-ignore`, to avoid stalling required status checks). Marked experimental — not yet folded into `rules/ci.md`'s mandatory checklist
-- [ ] Apply the template to 1-2 more real projects; if it holds up, promote it into `rules/ci.md` as a standing requirement and update `rules/git.md`'s branching model section to cross-reference it (fate decided in R8: reference file of the `hardening-ci` skill)
+- [ ] Apply the template to 1-2 more real projects; if it holds up, promote it into `rules/ci.md` as a standing requirement and update `core/git.md`'s branching model section to cross-reference it (fate decided in R8: reference file of the `hardening-ci` skill)
 
 ## Roadmap 0.6.2 → 1.0.0 (see ROADMAP.md)
 ### R0 — Baseline and loading hygiene (0.6.2)

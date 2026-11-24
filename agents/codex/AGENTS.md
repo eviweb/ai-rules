@@ -134,7 +134,7 @@ The system protects its data, users, and infrastructure from misuse and attack.
 - Validate and sanitise all external input to prevent injection
 - Apply least privilege: request only the permissions strictly needed
 - Keep dependencies up to date and audit them regularly
-- See `rules/security.md` for patterns
+- See `core/security.md` for patterns
 
 Red flags: secrets in source, world-writable files, unvalidated input passed to shell commands or SQL, overly broad permissions.
 
@@ -186,7 +186,7 @@ The codebase can be understood, modified, and extended by anyone familiar with t
 - Functions do one thing; if a function needs a comment to explain what it does, rename it or split it
 - No dead code, no commented-out blocks, no untracked TODOs
 - Complexity is documented where unavoidable (non-obvious invariant, external constraint, workaround for a known bug)
-- See `rules/principles.md` and `rules/naming.md`
+- See `core/principles.md` and `rules/naming.md`
 
 Red flags: functions > 50 lines, deeply nested conditions, magic numbers, copy-paste logic, code that only the original author can explain.
 
@@ -1116,95 +1116,34 @@ Strict applies if any is true: several contributors, public repo with consumers,
 
 Common to both: no force-push on `main`, tests green before tagging, tags only on a commit validated by CI, one topic per branch or commit.
 
-## Permanent branches
+## Branches
 
-| Branch | Role |
-|---|---|
-| `main` | Stable, always-deployable code. Protected — no direct commits (light profile: see exceptions above). |
-| `develop` | Continuous integration of features before release (optional — use only for projects with a long release cycle). |
+- `main`: stable, always-deployable, protected (light profile: see exceptions above). `develop` only for projects with a long release cycle.
+- Working branches are short-lived, created from `main`, deleted after merge, one topic each: `feat/`, `fix/`, `chore/`, `docs/`, `test/`, `release/X.Y.Z` (version bump + changelog), `hotfix/` (urgent fix on top of `main`, fast merge). Names must be self-explanatory (`feat/add-auth`).
+- Flow: branch from `main`, conventional commits, open a PR toward `main`, CI green + review, merge commit, delete the branch. Never merge directly to `main` without a PR (strict profile).
 
-For simple projects: `main` alone is sufficient, without `develop`.
+## Synchronization: rebase
 
-## Working branches (short-lived)
+When `main` moved ahead, run `git rebase main`: linear history, conflicts resolved commit by commit. **Never rebase a branch that is pushed and shared.** Use `git push --force-with-lease` only on a personal branch nobody else works on.
 
-Created from `main` (or `develop` if present), deleted after merge.
+## Merge: merge commit
 
-| Prefix | Usage | Example |
-|---|---|---|
-| `feat/` | New feature | `feat/add-auth` |
-| `fix/` | Bug fix | `fix/login-crash` |
-| `chore/` | Maintenance, tooling, dependencies | `chore/update-deps` |
-| `docs/` | Documentation only | `docs/api-reference` |
-| `test/` | Tests only | `test/add-bats-suite` |
-| `release/` | Release preparation (version bump, changelog) | `release/1.2.0` |
-| `hotfix/` | Urgent fix applied directly on top of `main` | `hotfix/critical-null-ptr` |
+Use `gh pr merge --merge`:
 
-## Synchronization strategy: rebase
-
-When `main` has moved ahead of a working branch, synchronize with:
-
-```bash
-git rebase main
-```
-
-- Produces a linear, readable history
-- Resolves conflicts commit by commit
-- **Never rebase a branch that has already been pushed and shared** — this rewrites history and will break other contributors. Use `git push --force-with-lease` only when the branch is personal and you are certain no one else is working on it.
-
-## Merge strategy: merge commit
-
-When merging a PR into `main`, use a merge commit (`gh pr merge --merge`):
-
-- Original commits keep their author GPG signature (`Verified`); the merge commit is signed by the platform
-- Squash replaces the signature with the platform's; rebase rewrites commits and leaves them `unsigned` — do not use either when signatures matter
-- History is non-linear: `git log --first-parent main` gives the linear, per-PR view
-- Commit messages survive as-is on `main`: clean the branch before pushing (`git rebase -i`, only while it is not shared) and write the merge message carefully — no `wip` / `fix typo` commits
-- Do not enable "require linear history" in the ruleset (incompatible); "require signed commits" is compatible
-
-## Workflow by case
-
-**Feature / fix / chore**
-1. Create branch from `main`: `git checkout -b feat/<description>`
-2. Develop with conventional commits
-3. Rebase on `main` if it has diverged: `git rebase main`
-4. Open a PR toward `main`
-5. CI green + review → merge commit with a clean message
-6. Delete the branch
-
-**Hotfix (critical production bug)**
-1. Create `hotfix/<description>` from `main`
-2. Fix and test
-3. Open a PR toward `main` — fast merge
-4. Delete the branch
-
-**Release**
-1. Create `release/X.Y.Z` from `main`
-2. Bump `VERSION`, update `CHANGELOG.md`
-3. Open a PR toward `main` → merge → tag `X.Y.Z` (light profile: the release commit may be made directly on `main`, then tag)
-4. Delete the branch
-
-## General rules
-
-- One branch = one topic = one PR
-- Keep branches short-lived — rebase regularly to avoid large divergence
-- Never merge directly to `main` without a PR (strict profile; see Project profile at the top)
-- Branch names must be self-explanatory without additional context
+- Original commits keep their author signature (`Verified`); the platform signs the merge commit. Squash replaces the signature and rebase leaves commits `unsigned`: use neither when signatures matter.
+- History is non-linear: `git log --first-parent main` gives the per-PR view.
+- Commit messages survive as-is: clean the branch before pushing (`git rebase -i`, only while not shared), no `wip` / `fix typo` commits.
+- Do not enable "require linear history" (incompatible); "require signed commits" is compatible.
 
 ## Deleting merged branches
 
-After a PR is merged, delete the local branch:
-
-```bash
-git branch -d <branch>
-```
-
-`-d` works because merge commits keep the original SHAs reachable from `main`. If it fails, the PR was merged another way (squash/rebase): confirm with `gh pr view <number> --json state -q .state`, then use `-D`.
+Run `git branch -d <branch>`; it works because merge commits keep the SHAs reachable. If it fails, the PR was merged another way: confirm with `gh pr view <number> --json state -q .state`, then use `-D`.
 
 ## Merge conflicts
 
-- Always analyze both sides of a conflict before resolving — never blindly apply `--ours` or `--theirs`
-- Prefer manual resolution that preserves the intent of both changes when possible
-- If the correct resolution is ambiguous, stop and ask the user before proceeding
+- Analyze both sides before resolving; never blindly apply `--ours` or `--theirs`.
+- Prefer a manual resolution that preserves the intent of both changes.
+- If the correct resolution is ambiguous, stop and ask the user.
 # Git Commits
 
 ## Format
@@ -1235,6 +1174,7 @@ git branch -d <branch>
 - Before proposing a commit to the user, write the message to `.private/COMMIT_MESSAGE` (create the file if absent, overwrite if present).
 - Wait for the user's explicit go-ahead before running any `git commit` command.
 - **When multiple commits are planned in sequence:** stop after each commit and wait for the user's explicit instruction to continue. Do not chain commits autonomously.
+- **Before proposing a commit**, check the cross-cutting duties even if no matching rule file is loaded: tests written first and green (TDD is mandatory, including the Refactor step); docs (`README.md`, `CHANGELOG.md`, `TODO.md`) updated in the same commit; self-review of the diff done (no debug leftovers, no secrets, shell scripts shellchecked)
 # Issues
 
 ## Title
@@ -1469,7 +1409,7 @@ These apply outside the workflow files themselves, in the platform's repository 
 
 - **Settings > Actions > General > Workflow permissions**: keep the default read-only repository permission.
 - **Settings > Actions > General > Actions permissions**: restrict to an allow-list of the GitHub and upstream actions actually required, when the org/repo supports it.
-- **Settings > Branches**: require the CI checks as status checks on protected branches (see `rules/git.md`).
+- **Settings > Branches**: require the CI checks as status checks on protected branches (see `core/git.md`).
 - Keep the standard (non-automatic) approval policy for workflows triggered from forks.
 - Use repository or organization secrets only in trusted workflows — CI triggered by pull requests should run without privileged secrets.
 

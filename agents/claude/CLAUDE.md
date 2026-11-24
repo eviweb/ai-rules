@@ -16,3 +16,4 @@ Topic rules in `rules/` carry a `paths:` frontmatter: Claude Code loads each one
 - `ai-rules-pull-requests-and-issues`: writing a pull request or an issue
 - `ai-rules-verification-before-completion`: about to say work is done or passing, before a commit message or a PR
 - `ai-rules-systematic-debugging`: a bug, failing test, CI failure or unexpected behavior, before proposing a fix
+- `ai-rules-test-driven-development`: implementing a feature, fix or behavior change, before the production code

@@ -98,6 +98,7 @@
 - [ ] Targeted condensation of what `core/` needs to meet its budget (`git`, `security`, `commits` gate) with an invariants test; no global rewrite; language split of `naming`/`error-handling`/`logging` only if measured worthwhile
 ### R4 — Process skills adapted from Superpowers (0.9.0)
 - [ ] Bootstrap, brainstorming, plans, TDD, debugging, verification, review, finishing a branch, releasing, `writing-rules-and-skills` (+ `NOTICE.md` attribution)
+- [ ] `ai-rules-refactoring-and-design` skill: refactoring signals after green, design patterns to apply, criteria against over-engineering (agents skip the Refactor step of TDD)
 ### R5 — Hooks (0.9.x)
 - [ ] `session-start` bootstrap and `pre-tool-guard` (bats-tested, latency budget)
 ### R6 — Cross-agent parity (0.10.0, breaking)
@@ -107,6 +108,7 @@
 - [ ] `evals/` with 3 reference tasks, metrics per version in `docs/metrics/`, regression thresholds
 ### R8 — Wording and consistency cleanup (alongside R2–R4)
 - [ ] Agent-neutral rules, TDD scope clause, single owner per topic, docs refresh, fate of `templates/ci-triggers.md`
+- [ ] `tdd.md`: make the Refactor step explicit (after green, review the diff, name what was simplified or state "nothing to refactor")
 
 ---
 

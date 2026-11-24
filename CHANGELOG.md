@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Normative-invariants test: cross-cutting rules (no autonomous commit, propose before implementing, TDD, docs in the same commit, ...) must stay present in `core/`, `rules/` or `skills/` while R3 relocates rule text
+
 ### Changed
 
 ### Fixed

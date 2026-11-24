@@ -42,6 +42,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Shell completion installed through `bin/ai-rules-wrapper` (or `python -m ai_rules.cli`) was registered for a program named `python -m ai_rules.cli` and never worked: Click derives the program name from how it was started. `python -m ai_rules.cli` and `bin/ai-rules` now run the app as `ai-rules`, so `ai-rules --install-completion` and `--show-completion` produce a script for the right command. Tests check the module, the wrapper and the development entry point
+
 - `scripts/check-sources-age.sh --check-upstream` failed in the monthly workflow with "Failure writing output": it parsed the GitHub response through `curl | grep -m1`, and `grep` closing the pipe made `curl` fail under `pipefail`. The response is now read in full before parsing, and the workflow passes its token to the API call to avoid anonymous rate limits. Three tests reproduce the failure with a `curl` that keeps writing after the first line
 
 ## [0.8.0] - 2026-11-24

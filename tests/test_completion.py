@@ -119,3 +119,44 @@ def test_log_dir_paths_are_completed_by_the_shell(tmp_path: Path) -> None:
 
     assert result.returncode == 0
     assert result.stdout.strip() == "_files"
+
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+
+
+def _show_completion(command: list[str], env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        [*command, "--show-completion", "bash"],
+        capture_output=True,
+        text=True,
+        check=False,
+        env={**os.environ, **(env or {})},
+    )
+
+
+def test_running_the_module_registers_the_completion_for_ai_rules() -> None:
+    result = _show_completion([sys.executable, "-m", "ai_rules.cli"])
+
+    assert result.returncode == 0
+    assert "_AI_RULES_COMPLETE=complete_bash" in result.stdout
+    assert result.stdout.strip().endswith("ai-rules")
+    assert "python" not in result.stdout
+
+
+def test_the_wrapper_registers_the_completion_for_ai_rules() -> None:
+    venv_python = REPO_ROOT / ".venv" / "bin" / "python3"
+    if not venv_python.exists():
+        pytest.skip("the wrapper needs the repository virtual environment")
+
+    result = _show_completion([str(REPO_ROOT / "bin" / "ai-rules-wrapper")], {"AI_RULES_HOME": str(REPO_ROOT)})
+
+    assert result.returncode == 0
+    assert result.stdout.strip().endswith("ai-rules")
+    assert "python" not in result.stdout
+
+
+def test_the_development_entry_point_registers_the_completion_for_ai_rules() -> None:
+    result = _show_completion([sys.executable, str(REPO_ROOT / "bin" / "ai-rules")])
+
+    assert result.returncode == 0
+    assert result.stdout.strip().endswith("ai-rules")

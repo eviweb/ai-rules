@@ -445,4 +445,6 @@ def skills_status(
 
 
 if __name__ == "__main__":
-    app()
+    # Run as `python -m ai_rules.cli` (what bin/ai-rules-wrapper does), Click would name
+    # the program "python -m ai_rules.cli" and install a completion script for that name.
+    app(prog_name="ai-rules")

@@ -77,3 +77,22 @@ def test_package_version_falls_back_to_version_file_when_not_installed(monkeypat
     finally:
         monkeypatch.undo()
         importlib.reload(ai_rules)
+
+
+def test_rules_forbid_attribution_lines_in_every_published_message():
+    commits = (REPO_ROOT / "rules" / "commits.md").read_text()
+    pr = (REPO_ROOT / "rules" / "pr.md").read_text()
+    release = (REPO_ROOT / "rules" / "release.md").read_text()
+
+    assert "No attribution" in commits
+    assert "Co-Authored-By" in commits
+    assert "tag messages" in commits and "release notes" in commits
+    assert "attribution" in pr.lower()
+    assert "attribution" in release.lower()
+
+
+def test_attribution_rule_names_no_specific_tool():
+    commits = (REPO_ROOT / "rules" / "commits.md").read_text()
+    section = commits.split("No attribution", 1)[1].split("\n", 3)[0]
+
+    assert "Claude" not in section

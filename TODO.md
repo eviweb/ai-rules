@@ -104,16 +104,24 @@
 - [x] Targeted condensation of what `core/` needs to meet its budget, with an invariants test; no global rewrite
 - [ ] Language split of `naming`/`error-handling`/`logging` only if measured worthwhile (not done in 0.8.0: scoped rules already load only on matching source files)
 ### R4 — Process skills adapted from Superpowers (0.9.0)
-- [ ] Bootstrap, brainstorming, plans, TDD, debugging, verification, review, finishing a branch, releasing, `writing-rules-and-skills` (+ `NOTICE.md` attribution)
-- [ ] `ai-rules-refactoring-and-design` skill: refactoring signals after green, design patterns to apply, criteria against over-engineering (agents skip the Refactor step of TDD)
+Scope validated 2026-11-24: ten skills, rewritten (not copied), `derived-from` pinned to Superpowers v7.0.2 (`22f0b46`, MIT verified), no skill commits. Deferred: `using-ai-rules` (R5 hook), `subagent-execution` (after R7 evals), `writing-rules-and-skills` (R7). Gemini does not receive these skills before phase 6.
+- [x] PR A: `THIRD_PARTY.md` (MIT notice) and `ai-rules-verification-before-completion`
+- [ ] PR B: `ai-rules-systematic-debugging`
+- [ ] PR C: `ai-rules-test-driven-development`, `ai-rules-refactoring-and-design` (original skill; **the catalogue of techniques is discussed and validated with the user before any text is written**: KISS, YAGNI, design patterns, hexagonal/DDD/SOLID preferences, code smells and proven refactoring techniques, criteria against over-design), `tdd.md` with an explicit Refactor step and a pointer to the skill
+- [ ] PR D: `ai-rules-brainstorming` (with candidate ranking by value and complexity, from `ai-custom`), `ai-rules-writing-plans` (with an initial repository inspection step), `ai-rules-executing-plans`
+- [ ] PR E: `ai-rules-receiving-code-review`, `requesting-code-review` merged into `ai-rules-reviewing-changes` with a `review-package` script
+- [ ] PR F: `ai-rules-finishing-a-branch`, `ai-rules-releasing` (`release.md` becomes the skill; `changelog.md` and `versioning.md` stay scoped)
+- [ ] PR G: `docs/metrics/0.9.0.md`, README, CHANGELOG, listing budget test, release 0.9.0
 ### R5 — Hooks (0.9.x)
 - [ ] `session-start` bootstrap and `pre-tool-guard` (bats-tested, latency budget)
 ### R6 — Cross-agent parity (0.10.0, breaking)
 - [ ] Replace `gemini` by `antigravity`, Codex execution policy, single `permissions.toml` source
 - [ ] Embed a rules version header in generated flat files (former deferred item), extend `verify` to skills and scoped outputs
 ### R7 — Evals and measurement (gate for 1.0.0)
+- [ ] `writing-rules-and-skills` with an optimizing-prompts procedure taken from `ai-custom/prompts/ai-engineering-expert.md` (keep the language, never invent requirements, flag ambiguity); archive `ai-custom` afterwards
 - [ ] `evals/` with 3 reference tasks, metrics per version in `docs/metrics/`, regression thresholds
 ### R8 — Wording and consistency cleanup (alongside R2–R4)
+- [ ] Project instructions template (from `ai-custom/prompts/templates/project-prompt.md`) as a reference of `ai-rules-starting-a-project`; optional line on shell aliases and completion in `cli.md`
 - [ ] Agent-neutral rules, TDD scope clause, single owner per topic, docs refresh, fate of `templates/ci-triggers.md`
 - [ ] `tdd.md`: make the Refactor step explicit (after green, review the diff, name what was simplified or state "nothing to refactor")
 

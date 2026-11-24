@@ -1,18 +1,18 @@
 # Global Rules
 
 ## Language & style
-@./rules/language.md
+@./core/language.md
 @./rules/naming.md
 @./rules/editor.md
 
 ## General principles
-@./rules/principles.md
+@./core/principles.md
 @./rules/quality.md
 
 ## Development practices
 @./rules/tdd.md
 @./rules/testing.md
-@./rules/security.md
+@./core/security.md
 @./rules/dependencies.md
 @./rules/compatibility.md
 
@@ -29,8 +29,8 @@
 @./rules/api.md
 
 ## Git & collaboration
-@./rules/git.md
-@./rules/commits.md
+@./core/git.md
+@./core/commits.md
 @./rules/issues.md
 @./rules/pr.md
 @./rules/review.md

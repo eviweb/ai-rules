@@ -24,7 +24,7 @@ The system protects its data, users, and infrastructure from misuse and attack.
 - Validate and sanitise all external input to prevent injection
 - Apply least privilege: request only the permissions strictly needed
 - Keep dependencies up to date and audit them regularly
-- See `rules/security.md` for patterns
+- See `core/security.md` for patterns
 
 Red flags: secrets in source, world-writable files, unvalidated input passed to shell commands or SQL, overly broad permissions.
 
@@ -76,7 +76,7 @@ The codebase can be understood, modified, and extended by anyone familiar with t
 - Functions do one thing; if a function needs a comment to explain what it does, rename it or split it
 - No dead code, no commented-out blocks, no untracked TODOs
 - Complexity is documented where unavoidable (non-obvious invariant, external constraint, workaround for a known bug)
-- See `rules/principles.md` and `rules/naming.md`
+- See `core/principles.md` and `rules/naming.md`
 
 Red flags: functions > 50 lines, deeply nested conditions, magic numbers, copy-paste logic, code that only the original author can explain.
 

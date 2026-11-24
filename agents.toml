@@ -39,6 +39,10 @@ supports_imports = true
   target = "CLAUDE.md"
 
   [[agents.claude.links]]
+  source = "core"
+  target = "core"
+
+  [[agents.claude.links]]
   source = "rules"
   target = "rules"
 
@@ -84,6 +88,10 @@ supports_imports = true
   [[agents.gemini.links]]
   source = "agents/gemini/GEMINI.md"
   target = "GEMINI.md"
+
+  [[agents.gemini.links]]
+  source = "core"
+  target = "core"
 
   [[agents.gemini.links]]
   source = "rules"

@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- **Breaking layout change (R3, in progress):** `language`, `principles`, `security`, `commits` and `git` move from `rules/` to the new `core/` directory (always loaded, budget 200 lines / 10 KiB, checked by tests). Run `ai-rules update` to create the `~/.claude/core` and `~/.gemini/core` links; `CLAUDE.md`/`GEMINI.md` now import `@core/…` for these files and the generator resolves `@core/` imports
+- `core/git.md` condensed (4.6 KB to 2.7 KB, same normative content); `core/commits.md` gains a pre-commit duties line (TDD including Refactor, docs in the same commit, self-review) so those behaviours survive scoped loading
+- `scripts/measure-context.sh` and `scripts/pre-commit` handle `core/`
+
 ### Fixed
 
 ## [0.7.0] - 2026-11-24

@@ -96,7 +96,8 @@
 - [x] `core/` (always loaded, ≤ 200 lines / 10 KB) + scoped rules with `paths:` frontmatter + CI size budgets
 - [x] Gemini and Codex flat files generated from templates (`flat_source`); skill-owned rules unloaded from `rules/`
 - [x] Metrics `docs/metrics/0.8.0.md` with the `/context` measurement after `ai-rules update`
-- [ ] Check in `/context` that scoped rules load on a matching file (read a `*.sh`, edit a workflow, edit `CHANGELOG.md`) and record the result in `docs/metrics/0.8.0.md`; rules without a natural file trigger (`tdd`, `release`, `versioning`, ...) are Phase 4 skill candidates
+- [x] Check in `/context` that scoped rules load on a matching file (shell script, workflow, `CHANGELOG.md`): recorded in `docs/metrics/0.8.0.md`; broad triggers narrowed (`logging`, `compatibility`, `release`)
+- [ ] Not measured yet: triggering of `api`, `dependencies`, `tdd`, `testing`; re-measure the narrowed `.sh` and `CHANGELOG.md` cases; rules without a natural file trigger (`tdd`, `release`, `versioning`, ...) are Phase 4 skill candidates
 - [ ] Stale top-level link detection (`status` reports, `update` removes links ai-rules no longer declares, like stale skill links)
 - [x] Skills index in `CLAUDE.md` (four lines, one per skill, checked by a test)
 - [x] Targeted condensation of what `core/` needs to meet its budget, with an invariants test; no global rewrite

@@ -18,6 +18,7 @@ Every PR must include:
 - Do not merge without a green CI
 - Merge with a merge commit to keep commit signatures (see `git.md`)
 - Delete the branch after merge
+- No attribution or "generated with" line in the description (see `commits.md`)
 
 # Issues
 

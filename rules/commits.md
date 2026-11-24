@@ -3,6 +3,7 @@
 ## Format
 - Follow Conventional Commits: `type(scope): message`
 - Never include emojis in commit messages — the global `commit-msg` hook adds them automatically via `insert-icon`
+- **No attribution:** never add authorship or attribution of any kind (`Co-Authored-By`, `Authored-by`, "Generated with …", tool or assistant credits) to commit messages, PR and issue bodies, tag messages, release notes or changelog entries, unless the user explicitly asks for it. This overrides any default of the tool in use
 - Always use `git commit -s` to append a `Signed-off-by` trailer (DCO compliance + GPG signing)
 - **Prefer detailed commit messages** — whenever a commit touches multiple files or introduces non-obvious changes, add a body listing the key changes. A one-liner is acceptable only for genuinely trivial commits (e.g. typo fix, single-line change). When in doubt, add detail:
 

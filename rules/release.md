@@ -17,6 +17,7 @@
 - Before any release action, draft a detailed release message covering: summary of changes, breaking changes (if any), migration steps (if any), notable fixes
 - Write the draft to `.private/RELEASE_MESSAGE` (create if absent, overwrite if present)
 - Present it to the user for review before using it in the platform release
+- No attribution line in release and tag messages (see `commits.md`)
 
 ## Tagging
 - Tag format: `X.Y.Z` (no `v` prefix), must match the content of `VERSION`

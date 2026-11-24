@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- `docs/metrics/0.8.0.md` records the measured triggering of `testing`, `tdd`, `dependencies` and `api` (rules are paid once per session, cost versus file size, the narrowed `.sh` and `CHANGELOG.md` rule sets) and two candidates for narrowing
+
 - `rules/cli.md` states its scope: user-facing CLI scripts. Internal read-only helpers under `scripts/` (e.g. `measure-context.sh`) only need `-h|--help`, `-V|--version` and `--debug`, so the agent no longer flags the missing no-op options each time it reads one
 
 - `scripts/measure-context.sh` labels the `rules/` row `rules/ scoped (on demand)` when every rule declares `paths:`, so the table no longer shows 16.5k tokens next to the always-on rows (the plain label stays for trees with unscoped rules)

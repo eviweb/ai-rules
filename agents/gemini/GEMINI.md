@@ -400,9 +400,13 @@ When the project runs in a multi-instance or production environment, document th
 
 *Applies when working on: `**/*.sh`, `bin/**`, `**/cli.*`, `**/__main__.py`.*
 
+## Scope
+
+These rules apply to **user-facing** CLI scripts and tools. An internal, read-only helper (for example a measurement or maintenance script under `scripts/` that writes and logs nothing) only needs `-h|--help`, `-V|--version` and `--debug`; the other options below would do nothing there.
+
 ## Default options
 
-Every CLI script must support the following options:
+Every user-facing CLI script must support the following options:
 
 - `-h|--help` — display usage and exit
 - `--debug` — enable trace mode (`set -x`) for troubleshooting

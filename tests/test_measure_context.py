@@ -195,3 +195,13 @@ def test_measure_context_ignores_and_reports_an_import_that_does_not_resolve(sam
     assert cells[1] == "2"
     assert "does not resolve" in result.stderr
     assert "rules/a.md" in result.stderr
+
+
+def test_measure_context_explains_that_scoped_rules_are_not_always_on(sample_repo):
+    (sample_repo / "core").mkdir()
+    (sample_repo / "core" / "language.md").write_text("x" * 10)
+
+    result = run_script("--root", str(sample_repo))
+
+    assert "Scoped rules" in result.stdout
+    assert "not at launch" in result.stdout

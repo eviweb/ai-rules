@@ -95,9 +95,12 @@
 ### R3 — Core slimming and scoped rules (0.8.0, breaking)
 - [x] `core/` (always loaded, ≤ 200 lines / 10 KB) + scoped rules with `paths:` frontmatter + CI size budgets
 - [x] Gemini and Codex flat files generated from templates (`flat_source`); skill-owned rules unloaded from `rules/`
-- [ ] Metrics `docs/metrics/0.8.0.md`, README migration check, `/context` measurement after `ai-rules update`
-- [ ] Skills index in `CLAUDE.md` (moved from R2: redundant with the automatic skill listing while the rules are loaded, and it would leak into the Codex flat file before Codex has skills)
-- [ ] Targeted condensation of what `core/` needs to meet its budget (`git`, `security`, `commits` gate) with an invariants test; no global rewrite; language split of `naming`/`error-handling`/`logging` only if measured worthwhile
+- [x] Metrics `docs/metrics/0.8.0.md` with the `/context` measurement after `ai-rules update`
+- [ ] Check in `/context` that scoped rules load on a matching file (read a `*.sh`, edit a workflow, edit `CHANGELOG.md`) and record the result in `docs/metrics/0.8.0.md`; rules without a natural file trigger (`tdd`, `release`, `versioning`, ...) are Phase 4 skill candidates
+- [ ] Stale top-level link detection (`status` reports, `update` removes links ai-rules no longer declares, like stale skill links)
+- [x] Skills index in `CLAUDE.md` (four lines, one per skill, checked by a test)
+- [x] Targeted condensation of what `core/` needs to meet its budget, with an invariants test; no global rewrite
+- [ ] Language split of `naming`/`error-handling`/`logging` only if measured worthwhile (not done in 0.8.0: scoped rules already load only on matching source files)
 ### R4 — Process skills adapted from Superpowers (0.9.0)
 - [ ] Bootstrap, brainstorming, plans, TDD, debugging, verification, review, finishing a branch, releasing, `writing-rules-and-skills` (+ `NOTICE.md` attribution)
 - [ ] `ai-rules-refactoring-and-design` skill: refactoring signals after green, design patterns to apply, criteria against over-engineering (agents skip the Refactor step of TDD)

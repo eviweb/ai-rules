@@ -177,21 +177,21 @@ Expected outcome: always-on context drops from ~65 KB to ≤ 13 KB (core + boots
 
 **Goal:** split rules by *when they are needed*.
 
-- [ ] Classify each of the 25 files (see Appendix A for the proposed mapping)
-- [ ] Create `core/` with condensed, imperative versions of: `language`, `principles`, `security` (essentials), `commits` (gate only), `git` (profile + merge policy)
-- [ ] Add `paths:` frontmatter to file-type rules (`shell`, `ci`, `api`, `logging`, `error-handling`, `naming`, `editor`, `testing`)
-- [ ] Unload task-type material now hosted by skills: `review`, `pr`, `issues`, `quality` (Phase 2 transition skills), and later the Phase 4 skills (`release`, `changelog`, `versioning`, `docs`, `dependencies`, `compatibility` stay path-scoped until then)
-- [ ] Targeted condensation, only what `core/` needs to meet its budget (`git`, `security`, `commits` gate): the six core candidates weigh 11.5 KB against a 10 KB budget. No global rewrite of the other rules: they load on demand, so the saving is small and the risk of changing a rule's meaning is not worth it (decision 2026-11-23). Guard: an invariants test lists the normative statements of the core (e.g. never commit autonomously, propose before implementing, English only) and fails when one disappears; the removed rationale stays in git history and, where useful, in a skill reference
+- [x] Classify each of the 25 files (see Appendix A for the proposed mapping)
+- [x] Create `core/` with condensed, imperative versions of: `language`, `principles`, `security` (essentials), `commits` (gate only), `git` (profile + merge policy)
+- [x] Add `paths:` frontmatter to file-type rules (`shell`, `ci`, `api`, `logging`, `error-handling`, `naming`, `editor`, `testing`)
+- [x] Unload task-type material now hosted by skills: `review`, `pr`, `issues`, `quality` (Phase 2 transition skills), and later the Phase 4 skills (`release`, `changelog`, `versioning`, `docs`, `dependencies`, `compatibility` stay path-scoped until then)
+- [x] Targeted condensation, only what `core/` needs to meet its budget (`git`, `security`, `commits` gate): the six core candidates weigh 11.5 KB against a 10 KB budget. No global rewrite of the other rules: they load on demand, so the saving is small and the risk of changing a rule's meaning is not worth it (decision 2026-11-23). Guard: an invariants test lists the normative statements of the core (e.g. never commit autonomously, propose before implementing, English only) and fails when one disappears; the removed rationale stays in git history and, where useful, in a skill reference
 - [ ] Split `naming`, `error-handling`, `logging` by language only if the measured saving justifies it (separate PR, after the classification)
-- [ ] Skills index in `CLAUDE.md` (3–5 lines naming each skill with its trigger), moved from Phase 2, until the Phase 5 bootstrap hook injects it
-- [ ] Generator: Codex flat file = core + scoped rules inlined under "When editing X" headings + skill index (name + description + path)
-- [ ] CI size budgets (new tests in `test_rules_integrity.py`):
+- [x] Skills index in `CLAUDE.md` (3–5 lines naming each skill with its trigger), moved from Phase 2, until the Phase 5 bootstrap hook injects it
+- [x] Generator: Codex flat file = core + scoped rules inlined with an "Applies when working on" note (the skill index is not inlined: Codex lists its native skills); Gemini, which has no skills, gets the same plus the skill texts. Both come from templates (`flat_source`)
+- [x] CI size budgets (new tests in `test_rules_integrity.py`):
   - core ≤ 200 lines and ≤ 10 KB
   - each scoped rule ≤ 6 KB
   - every non-core rule has `paths:` frontmatter or lives under `skills/`
   - no skill duplicates core content (heuristic: shared headings), moved from Phase 2
 
-**Acceptance:** `/context` no longer lists `review`, `pr`, `issues` and `quality` as memory files and the memory total drops accordingly (expected about -3.7k: 2.6k + ~0.7k + ~0.2k + ~0.2k); always-on size ≤ 10 KB (before bootstrap); Codex flat file ≤ 32 KB, `project_doc_max_bytes` patch no longer required; behavior checks from Phase 7 show no regression on the 3 reference tasks.
+**Acceptance (met, `docs/metrics/0.8.0.md`):** `/context` no longer lists `review`, `pr`, `issues` and `quality` as memory files; memory files drop from 25k to 3.7k tokens (`CLAUDE.md` + core 3.5k, the rest is the auto-memory index); always-on size 9.5 KB of core (≤ 10 KB, before bootstrap); Codex flat file ≤ 32 KB, `project_doc_max_bytes` patch no longer required (**not met in 0.8.0**: core plus scoped rules inlined make 54 KB, the patch stays; reducing it needs Codex-specific condensation or an index with on-demand reads, Phase 6); behavior checks from Phase 7 show no regression on the 3 reference tasks.
 
 ---
 

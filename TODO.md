@@ -130,9 +130,9 @@ Scope validated 2026-11-24: ten skills, rewritten (not copied), `derived-from` p
 - [ ] After 0.9.0: narrow `rules/docs.md` to the doc-sync duties; its project-setup part (`.gitignore` template, community files, `TODO.md` structure) is already in `ai-rules-starting-a-project` and makes a `VERSION` read cost ~1.6k of its ~2.1k (`docs/metrics/0.9.0.md`)
 - [ ] After 0.9.0: per-language split of `naming`, `error-handling`, `testing`, `logging` with the same manifest-driven mechanism, adding Rust and PHP (a read of one `.py` file loads about 7 KB of other languages today)
 
-### R5 — Hooks (0.9.x)
+### R5 — Hooks (0.10.0)
 - [ ] `session-start` bootstrap and `pre-tool-guard` (bats-tested, latency budget)
-### R6 — Cross-agent parity (0.10.0, breaking)
+### R6 — Cross-agent parity (0.11.0, breaking)
 - [ ] Replace `gemini` by `antigravity`, Codex execution policy, single `permissions.toml` source
 - [ ] Embed a rules version header in generated flat files (former deferred item), extend `verify` to skills and scoped outputs
 ### R7 — Evals and measurement (gate for 1.0.0)

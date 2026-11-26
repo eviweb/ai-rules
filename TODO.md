@@ -123,7 +123,7 @@ Scope validated 2026-11-24: ten skills, rewritten (not copied), `derived-from` p
   - Handoff: `executing-plans` proposes a handoff note in `.private/HANDOFF.md` when the session grows heavy or the topic changes: repository state, decisions, open points, next action, and a **Resume** section (prompt to paste after `/clear`, commands to check the state, files to reread)
   - Subagents: `subagent-execution` stays deferred until after R7
 - [x] PR D1: staleness check of `~/.config/ai-rules/model-tiers.md` in `ai-rules status`, not `verify` (CI runs `verify` and has no such file); warning only, never a failure
-- [ ] PR E: `ai-rules-receiving-code-review`, `requesting-code-review` merged into `ai-rules-reviewing-changes` with a `review-package` script
+- [x] PR E: `ai-rules-receiving-code-review`, `requesting-code-review` merged into `ai-rules-reviewing-changes` with a `review-package` script
 - [ ] PR F: `ai-rules-finishing-a-branch`, `ai-rules-releasing` (`release.md` becomes the skill; `changelog.md` and `versioning.md` stay scoped)
 - [ ] PR G: `docs/metrics/0.9.0.md`, README, CHANGELOG, listing budget test, release 0.9.0 (C3 and C4 move to 0.9.1 if 0.9.0 grows too much)
 - [ ] After 0.9.0: per-language split of `naming`, `error-handling`, `testing`, `logging` with the same manifest-driven mechanism, adding Rust and PHP (a read of one `.py` file loads about 7 KB of other languages today)

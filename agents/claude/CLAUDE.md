@@ -17,7 +17,8 @@ Typical flow: brainstorming (frame the problem, options) → spec → plan → t
 - `ai-rules-executing-plans`: the user approved a plan and asked to execute it
 - `ai-rules-starting-a-project`: new project or repository (initial files, `.editorconfig`, first commit)
 - `ai-rules-quality-dimensions`: designing a project or judging the quality of a significant change
-- `ai-rules-reviewing-changes`: before proposing a commit or opening a PR, or when reviewing a change
+- `ai-rules-reviewing-changes`: before proposing a commit or opening a PR, or when reviewing a change (review package, reviewer brief)
+- `ai-rules-receiving-code-review`: review feedback received (from the user, a PR comment, another agent), before changing anything
 - `ai-rules-pull-requests-and-issues`: writing a pull request or an issue
 - `ai-rules-verification-before-completion`: about to say work is done or passing, before a commit message or a PR
 - `ai-rules-systematic-debugging`: a bug, failing test, CI failure or unexpected behavior, before proposing a fix

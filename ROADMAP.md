@@ -235,7 +235,7 @@ Explicitly **not** adopted (or deferred):
 
 ---
 
-### Phase 5 — Hooks: bootstrap and enforcement (0.9.x)
+### Phase 5 — Hooks: bootstrap and enforcement (0.10.0)
 
 **Goal:** guarantee activation and back critical rules with code.
 
@@ -253,7 +253,7 @@ Explicitly **not** adopted (or deferred):
 
 ---
 
-### Phase 6 — Cross-agent parity (0.10.0)
+### Phase 6 — Cross-agent parity (0.11.0)
 
 **Goal:** keep Codex and Antigravity first-class without carrying Claude's full context.
 
@@ -348,8 +348,8 @@ Explicitly **not** adopted (or deferred):
 | 0.7.0 | Phase 2 — skills infrastructure, transition skills | No |
 | 0.8.0 | Phase 3 — core + scoped rules, size budgets | Yes (layout change) |
 | 0.9.0 | Phase 4 — process skills | No |
-| 0.9.x | Phase 5 — hooks | No |
-| 0.10.0 | Phase 6 — cross-agent parity | Yes (gemini agent replaced by antigravity; migration automatic) |
+| 0.10.0 | Phase 5 — hooks | No |
+| 0.11.0 | Phase 6 — cross-agent parity | Yes (gemini agent replaced by antigravity; migration automatic) |
 | 1.0.0 | Phase 7 gate passed, docs complete | — |
 
 Each phase follows the strict profile: one PR per phase item, merge commit, CI green, release commit bumps `VERSION` only.

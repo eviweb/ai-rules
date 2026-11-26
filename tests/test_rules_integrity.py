@@ -10,7 +10,22 @@ def test_language_rule_requires_english_for_project_artifacts():
     content = (REPO_ROOT / "core" / "language.md").read_text()
 
     assert "English" in content
-    assert "French" in content
+    assert "unless the user explicitly chooses another language" in content
+    assert "`README.md`" in content
+
+
+def test_language_rule_follows_the_user_language_in_conversation():
+    content = (REPO_ROOT / "core" / "language.md").read_text()
+
+    assert "Converse with the user in the language they write in." in content
+    assert "French" not in content
+
+
+def test_starting_a_project_asks_the_artifact_language():
+    content = (REPO_ROOT / "skills" / "ai-rules-starting-a-project" / "SKILL.md").read_text()
+
+    assert "Artifact language" in content
+    assert "`core/language.md`" in content
 
 
 ENTRY_POINT = REPO_ROOT / "agents" / "claude" / "CLAUDE.md"

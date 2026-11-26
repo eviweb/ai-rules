@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Pre-tool guard for Claude Code (`hooks/pre-tool-guard.py`, `PreToolUse` hook on `Bash`, spec `docs/specs/0001-pre-tool-guard.md`): denies a recursive `rm`, `sudo` and `doas` (also inside `bash -c`), a force-push, `git reset --hard`, `git clean`, `git checkout --` and forced branch deletion in the forms the permission rules miss (`bash -c`, `sh -c`, `eval`, `/bin/rm`, `git -C … push --force`, `+refspec`); asks for `find -delete`, `shred`, `--force-with-lease` and inline code with deletion or process primitives; lets the agent commit only with `git commit -s -F .private/COMMIT_MESSAGE`, a non-empty message and no `git -c` setting that skips the commit hooks, signature or identity. It never allows anything; Python standard library, about 20 ms per command; if it fails, the permission rules still apply. `ai-rules status` shows its link, registration and `python3`
+
+### Fixed
+
+- `agents.toml` owned the whole `hooks` key of `~/.claude/settings.json`: as an object it was merged as a single value, so the first ai-rules hook would have replaced the user's own hooks. The owned key is now `hooks.PreToolUse`, a list merged entry by entry
+- `ai-rules install` creates the parent directory of a link target (`~/.claude/hooks/`)
+
 ## [0.9.0] - 2026-11-26
 
 Roadmap phase 4: process skills. Twelve new skills cover the whole flow, from brainstorming and specification to planning, test-driven development with refactoring, review and release; eight are rewritten from Superpowers (MIT), the four others are original. The agent still never commits: every skill ends with a commit message and a command block for the user. Always-on cost: `CLAUDE.md` + core 4.2k tokens plus about 1.5k for the listing of the sixteen skills. **Breaking:** `rules/release.md` became the `ai-rules-releasing` skill and `scripts/extract-changelog.sh` moved into it; run `ai-rules update` after upgrading.

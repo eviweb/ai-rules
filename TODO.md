@@ -131,7 +131,8 @@ Scope validated 2026-11-24: ten skills, rewritten (not copied), `derived-from` p
 - [ ] After 0.9.0: per-language split of `naming`, `error-handling`, `testing`, `logging` with the same manifest-driven mechanism, adding Rust and PHP (a read of one `.py` file loads about 7 KB of other languages today)
 
 ### R5 — Hooks (0.10.0)
-- [ ] `session-start` bootstrap and `pre-tool-guard` (bats-tested, latency budget)
+- [x] R5a `pre-tool-guard` (spec `docs/specs/0001-pre-tool-guard.md`, pytest, latency p95 20 ms); after merge: `ai-rules update` and a live check in a new session
+- [ ] R5b `session-start` bootstrap, after a period of use of 0.9.0: note missed skills in `.private/`, optionally a script counting skill invocations in the Claude Code transcripts
 ### R6 — Cross-agent parity (0.11.0, breaking)
 - [ ] Replace `gemini` by `antigravity`, Codex execution policy, single `permissions.toml` source
 - [ ] Embed a rules version header in generated flat files (former deferred item), extend `verify` to skills and scoped outputs

@@ -16,6 +16,7 @@ from ai_rules.installer import (
     migrate_agent_backups,
     remove_agent,
     status_agent,
+    status_guard,
     status_skill_dirs,
 )
 from ai_rules.model_tiers import model_tiers_path, model_tiers_status
@@ -199,6 +200,12 @@ def status(
         for name, state in status_agent(repo_root, ag):
             icon = "✓" if state == "ok" else "✗"
             _echo(f"  {icon}  {name:<32} {state}")
+        guard_rows = status_guard(repo_root, ag)
+        if guard_rows:
+            _echo("\n[guard] pre-tool-guard")
+            for name, state in guard_rows:
+                icon = "✓" if state.startswith("ok") else "✗"
+                _echo(f"  {icon}  {name:<32} {state}")
 
     tiers_path = model_tiers_path()
     tiers_ok, tiers_message = model_tiers_status(tiers_path, date.today())

@@ -39,6 +39,10 @@ supports_imports = true
   source = "settings.json"
   target = "settings.json"
 
+  [[agents.claude.links]]
+  source = "hooks/pre-tool-guard.py"
+  target = "hooks/ai-rules-pre-tool-guard.py"
+
 [agents.codex]
 name               = "Codex"
 entry_point        = "agents/codex/AGENTS.md"
@@ -85,6 +89,7 @@ def repo(tmp_path: Path) -> Path:
     shutil.copytree(REAL_REPO / "rules", repo_root / "rules")
     shutil.copytree(REAL_REPO / "core", repo_root / "core")
     shutil.copytree(REAL_REPO / "agents", repo_root / "agents")
+    shutil.copytree(REAL_REPO / "hooks", repo_root / "hooks")
     if (REAL_REPO / "settings.json").exists():
         shutil.copy2(REAL_REPO / "settings.json", repo_root / "settings.json")
 
@@ -173,6 +178,27 @@ def test_status_reports_a_stale_model_tiers_file_without_failing(
     assert result.exit_code == 0
     assert "[model tiers]" in result.output
     assert "stale: checked 2000-01-01" in result.output
+
+
+def test_status_reports_the_guard_before_install(repo: Path) -> None:
+    result = invoke(["status", "claude"], repo)
+
+    assert "[guard] pre-tool-guard" in result.output
+    assert "not linked" in result.output
+    assert "not registered" in result.output
+    assert "python3" in result.output
+
+
+def test_status_reports_the_guard_linked_after_install(repo: Path) -> None:
+    invoke(["install", "claude"], repo)
+
+    result = invoke(["status", "claude"], repo)
+
+    assert "✓  link" in result.output
+
+
+def test_status_omits_the_guard_for_agents_without_it(repo: Path) -> None:
+    assert "[guard]" not in invoke(["status", "codex"], repo).output
 
 
 def test_status_unknown_agent_exits_1(repo: Path) -> None:

@@ -21,5 +21,4 @@
 @rules/docs.md
 @rules/changelog.md
 @rules/versioning.md
-@rules/release.md
 @rules/ci.md

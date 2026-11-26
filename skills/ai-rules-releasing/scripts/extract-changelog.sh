@@ -4,8 +4,7 @@ set -euo pipefail
 # extract-changelog.sh — Extract release notes for a given version from CHANGELOG.md
 
 SCRIPT_NAME="$(basename "$0")"
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-SCRIPT_VERSION="$(cat "${SCRIPT_DIR}/../VERSION" 2>/dev/null || echo "unknown")"
+SCRIPT_VERSION="1.1.0"
 
 CHANGELOG="${PWD}/CHANGELOG.md"
 

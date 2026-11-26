@@ -158,7 +158,7 @@ def test_rules_forbid_attribution_lines_in_every_published_message():
     pr = (
         REPO_ROOT / "skills" / "ai-rules-pull-requests-and-issues" / "SKILL.md"
     ).read_text()
-    release = (REPO_ROOT / "rules" / "release.md").read_text()
+    release = (REPO_ROOT / "skills" / "ai-rules-releasing" / "SKILL.md").read_text()
 
     assert "No attribution" in commits
     assert "Co-Authored-By" in commits

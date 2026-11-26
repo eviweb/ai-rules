@@ -26,7 +26,7 @@ file change regardless of content. This template scopes all three.
   every change against the true baseline immediately.
 - **Tags never trigger CI.** A tag should only ever be created pointing at
   a commit already validated by `push`/`pull_request` CI on `main` (see
-  `rules/release.md`). Re-running CI on the tag itself is redundant. This
+  the `ai-rules-releasing` skill). Re-running CI on the tag itself is redundant. This
   falls out for free from using a `branches:` filter instead of a bare
   `push:` — tag refs never match a `branches:` list.
 - **Docs-only changes still run the workflow, but skip the expensive

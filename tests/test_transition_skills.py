@@ -13,7 +13,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 DUPLICATED_RULES = {"ai-rules-starting-a-project": ["docs.md"]}
 
 # Rules whose skill is the single source: they must not also live in rules/.
-SKILL_OWNED_RULES = ["editor.md", "quality.md", "review.md", "pr.md", "issues.md"]
+SKILL_OWNED_RULES = ["editor.md", "quality.md", "review.md", "pr.md", "issues.md", "release.md"]
 
 SKILLS = [
     "ai-rules-starting-a-project",

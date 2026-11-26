@@ -30,7 +30,7 @@ ai-rules/
 │       ├── GEMINI.md       # Gemini entry point (flat file, generated from GEMINI.src.md)
 │       └── GEMINI.src.md   # Template of the Gemini flat file (core, rules and skill texts)
 ├── core/                   # Always-loaded core rules (5 files, ≤ 200 lines / 10 KiB)
-├── rules/                  # Scoped rules (15 files, `paths:` frontmatter, loaded when a matching file is touched)
+├── rules/                  # Scoped rules (14 files, `paths:` frontmatter, loaded when a matching file is touched)
 │   ├── naming.md
 │   ├── tdd.md
 │   ├── testing.md
@@ -44,9 +44,9 @@ ai-rules/
 │   ├── logging.md
 │   ├── error-handling.md
 │   ├── api.md
-│   ├── ci.md
-│   └── release.md
+│   └── ci.md
 ├── skills/                 # Skills (ai-rules-<topic>/SKILL.md), loaded on demand; see docs/skills.md
+│                           # (scripts such as releasing/scripts/extract-changelog.sh ship with their skill)
 ├── templates/              # On-demand references, not auto-loaded
 │   └── ci-triggers.md      # experimental CI triggers pattern
 ├── docs/
@@ -54,7 +54,6 @@ ai-rules/
 │   ├── skills.md           # How to write a skill (format, description style, derived skills)
 │   └── sources.md          # Register of the standards and upstream projects relied on, with review dates
 ├── scripts/
-│   ├── extract-changelog.sh  # Extract release notes from CHANGELOG.md
 │   ├── measure-context.sh    # Size of each rule-loading layer (bytes, lines, ~tokens)
 │   └── check-sources-age.sh  # Lists the sources of docs/sources.md that are due for a review
 ├── bin/

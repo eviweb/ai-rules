@@ -79,6 +79,7 @@ def test_writing_plans_maps_tiers_without_looking_models_up() -> None:
     assert "`/model`" in text
     assert "Do not look them up yourself" in text
     assert "never switch models on your own" in text
+    assert "`ai-rules status`" in text
 
 
 def test_executing_plans_stops_at_each_commit_point() -> None:

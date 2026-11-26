@@ -153,6 +153,28 @@ def test_status_shows_ok_after_install(repo: Path) -> None:
     assert "ok" in result.output
 
 
+def test_status_reports_a_missing_model_tiers_file_without_failing(repo: Path) -> None:
+    result = invoke(["status"], repo)
+
+    assert result.exit_code == 0
+    assert "[model tiers]" in result.output
+    assert "missing (optional)" in result.output
+
+
+def test_status_reports_a_stale_model_tiers_file_without_failing(
+    repo: Path, xdg_config_home: Path
+) -> None:
+    tiers = xdg_config_home / "ai-rules" / "model-tiers.md"
+    tiers.parent.mkdir(parents=True)
+    tiers.write_text("checked: 2000-01-01\n")
+
+    result = invoke(["status", "claude"], repo)
+
+    assert result.exit_code == 0
+    assert "[model tiers]" in result.output
+    assert "stale: checked 2000-01-01" in result.output
+
+
 def test_status_unknown_agent_exits_1(repo: Path) -> None:
     result = invoke(["status", "unknown"], repo)
     assert result.exit_code == 1

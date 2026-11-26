@@ -61,7 +61,7 @@ deep: <model>, effort <…>
 checked: YYYY-MM-DD
 ```
 
-with where to find the values: the agent's `/model` command (the models and efforts the user's plan allows) and the vendor's public models page. Do not look them up yourself. When the running model or effort does not match the tier of the next task, say it in one line; never switch models on your own.
+with where to find the values: the agent's `/model` command (the models and efforts the user's plan allows) and the vendor's public models page. Do not look them up yourself. `ai-rules status` reports a missing or stale file without any token cost. When the running model or effort does not match the tier of the next task, say it in one line; never switch models on your own.
 
 ## Self-review
 

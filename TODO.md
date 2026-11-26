@@ -122,7 +122,7 @@ Scope validated 2026-11-24: ten skills, rewritten (not copied), `derived-from` p
   - Staleness: `ai-rules verify` reports a missing file or a `checked` date older than three months (no token cost); the skill adds a one-line reminder only when it reads the file anyway. The R5 hook may reuse the same check
   - Handoff: `executing-plans` proposes a handoff note in `.private/HANDOFF.md` when the session grows heavy or the topic changes: repository state, decisions, open points, next action, and a **Resume** section (prompt to paste after `/clear`, commands to check the state, files to reread)
   - Subagents: `subagent-execution` stays deferred until after R7
-- [ ] PR D1: staleness check of `~/.config/ai-rules/model-tiers.md` in `ai-rules verify` (warning only, never a failure: the file is personal and optional)
+- [x] PR D1: staleness check of `~/.config/ai-rules/model-tiers.md` in `ai-rules status`, not `verify` (CI runs `verify` and has no such file); warning only, never a failure
 - [ ] PR E: `ai-rules-receiving-code-review`, `requesting-code-review` merged into `ai-rules-reviewing-changes` with a `review-package` script
 - [ ] PR F: `ai-rules-finishing-a-branch`, `ai-rules-releasing` (`release.md` becomes the skill; `changelog.md` and `versioning.md` stay scoped)
 - [ ] PR G: `docs/metrics/0.9.0.md`, README, CHANGELOG, listing budget test, release 0.9.0 (C3 and C4 move to 0.9.1 if 0.9.0 grows too much)

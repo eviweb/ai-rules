@@ -12,3 +12,12 @@ def xdg_state_home(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     xdg.mkdir()
     monkeypatch.setenv("XDG_STATE_HOME", str(xdg))
     return xdg
+
+
+@pytest.fixture(autouse=True)
+def xdg_config_home(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+    """Redirect XDG_CONFIG_HOME so tests never read the user's own config."""
+    xdg = tmp_path / "config"
+    xdg.mkdir()
+    monkeypatch.setenv("XDG_CONFIG_HOME", str(xdg))
+    return xdg

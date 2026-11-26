@@ -125,7 +125,9 @@ Scope validated 2026-11-24: ten skills, rewritten (not copied), `derived-from` p
 - [x] PR D1: staleness check of `~/.config/ai-rules/model-tiers.md` in `ai-rules status`, not `verify` (CI runs `verify` and has no such file); warning only, never a failure
 - [x] PR E: `ai-rules-receiving-code-review`, `requesting-code-review` merged into `ai-rules-reviewing-changes` with a `review-package` script
 - [x] PR F: `ai-rules-finishing-a-branch`, `ai-rules-releasing` (`release.md` becomes the skill; `changelog.md` and `versioning.md` stay scoped)
-- [ ] PR G: `docs/metrics/0.9.0.md`, README, CHANGELOG, listing budget test, release 0.9.0 (C3 and C4 move to 0.9.1 if 0.9.0 grows too much)
+- [x] PR G1: `docs/metrics/0.9.0.md`, README, CHANGELOG, listing budget test (5 KiB)
+- [ ] PR G2: release 0.9.0 (`release/0.9.0`, first run of `ai-rules-releasing`)
+- [ ] After 0.9.0: narrow `rules/docs.md` to the doc-sync duties; its project-setup part (`.gitignore` template, community files, `TODO.md` structure) is already in `ai-rules-starting-a-project` and makes a `VERSION` read cost ~1.6k of its ~2.1k (`docs/metrics/0.9.0.md`)
 - [ ] After 0.9.0: per-language split of `naming`, `error-handling`, `testing`, `logging` with the same manifest-driven mechanism, adding Rust and PHP (a read of one `.py` file loads about 7 KB of other languages today)
 
 ### R5 — Hooks (0.9.x)

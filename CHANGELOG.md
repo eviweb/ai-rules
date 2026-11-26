@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `docs/metrics/0.9.0.md`: measurement after R4 (sixteen skills): `CLAUDE.md` + core 4.2k tokens at launch, skill listing about 1.5k, a skill paid once at the size of its `SKILL.md`, `release` no longer loaded by `VERSION`; a test caps the skill listing (name + description of every skill) at 5 KiB
+
 - `ai-rules-finishing-a-branch` skill (rewritten from Superpowers' `finishing-a-development-branch`, `22f0b46`): verify the tree being integrated, confirm the base and the remote, offer the ways to finish (pull request, local merge in the light profile, keep), prepare the commit message, the pull request and the full command block for the user to run, then handle failing checks, review comments and the cleanup; discarding only on an explicit request confirmed by typing `discard`. Worktrees and agent-run merges are left out
 - `ai-rules-releasing` skill (original, from `rules/release.md`): the release in eight steps, from choosing the version out of `[Unreleased]` to opening the next `-dev` version
 

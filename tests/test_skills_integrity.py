@@ -57,3 +57,21 @@ def test_derived_skills_declare_the_license_of_origin() -> None:
         metadata = fields.get("metadata", {})
         if isinstance(metadata, dict) and "derived-from" in metadata:
             assert metadata.get("license-of-origin") == "MIT", folder.name
+
+
+SKILL_LISTING_BUDGET_BYTES = 5 * 1024
+
+
+def test_skill_listing_stays_within_its_always_on_budget() -> None:
+    """Name and description of every skill sit in the agent's context at every turn."""
+    from ai_rules.skills import discover_skills, parse_frontmatter
+
+    listing_bytes = 0
+    for folder in discover_skills(REPO_ROOT / "skills"):
+        fields, _ = parse_frontmatter((folder / "SKILL.md").read_text())
+        listing_bytes += len(f"{fields['name']}{fields['description']}".encode())
+
+    assert listing_bytes <= SKILL_LISTING_BUDGET_BYTES, (
+        f"skill listing is {listing_bytes} bytes, budget {SKILL_LISTING_BUDGET_BYTES}: "
+        "shorten descriptions or merge skills"
+    )

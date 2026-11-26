@@ -50,7 +50,7 @@ ai-rules/
 ├── templates/              # On-demand references, not auto-loaded
 │   └── ci-triggers.md      # experimental CI triggers pattern
 ├── docs/
-│   ├── metrics/            # Context-cost measurements per version (baseline-0.6.1.md, 0.7.0.md, 0.8.0.md)
+│   ├── metrics/            # Context-cost measurements per version (baseline-0.6.1.md, 0.7.0.md, 0.8.0.md, 0.9.0.md)
 │   ├── skills.md           # How to write a skill (format, description style, derived skills)
 │   └── sources.md          # Register of the standards and upstream projects relied on, with review dates
 ├── scripts/
@@ -224,7 +224,7 @@ Skill directories (`[[agents.*.skill_dirs]]` in `agents.toml`): each sub-folder 
 - `~/.claude/CLAUDE.md` imports only the core (`@../../core/<name>.md`): five files, always in context. Claude Code resolves a relative import against the **real path** of the file that holds it, and `~/.claude/CLAUDE.md` is a symlink into this repository, so the paths are written relative to `agents/claude/` (checked by a test). `@core/…` would look for `agents/claude/core/` and silently load nothing.
 - `~/.claude/rules/` holds the topic rules. Each has a `paths:` frontmatter, so Claude Code loads it only when it reads or writes a matching file (patterns are relative to the session's working directory). A rule is never imported: an `@import` always loads its file. The tests enforce both.
 - Task-type material (project start, quality dimensions, review, pull requests and issues) lives in skills, loaded on demand; Codex and Gemini receive the same texts in their generated flat files (Gemini has no skills; Codex has native skills for them).
-- Always-on cost: the core is about 9.5 KB (about 3.5k tokens) plus the skill listing (about 0.3k). Estimate it with `scripts/measure-context.sh` and confirm with `/context`.
+- Always-on cost: `CLAUDE.md` and the core are about 12 KB (about 4.2k tokens, measured) plus the listing of the sixteen skills (about 1.5k, capped at 5 KiB by a test). Estimate it with `scripts/measure-context.sh` and confirm with `/context`.
 - Migration from 0.7.x: run `ai-rules update`. The `~/.claude/core` (0.8.0-dev builds only), `~/.gemini/core` and `~/.gemini/rules` links are not used and can be deleted by hand.
 
 ### Agents with a generated flat file (Codex, Gemini)

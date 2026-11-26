@@ -21,10 +21,9 @@
 @rules/docs.md
 @rules/changelog.md
 @rules/versioning.md
-@rules/release.md
 @rules/ci.md
 
-## Project start, quality, review, pull requests and issues
+## Project start, quality, review, pull requests, issues and releases
 @skills/ai-rules-starting-a-project/SKILL.md
 @skills/ai-rules-quality-dimensions/references/dimensions/correctness.md
 @skills/ai-rules-quality-dimensions/references/dimensions/reliability.md
@@ -45,3 +44,4 @@
 @skills/ai-rules-quality-dimensions/references/dimensions/interoperability.md
 @skills/ai-rules-reviewing-changes/SKILL.md
 @skills/ai-rules-pull-requests-and-issues/SKILL.md
+@skills/ai-rules-releasing/SKILL.md

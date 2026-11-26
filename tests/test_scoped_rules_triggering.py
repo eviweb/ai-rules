@@ -69,7 +69,7 @@ def rules_loaded_by(path: str) -> dict[str, int]:
         ("scripts/measure-context.sh", {"shell", "cli", "naming", "error-handling"}),
         (".github/workflows/ci.yml", {"ci", "compatibility"}),
         ("CHANGELOG.md", {"docs", "changelog", "versioning"}),
-        ("VERSION", {"docs", "changelog", "versioning", "release"}),
+        ("VERSION", {"docs", "changelog", "versioning"}),
         ("src/ai_rules/cli.py", {"cli", "naming", "error-handling", "logging"}),
         ("pyproject.toml", {"dependencies", "compatibility"}),
     ],

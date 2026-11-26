@@ -225,6 +225,7 @@ Skill directories (`[[agents.*.skill_dirs]]` in `agents.toml`): each sub-folder 
 - `~/.claude/rules/` holds the topic rules. Each has a `paths:` frontmatter, so Claude Code loads it only when it reads or writes a matching file (patterns are relative to the session's working directory). A rule is never imported: an `@import` always loads its file. The tests enforce both.
 - Task-type material (project start, quality dimensions, review, pull requests and issues) lives in skills, loaded on demand; Codex and Gemini receive the same texts in their generated flat files (Gemini has no skills; Codex has native skills for them).
 - Always-on cost: `CLAUDE.md` and the core are about 12 KB (about 4.2k tokens, measured) plus the listing of the sixteen skills (about 1.5k, capped at 5 KiB by a test). Estimate it with `scripts/measure-context.sh` and confirm with `/context`.
+- Migration from 0.8.x: run `ai-rules update` to link the twelve new skills; `rules/release.md` disappears with the `rules/` link, and release notes are extracted with `skills/ai-rules-releasing/scripts/extract-changelog.sh` instead of `scripts/extract-changelog.sh`.
 - Migration from 0.7.x: run `ai-rules update`. The `~/.claude/core` (0.8.0-dev builds only), `~/.gemini/core` and `~/.gemini/rules` links are not used and can be deleted by hand.
 
 ### Agents with a generated flat file (Codex, Gemini)

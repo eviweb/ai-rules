@@ -127,6 +127,9 @@ CITED_PATTERNS = {
     "ISO 9241": r"ISO 9241",
     "Nielsen": r"Nielsen",
     "DORA": r"DORA",
+    "Diátaxis": r"Di[aá]taxis",
+    "C4 model": r"\bC4\b",
+    "EARS": r"\bEARS\b",
 }
 
 

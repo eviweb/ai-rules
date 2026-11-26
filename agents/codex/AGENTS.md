@@ -1005,6 +1005,7 @@ Follow the [Keep a Changelog](https://keepachangelog.com) format.
 - Every meaningful commit must have a corresponding entry in `[Unreleased]`
 - Entries are written in English, in the imperative mood (e.g. "Add logging support")
 - Do not list trivial changes (formatting, typos in comments, etc.)
+- Writing practices that keep it readable (entries for users, breaking changes first, curated): `ai-rules-writing-documents`
 # Semantic Versioning
 
 *Applies when working on: `VERSION`, `CHANGELOG.md`.*

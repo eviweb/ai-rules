@@ -21,3 +21,4 @@ Typical flow: brainstorming (frame the problem, options) → spec → plan → t
 - `ai-rules-test-driven-development`: implementing a feature, fix or behavior change, before the production code
 - `ai-rules-refactoring-and-design`: the Refactor step, code smells, hard-to-change code, choosing a design or pattern
 - `ai-rules-architecture-proposal`: starting a project or adding a significant component, before choosing a structure
+- `ai-rules-writing-documents`: writing or rewriting a README, guide, spec, design document, changelog entry or diagram

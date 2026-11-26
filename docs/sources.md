@@ -28,6 +28,9 @@ When a row is checked, update its version, date and status in the same commit as
 | Conventional Commits | 1.0.0 | https://www.conventionalcommits.org/en/v1.0.0/ | 2026-11-24 | 24 | verified | core: commits |
 | Keep a Changelog | 1.1.0 | https://keepachangelog.com/en/1.1.0/ | 2026-11-24 | 24 | verified | rules: changelog |
 | Semantic Versioning | 2.0.0 | https://semver.org/ | 2026-11-24 | 24 | verified | rules: versioning |
+| Diátaxis (Procida) | four types: tutorials, how-to guides, reference, explanation (no version published) | https://diataxis.fr/ | 2026-11-26 | 24 | verified | writing-documents: guides |
+| C4 model (Brown) | abstractions software system, container, component, code, plus people; system context, container, component and code diagrams, with system landscape, dynamic and deployment (no version published) | https://c4model.com/abstractions | 2026-11-26 | 24 | verified | writing-documents: diagrams |
+| EARS (Mavin) | first published 2009; ubiquitous, event-driven, state-driven, unwanted behaviour, optional feature and complex patterns | https://alistairmavin.com/ears/ | 2026-11-26 | 36 | verified | writing-documents: specifications |
 | Superpowers (obra/superpowers) | v7.0.2 @ 22f0b46 | https://github.com/obra/superpowers | 2026-11-24 | 3 | verified | skills derived from it (see `THIRD_PARTY.md`) |
 
 ## Superpowers

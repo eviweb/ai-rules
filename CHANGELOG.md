@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-11-26
+
+Roadmap phase 4: process skills. Twelve new skills cover the whole flow, from brainstorming and specification to planning, test-driven development with refactoring, review and release; eight are rewritten from Superpowers (MIT), the four others are original. The agent still never commits: every skill ends with a commit message and a command block for the user. Always-on cost: `CLAUDE.md` + core 4.2k tokens plus about 1.5k for the listing of the sixteen skills. **Breaking:** `rules/release.md` became the `ai-rules-releasing` skill and `scripts/extract-changelog.sh` moved into it; run `ai-rules update` after upgrading.
+
 ### Added
 
 - `docs/metrics/0.9.0.md`: measurement after R4 (sixteen skills): `CLAUDE.md` + core 4.2k tokens at launch, skill listing about 1.5k, a skill paid once at the size of its `SKILL.md`, `release` no longer loaded by `VERSION`; a test caps the skill listing (name + description of every skill) at 5 KiB

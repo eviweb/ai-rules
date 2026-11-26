@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `core/language.md`: every project artifact, documentation included, stays in English unless the user explicitly chooses another language for an artifact; the choice is recorded in the `README.md` and in the project's agent instructions file. The conversation follows the language the user writes in, instead of naming French. `ai-rules-starting-a-project` asks the artifact language at project start
 - `docs/sources.md` first review (issue #57): 14 sources checked at their official source on 2026-11-24 (European Accessibility Act applies from 28 June 2025; ISO/IEC 25010 edition 2 of November 2023; ISO 9241-210:2019; Section 508 harmonised with WCAG 2.0; SLSA 1.2; Saltzer and Schroeder's eight principles; Shostack's four questions; Nielsen's ten heuristics; Conventional Commits 1.0.0; Keep a Changelog 1.1.0; Semantic Versioning 2.0.0; DORA). Two stay `to confirm` with a three-month period (EN 301 549 quoted from the RGAA page, Privacy by Design: the primary document could not be read)
 - Corrections that came out of the review: DORA now has five metrics with new names (change lead time, deployment frequency, failed deployment recovery time, change fail rate, deployment rework rate) and the reliability and evolvability guidance follows; the threat-modelling questions use Shostack's wording ("what are we working on"); the changelog header points to Keep a Changelog 1.1.0
 

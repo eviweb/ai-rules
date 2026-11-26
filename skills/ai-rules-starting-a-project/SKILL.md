@@ -4,6 +4,8 @@ description: "Use when starting a new project or repository: initial files (READ
 ---
 Before creating the structure, settle the architecture and the main technology choices with the user (`ai-rules-architecture-proposal`); this skill then creates the project skeleton.
 
+**Artifact language:** ask whether every artifact stays in English (the default, `core/language.md`) or whether some use another language, for example the user-facing documentation. Record any exception in the `README.md`, and in the project's agent instructions file if one is created.
+
 # Documentation
 
 Every project must include the following files from the start:

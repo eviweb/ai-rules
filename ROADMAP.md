@@ -231,6 +231,8 @@ Explicitly **not** adopted (or deferred):
 
 **Acceptance:** on the 3 reference tasks (Phase 7), the agent invokes the expected skill without being prompted, never commits without approval, and total tokens per task are ≤ baseline.
 
+**Measured (`docs/metrics/0.9.0.md`):** sixteen skills; always-on `CLAUDE.md` + core 4.2k tokens and skill listing about 1.5k (budget 5 KiB, tested); a skill costs its `SKILL.md` once when invoked (~1.7k for `writing-plans`). The behavior part of the acceptance waits for the Phase 7 reference tasks.
+
 ---
 
 ### Phase 5 — Hooks: bootstrap and enforcement (0.9.x)

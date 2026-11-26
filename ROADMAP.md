@@ -237,19 +237,13 @@ Explicitly **not** adopted (or deferred):
 
 ### Phase 5 — Hooks: bootstrap and enforcement (0.10.0)
 
-**Goal:** guarantee activation and back critical rules with code.
+**Goal:** guarantee activation and back critical rules with code. Split on 2026-11-26: part A (the guard) is preventive and ships first; part B (the bootstrap) waits for usage data of the 0.9.0 skills.
 
-- [ ] `hooks/session-start` (bash, no forks, PATH-independent — same constraints as Superpowers' hook): inject `using-ai-rules` as additional context
-  - Matcher `startup|clear|compact` so the bootstrap survives context compaction
-  - Emit only the JSON field the current agent consumes
-- [ ] `hooks/pre-tool-guard` (PreToolUse on `Bash`): parse the command (including `bash -c`, `sh -c`, `xargs`, `;`, `&&`, pipes) and
-  - block recursive deletes outside the working tree, force-push, `reset --hard`, `clean -fd` without prior confirmation
-  - for `git commit`: require `.private/COMMIT_MESSAGE` to exist and match the `-F`/`-m` content
-- [ ] Deploy hooks through the Phase 1 settings merge (owned `hooks` entries), never by overwriting user hooks
-- [ ] Tests: bats-core suite for both hooks (malicious command variants, JSON output shape, empty PATH)
-- [ ] Hook latency budget: ≤ 50 ms per invocation, measured in CI
+- [x] **Part A** `hooks/pre-tool-guard.py` (`PreToolUse` on `Bash`), spec `docs/specs/0001-pre-tool-guard.md`. Claude Code already applies deny rules to every subcommand (`&&`, `;`, pipes, subshells) and strips `xargs` or `timeout`, so the guard only covers the forms the rules miss: `bash -c`/`sh -c`/`eval`, a program given by path, git global options, `+refspec`, deletion without `rm`, inline code with deletion primitives; `git commit` by the agent only as `git commit -s -F .private/COMMIT_MESSAGE`. Python standard library rather than bash (quote handling), tested with pytest rather than bats; latency p95 20 ms against a 50 ms budget, measured by a test
+- [x] Deploy hooks through the Phase 1 settings merge: the owned key is `hooks.PreToolUse` (a list merged entry by entry); owning `hooks` would have replaced the user's hooks
+- [ ] **Part B** `hooks/session-start`: inject `using-ai-rules` as additional context, matcher `startup|clear|compact`, emitting only the JSON field the current agent consumes. Sized from observed skill misses (transcripts record each skill invocation); `CLAUDE.md`, re-read after compaction, may make it unnecessary for Claude Code
 
-**Acceptance:** after `/compact`, the bootstrap is present again; the documented bypass variants of `rm -rf` are blocked; no false positive on the 3 reference tasks.
+**Acceptance:** after `/compact`, the bootstrap is present again (part B); the documented bypass variants of `rm -rf` are blocked (part A, tested); no false positive on the 3 reference tasks.
 
 ---
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import re
 import shutil
@@ -326,6 +327,7 @@ def install_agent(
 
         actions.append(f"LINK    {link.target}: {target} -> {source}")
         if not dry_run:
+            target.parent.mkdir(parents=True, exist_ok=True)
             target.symlink_to(source)
 
     for skill_dir in agent.skill_dirs:
@@ -421,6 +423,37 @@ def migrate_agent_backups(agent: Agent, dry_run: bool = False) -> list[str]:
                 shutil.move(str(bak), dest)
 
     return actions
+
+
+GUARD_SOURCE = "hooks/pre-tool-guard.py"
+
+
+def status_guard(repo_root: Path, agent: Agent) -> list[tuple[str, str]]:
+    """Return the pre-tool guard state (link, registration, python3), or [] if the agent has none."""
+    link = next((entry for entry in agent.links if entry.source == GUARD_SOURCE), None)
+    if link is None:
+        return []
+    source, target = _resolve_link(repo_root, agent, link)
+    linked = target.is_symlink() and target.resolve() == source
+
+    try:
+        settings = json.loads((agent.install_path / "settings.json").read_text())
+        entries = settings.get("hooks", {}).get("PreToolUse", [])
+    except (OSError, ValueError, AttributeError):
+        entries = []
+    target_name = Path(link.target).name
+    registered = any(
+        target_name in hook.get("command", "")
+        for entry in entries if isinstance(entry, dict)
+        for hook in entry.get("hooks", []) if isinstance(hook, dict)
+    )
+
+    python = shutil.which("python3")
+    return [
+        ("link", "ok" if linked else "not linked (run ai-rules install)"),
+        ("registration", "ok" if registered else "not registered in settings.json (run ai-rules update)"),
+        ("python3", f"ok ({python})" if python else "not found: the hook cannot run, the permission rules still apply"),
+    ]
 
 
 def status_skill_dirs(repo_root: Path, agent: Agent) -> list[tuple[str, str]]:

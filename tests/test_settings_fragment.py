@@ -79,3 +79,31 @@ def test_agents_toml_owns_every_permission_list() -> None:
     for key in ("permissions.allow", "permissions.ask", "permissions.deny"):
         assert key in owned
     assert "autoApprove" not in owned
+
+
+def _claude_agent() -> dict:
+    return tomllib.loads((REPO_ROOT / "agents.toml").read_text())["agents"]["claude"]
+
+
+def test_fragment_registers_the_pre_tool_guard_for_bash() -> None:
+    entries = json.loads((REPO_ROOT / "settings.json").read_text())["hooks"]["PreToolUse"]
+
+    guard = [entry for entry in entries if entry["matcher"] == "Bash"]
+    assert len(guard) == 1
+    (hook,) = guard[0]["hooks"]
+    assert hook["type"] == "command"
+    assert hook["command"] == 'python3 -I -S "$HOME/.claude/hooks/ai-rules-pre-tool-guard.py"'
+    assert hook["timeout"] <= 10
+
+
+def test_agents_toml_owns_only_the_pre_tool_use_hooks() -> None:
+    (merge,) = _claude_agent()["settings_merge"]
+
+    assert "hooks.PreToolUse" in merge["owned"]
+    assert "hooks" not in merge["owned"]
+
+
+def test_agents_toml_links_the_guard_into_the_claude_hooks_directory() -> None:
+    links = {link["target"]: link["source"] for link in _claude_agent()["links"]}
+
+    assert links["hooks/ai-rules-pre-tool-guard.py"] == "hooks/pre-tool-guard.py"

@@ -49,8 +49,11 @@ ai-rules/
 │                           # (scripts such as releasing/scripts/extract-changelog.sh ship with their skill)
 ├── templates/              # On-demand references, not auto-loaded
 │   └── ci-triggers.md      # experimental CI triggers pattern
+├── hooks/
+│   └── pre-tool-guard.py   # Claude Code PreToolUse hook on Bash (logic in src/ai_rules/guard.py)
 ├── docs/
 │   ├── metrics/            # Context-cost measurements per version (baseline-0.6.1.md, 0.7.0.md, 0.8.0.md, 0.9.0.md)
+│   ├── specs/              # Specifications (0001-pre-tool-guard.md)
 │   ├── skills.md           # How to write a skill (format, description style, derived skills)
 │   └── sources.md          # Register of the standards and upstream projects relied on, with review dates
 ├── scripts/
@@ -208,6 +211,16 @@ Settings merge (`[[agents.*.settings_merge]]` in `agents.toml`):
 `~/.claude/settings.json` is a regular file, not a symlink: Claude Code writes its own keys into it (plugins, `/permissions`, theme), which would otherwise land in this repository. ai-rules adds its list entries and scalars (`allow`, `ask` and `deny` rules; `git commit`, `git push`, `rm`, `npx` and `chmod` ask first, destructive variants such as `rm -r`, `git push --force`, `git reset --hard` and `git clean` are denied, `--force-with-lease` still asks), never touches other keys, and records what it added in `$XDG_STATE_HOME/ai-rules/state/claude-settings.json`. `ai-rules update` retires entries that left the fragment. A legacy symlinked install is migrated automatically: the content is backed up to `$XDG_STATE_HOME/ai-rules/backups/claude/` and replaced by a regular file with the same content.
 
 Skill directories (`[[agents.*.skill_dirs]]` in `agents.toml`): each sub-folder of `source` that holds a `SKILL.md` is linked to `<install_dir>/<target>/<folder name>`, one symlink per skill, so skills you write yourself live in the same directory and are never touched. `ai-rules update` unlinks the skills that were deleted from the repository (only symlinks pointing into the source directory are considered ai-rules', never other entries); a real folder with the same name is backed up first. `status` lists one line per skill (`ok`, `not installed`, `symlink mismatch`, `exists (not a symlink)`, `stale`). Claude Code links them under `~/.claude/skills/` and Codex under `~/.agents/skills/` (the user skills directory Codex scans); a target starting with `~` or an absolute path is not relative to `install_dir`. Gemini has no skills yet (phase 6).
+
+#### Pre-tool guard (Claude Code)
+
+The permission rules above match every subcommand of a compound command, but not the same program invoked in another form. `ai-rules install` also links `hooks/pre-tool-guard.py` to `~/.claude/hooks/ai-rules-pre-tool-guard.py` and registers it as a `PreToolUse` hook on `Bash` (only the `hooks.PreToolUse` list is merged; your own hooks are left alone). Before each shell command of the agent it:
+
+- denies a recursive `rm` hidden in `bash -c`, `sh -c`, `eval` or a path such as `/bin/rm`; `sudo` and `doas` at any level (the `sudo` rule does not see inside `bash -c`); force-push behind global options (`git -C x push --force`) or as a `+refspec`; `git reset --hard`, `git clean`, `git checkout --` and forced branch deletion in the same forms;
+- asks for `find -delete`, `find -exec rm`, `shred`, `git push --force-with-lease`, and inline Python, Perl, Ruby or Node code that uses a deletion or process primitive (`rmtree`, `unlink`, `remove`, `rmdir`, `os.system`, `subprocess`, `rm -`);
+- lets the agent run `git commit` only as `git commit -s -F .private/COMMIT_MESSAGE` with a non-empty reviewed message and no `git -c` setting that would skip your commit hooks, signature or identity (`core.hooksPath`, `commit.gpgSign`, `user.*`); you still confirm it.
+
+It never allows anything, so it can only make the rules stricter. It needs `python3` (standard library only, about 20 ms per command); if `python3` is missing or the hook fails, Claude Code shows a hook error and the permission rules still apply. `ai-rules status claude` shows its link, registration and `python3`. To turn it off, remove its entry from `hooks.PreToolUse` in `~/.claude/settings.json` (an `ai-rules update` adds it back). Specification: `docs/specs/0001-pre-tool-guard.md`.
 
 ### What remove does
 

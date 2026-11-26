@@ -45,6 +45,11 @@ supports_imports = true
   source = "rules"
   target = "rules"
 
+  # Pre-tool guard (PreToolUse hook on Bash), registered in settings.json below.
+  [[agents.claude.links]]
+  source = "hooks/pre-tool-guard.py"
+  target = "hooks/ai-rules-pre-tool-guard.py"
+
   # One symlink per skill folder, so skills written by the user coexist.
   [[agents.claude.skill_dirs]]
   source = "skills"
@@ -55,7 +60,9 @@ supports_imports = true
   [[agents.claude.settings_merge]]
   file   = "settings.json"
   source = "settings.json"
-  owned  = ["permissions.allow", "permissions.ask", "permissions.deny", "hooks"]
+  # hooks.PreToolUse is a list merged entry by entry: the user's own hooks
+  # (other entries, other events) are never touched.
+  owned  = ["permissions.allow", "permissions.ask", "permissions.deny", "hooks.PreToolUse"]
 
 [agents.codex]
 name               = "Codex"

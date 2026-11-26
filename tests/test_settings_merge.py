@@ -428,3 +428,36 @@ def test_status_agent_reports_settings_merge(repo_root: Path, agent: Agent) -> N
     install_agent(repo_root, agent)
 
     assert ("settings.json", "ok") in status_agent(repo_root, agent)
+
+
+# --- hooks: list entries of one event, never the whole hooks object ---
+
+GUARD_ENTRY = {"matcher": "Bash", "hooks": [{"type": "command", "command": "guard", "timeout": 5}]}
+USER_PRE_TOOL = {"matcher": "Write", "hooks": [{"type": "command", "command": "user-write-hook"}]}
+USER_STOP = [{"hooks": [{"type": "command", "command": "user-stop-hook"}]}]
+
+
+def test_merge_adds_the_hook_entry_and_keeps_the_user_hooks(
+    repo_root: Path, install_dir: Path
+) -> None:
+    write_json(repo_root / "settings.json", {"hooks": {"PreToolUse": [GUARD_ENTRY]}})
+    write_json(install_dir / "settings.json", {"hooks": {"PreToolUse": [USER_PRE_TOOL], "Stop": USER_STOP}})
+    hook_agent = make_agent(install_dir, owned=["hooks.PreToolUse"])
+
+    merge(repo_root, hook_agent)
+    merge(repo_root, hook_agent)
+
+    hooks = read_json(install_dir / "settings.json")["hooks"]
+    assert hooks["PreToolUse"] == [USER_PRE_TOOL, GUARD_ENTRY]
+    assert hooks["Stop"] == USER_STOP
+
+
+def test_unmerge_removes_only_the_hook_entry_it_added(repo_root: Path, install_dir: Path) -> None:
+    write_json(repo_root / "settings.json", {"hooks": {"PreToolUse": [GUARD_ENTRY]}})
+    write_json(install_dir / "settings.json", {"hooks": {"PreToolUse": [USER_PRE_TOOL], "Stop": USER_STOP}})
+    hook_agent = make_agent(install_dir, owned=["hooks.PreToolUse"])
+    merge(repo_root, hook_agent)
+
+    unmerge(repo_root, hook_agent)
+
+    assert read_json(install_dir / "settings.json")["hooks"] == {"PreToolUse": [USER_PRE_TOOL], "Stop": USER_STOP}

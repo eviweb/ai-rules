@@ -69,6 +69,27 @@ def test_install_agent_creates_symlink(repo_root: Path, install_dir: Path) -> No
     assert link.resolve() == (repo_root / "entry.md").resolve()
 
 
+def test_install_agent_creates_the_missing_parent_directory_of_a_link(
+    repo_root: Path, install_dir: Path
+) -> None:
+    agent = make_agent(install_dir, [("entry.md", "hooks/entry-link.md")])
+
+    install_agent(repo_root, agent)
+
+    link = install_dir / "hooks" / "entry-link.md"
+    assert link.is_symlink()
+    assert link.resolve() == (repo_root / "entry.md").resolve()
+
+
+def test_remove_agent_unlinks_a_link_in_a_subdirectory(repo_root: Path, install_dir: Path) -> None:
+    agent = make_agent(install_dir, [("entry.md", "hooks/entry-link.md")])
+    install_agent(repo_root, agent)
+
+    remove_agent(repo_root, agent)
+
+    assert not (install_dir / "hooks" / "entry-link.md").is_symlink()
+
+
 def test_install_agent_skips_correct_existing_symlink(
     repo_root: Path, install_dir: Path
 ) -> None:

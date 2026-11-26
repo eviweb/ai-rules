@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from typing import Annotated, Optional
 
@@ -18,6 +18,7 @@ from ai_rules.installer import (
     status_agent,
     status_skill_dirs,
 )
+from ai_rules.model_tiers import model_tiers_path, model_tiers_status
 from ai_rules.skills import describe_skill, discover_skills, verify_skills
 
 app = typer.Typer(
@@ -198,6 +199,11 @@ def status(
         for name, state in status_agent(repo_root, ag):
             icon = "✓" if state == "ok" else "✗"
             _echo(f"  {icon}  {name:<32} {state}")
+
+    tiers_path = model_tiers_path()
+    tiers_ok, tiers_message = model_tiers_status(tiers_path, date.today())
+    _echo(f"\n[model tiers] {tiers_path}")
+    _echo(f"  {'✓' if tiers_ok else '✗'}  {tiers_message}")
     _echo()
 
 

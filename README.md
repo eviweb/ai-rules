@@ -136,7 +136,9 @@ Commands:
 # List configured agents
 ai-rules list
 
-# Check installation status
+# Check installation status (also reports whether the personal model tier
+# mapping ~/.config/ai-rules/model-tiers.md exists and was checked within
+# 90 days; a warning only, never a failure)
 ai-rules status
 ai-rules status claude
 
